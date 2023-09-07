@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_contact_us">
+
+    <fragment
+        android:id="@+id/nav_contact_us"
+        android:name="com.tqs.filemanager.ui.fragment.ContactUsFragment"
+        android:label="@string/menu_contact_us"
+        tools:layout="@layout/fragment_share" />
+
+    <fragment
+        android:id="@+id/nav_privacy_policy"
+        android:name="com.tqs.filemanager.ui.fragment.PrivacyPolicyFragment"
+        android:label="@string/menu_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" />
+
+    <fragment
+        android:id="@+id/nav_share"
+        android:name="com.tqs.filemanager.ui.fragment.ShareFragment"
+        android:label="@string/menu_share"
+        tools:layout="@layout/fragment_contact_us" />
+
+    <fragment
+        android:id="@+id/nav_upgrade"
+        android:name="com.tqs.filemanager.ui.fragment.UpgradeFragment"
+        android:label="@string/menu_upgrade"
+        tools:layout="@layout/fragment_upgrade" />
+</navigation>

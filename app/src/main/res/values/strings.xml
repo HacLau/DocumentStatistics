@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">File Manager</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">File Manager</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_contact_us">Contact Us</string>
+    <string name="menu_privacy_policy">Privacy Policy</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_upgrade">Upgrade</string>
+</resources>
