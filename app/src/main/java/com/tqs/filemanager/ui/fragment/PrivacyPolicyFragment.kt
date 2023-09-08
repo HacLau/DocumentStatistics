@@ -21,8 +21,6 @@ class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyP
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel =
-            ViewModelProvider(this).get(PrivacyPolicyVM::class.java)
 
         binding = FragmentPrivacyPolicyBinding.inflate(inflater, container, false)
         val root: View = binding.root

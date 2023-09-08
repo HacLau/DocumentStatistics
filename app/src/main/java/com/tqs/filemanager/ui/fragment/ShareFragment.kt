@@ -22,8 +22,6 @@ class ShareFragment : BaseFragment<FragmentShareBinding,ShareVM>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel =
-            ViewModelProvider(this).get(ShareVM::class.java)
 
         binding = FragmentShareBinding.inflate(inflater, container, false)
         val root: View = binding.root

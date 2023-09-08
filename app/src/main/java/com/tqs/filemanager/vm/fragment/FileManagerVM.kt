@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tqs.filemanager.vm.base.BaseVM
 
-class ContactUsVM : BaseVM() {
+class FileManagerVM : BaseVM() {
     override val title : LiveData<String>
         get() = MutableLiveData<String>().apply {
-            value = "This is Contact Us Fragment"
+            value = "This is File Manager Fragment"
         }
 }

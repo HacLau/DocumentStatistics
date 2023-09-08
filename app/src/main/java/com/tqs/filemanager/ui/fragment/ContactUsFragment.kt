@@ -21,8 +21,6 @@ class ContactUsFragment : BaseFragment<FragmentContactUsBinding,ContactUsVM>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel =
-            ViewModelProvider(this).get(ContactUsVM::class.java)
 
         binding = FragmentContactUsBinding.inflate(inflater, container, false)
         val root: View = binding.root
