@@ -25,11 +25,6 @@ class MainActivity : BaseActivity<ActivityMainBinding,MainVM>(), View.OnClickLis
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_file_manager,R.id.nav_contact_us, R.id.nav_privacy_policy, R.id.nav_share, R.id.nav_upgrade
-            ), binding.drawerLayout
-        )
 
         binding.appBarMain.findViewById<ImageView>(R.id.iv_order).setOnClickListener {
             binding.drawerLayout.openDrawer(Gravity.LEFT)
@@ -42,38 +37,30 @@ class MainActivity : BaseActivity<ActivityMainBinding,MainVM>(), View.OnClickLis
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.cl_file_manager -> {
-                selectedMenu(0)
-                navController.navigate(R.id.nav_file_manager)
+                selectedMenu(R.id.nav_file_manager)
             }
             R.id.rl_contact_us -> {
-                selectedMenu(1)
-                navController.navigate(R.id.nav_contact_us)
+                selectedMenu(R.id.nav_contact_us)
             }
             R.id.rl_privacy_policy -> {
-                selectedMenu(2)
-                navController.navigate(R.id.nav_privacy_policy)
+                selectedMenu(R.id.nav_privacy_policy)
             }
             R.id.rl_share -> {
-                selectedMenu(3)
-                navController.navigate(R.id.nav_share)
+                selectedMenu(R.id.nav_share)
             }
             R.id.rl_upgrade -> {
-                selectedMenu(4)
-                navController.navigate(R.id.nav_upgrade)
+                selectedMenu(R.id.nav_upgrade)
             }
         }
     }
 
-    private fun selectedMenu(index: Int){
+    private fun selectedMenu(resID: Int){
         binding.drawerLayout.closeDrawer(Gravity.LEFT)
+        navController.navigate(resID)
     }
 
 }
