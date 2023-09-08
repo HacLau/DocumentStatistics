@@ -12,4 +12,15 @@
     <string name="menu_privacy_policy">Privacy Policy</string>
     <string name="menu_share">Share</string>
     <string name="menu_upgrade">Upgrade</string>
+
+    <string name="tx_available_storage">Available Storage</string>
+    <string name="tx_space_proportion">Space proportion</string>
+    <string name="tx_image">Image</string>
+    <string name="tx_documents">Documents</string>
+    <string name="tx_audio">Audio</string>
+    <string name="tx_video">Video</string>
+    <string name="tx_download">Download</string>
+    <string name="tx_last_update">Last update</string>
+
+    <string name="tx_select_all">select all</string>
 </resources>

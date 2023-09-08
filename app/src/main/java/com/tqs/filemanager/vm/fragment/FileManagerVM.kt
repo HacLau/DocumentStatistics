@@ -10,4 +10,5 @@ class FileManagerVM : BaseVM() {
         get() = MutableLiveData<String>().apply {
             value = "This is File Manager Fragment"
         }
+    var progressValue = MutableLiveData<Long>(0L)
 }

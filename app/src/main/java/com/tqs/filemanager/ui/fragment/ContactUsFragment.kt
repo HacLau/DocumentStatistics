@@ -31,11 +31,6 @@ class ContactUsFragment : BaseFragment<FragmentContactUsBinding,ContactUsVM>() {
     override fun initData() {
         viewModel =
             ViewModelProvider(this).get(ContactUsVM::class.java)
-
-        val textView: TextView = binding.textSlideshow
-        viewModel.title.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
     }
 
     override fun onDestroyView() {

@@ -1,10 +1,7 @@
 package com.tqs.filemanager.ui.activity.audio
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityAudioListBinding
-import com.tqs.document.statistics.databinding.ActivityMainBinding
 import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.vm.activity.MainVM
 
@@ -15,5 +12,11 @@ class AudioListActivity : BaseActivity<ActivityAudioListBinding, MainVM>() {
         get() = this.packageName
 
     override fun initData() {
+        setStatusBarTransparent(this)
+        setStatusBarLightMode(this, true)
+        binding.titleBar.setLeftClickListener {
+            finish()
+        }
+
     }
 }

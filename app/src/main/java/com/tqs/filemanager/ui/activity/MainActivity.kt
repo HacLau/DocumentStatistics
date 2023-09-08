@@ -10,6 +10,7 @@ import androidx.navigation.ui.navigateUp
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityMainBinding
 import com.tqs.filemanager.ui.base.BaseActivity
+import com.tqs.filemanager.ui.view.TitleBar
 import com.tqs.filemanager.vm.activity.MainVM
 
 class MainActivity : BaseActivity<ActivityMainBinding,MainVM>(), View.OnClickListener {
@@ -26,7 +27,7 @@ class MainActivity : BaseActivity<ActivityMainBinding,MainVM>(), View.OnClickLis
         setStatusBarLightMode(this, true)
         navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        binding.appBarMain.findViewById<ImageView>(R.id.iv_order).setOnClickListener {
+        binding.appBarMain.findViewById<TitleBar>(R.id.title_bar_main).setLeftClickListener {
             binding.drawerLayout.openDrawer(Gravity.LEFT)
         }
         binding.clFileManager.setOnClickListener(this)

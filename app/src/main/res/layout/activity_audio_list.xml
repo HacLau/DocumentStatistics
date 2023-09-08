@@ -7,8 +7,17 @@
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="24dp">
 
+        <com.tqs.filemanager.ui.view.TitleBar
+            android:id="@+id/title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleBar_left_src="@mipmap/ic_back"
+            app:titleBar_right_visible="gone"
+            app:titleBar_title_text="@string/tx_audio"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
