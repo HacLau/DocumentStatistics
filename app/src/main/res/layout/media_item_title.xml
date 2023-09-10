@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
@@ -16,6 +16,7 @@
         app:layout_constraintLeft_toLeftOf="parent"/>
 
     <TextView
+        android:id="@+id/item_select_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tx_select_all"

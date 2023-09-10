@@ -81,14 +81,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
     override fun permissionSuccess(requestCode: Int) {
         super.permissionSuccess(requestCode)
         if (requestCode == REQUEST_CODE_PERMISSION){
-            Toast.makeText(this,"get permissions success",Toast.LENGTH_SHORT).show()
             startTimer()
         }
     }
 
     override fun permissionFail(requestCode: Int) {
         super.permissionFail(requestCode)
-        Toast.makeText(this,"get permissions fail",Toast.LENGTH_SHORT).show()
         startTimer()
     }
 

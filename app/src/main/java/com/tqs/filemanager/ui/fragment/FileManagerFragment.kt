@@ -1,11 +1,8 @@
 package com.tqs.filemanager.ui.fragment
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +22,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
 
-    private var totalSpace :Long = 100L
-    private var usedSpace :Long = 100L
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,27 +34,72 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
     }
 
     override fun initData() {
-        viewModel = ViewModelProvider(this).get(FileManagerVM::class.java)
+        viewModel = ViewModelProvider(this)[FileManagerVM::class.java]
+        setProgressValue()
+        setMediaList()
+        setMediaListSize()
+        getMediaInfo()
+        setClickListener()
+    }
+
+    private fun setProgressValue() {
         viewModel.progressValue.observe(requireActivity()){
-            binding.mainProgressBar.progress = (it * 1.0f / totalSpace * 100).toInt()
-            binding.tvSpaceProportion.text = Html.fromHtml("<font color='#FF4F15'>${usedSpace / 1024 / 1024}</font> / ${totalSpace / 1024 / 1024}  GB")
+            binding.mainProgressBar.progress = (it * 1.0f / viewModel.totalSpace.value!! * 100).toInt()
+            binding.tvSpaceProportion.text = Html.fromHtml("<font color='#FF4F15'>${viewModel.availSpace.value  } GB</font> / ${viewModel.totalSpace.value }  GB")
         }
-        getMemoryInfo()
+    }
+
+    private fun setMediaList() {
+        viewModel.imageList.observe(requireActivity()){
+            viewModel.getImageListSize()
+        }
+        viewModel.audioList.observe(requireActivity()){
+            viewModel.getAudioListSize()
+        }
+        viewModel.videoList.observe(requireActivity()){
+            viewModel.getVideoListSize()
+        }
+        viewModel.documentsList.observe(requireActivity()){
+            viewModel.getDocumentsListSize()
+        }
+        viewModel.downloadList.observe(requireActivity()){
+            viewModel.getDownloadListSize()
+        }
+    }
+
+    private fun setMediaListSize() {
+        viewModel.imageListSize.observe(requireActivity()){
+            binding.tvImageSpace.text = "$it MB"
+        }
+        viewModel.videoListSize.observe(requireActivity()){
+            binding.tvVideoSpace.text = "$it MB"
+        }
+        viewModel.audioListSize.observe(requireActivity()){
+            binding.tvAudioSpace.text = "$it MB"
+        }
+        viewModel.documentsListSize.observe(requireActivity()){
+            binding.tvDocumentsSpace.text = "$it MB"
+        }
+        viewModel.downloadListSize.observe(requireActivity()){
+            binding.tvDownloadSpace.text = "$it MB"
+        }
+    }
+
+    private fun getMediaInfo() {
+        viewModel.getMemoryInfo()
+        viewModel.getImageList(requireContext())
+        viewModel.getAudioList(requireContext())
+        viewModel.getVideoList(requireContext())
+        viewModel.getDocumentsList(requireContext())
+//        viewModel.getDownloadList(requireContext())
+    }
+
+    private fun setClickListener() {
         binding.clFileManagerAudio.setOnClickListener(this)
         binding.clFileManagerDocuments.setOnClickListener(this)
         binding.clFileManagerDownload.setOnClickListener(this)
         binding.clFileManagerImage.setOnClickListener(this)
         binding.clFileManagerVideo.setOnClickListener(this)
-    }
-
-    private fun getMemoryInfo() {
-        val am :ActivityManager = requireActivity().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val memoryInfo = ActivityManager.MemoryInfo()
-        am.getMemoryInfo(memoryInfo)
-        usedSpace = memoryInfo.totalMem - memoryInfo.availMem
-        totalSpace = memoryInfo.totalMem
-        viewModel.progressValue.value = usedSpace
-
     }
 
     override fun onDestroyView() {
@@ -86,7 +126,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
 
         }
     }
-
 
     private fun jumpImageListActivity() {
         val intent = Intent(requireActivity(), ImageListActivity::class.java)
