@@ -21,8 +21,32 @@
         android:button="@null"
         android:checked="true"
         android:visibility="gone"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
         android:background="@drawable/bg_checkbox_circle"
         app:layout_constraintTop_toTopOf="@id/item_image"
+        app:layout_constraintRight_toRightOf="@id/item_image"/>
+    <ImageButton
+        android:id="@+id/item_play"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:visibility="gone"
+        android:background="@mipmap/ic_video_play"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+    <TextView
+        android:id="@+id/item_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2.2MB"
+        android:textSize="@dimen/text_size_12"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="9dp"
+        app:layout_constraintBottom_toBottomOf="@id/item_image"
         app:layout_constraintRight_toRightOf="@id/item_image"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,13 +2,15 @@ package com.tqs.filemanager.model
 
 data class FileEntity(
     var id: Int = 0,
-    var path: String = "",
+    var path: String? = "",
     var size: Int = 0,
-    var name: String = "",
-    var mimeType: String = "",
+    var name: String? = "",
+    var mimeType: String? = "",
     var date: Long = 0L,
     var fileType: Int = 1,
-    var dateString: String = ""
+    var dateString: String? = "",
+    var selected:Boolean = false,
+    var deleted:Boolean = false
 ) {
 
 

@@ -23,4 +23,5 @@
     <string name="tx_last_update">Last update</string>
 
     <string name="tx_select_all">select all</string>
+    <string name="tx_delete">Delete</string>
 </resources>

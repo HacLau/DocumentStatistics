@@ -1,16 +1,15 @@
 package com.tqs.filemanager.vm.fragment
 
 import android.content.Context
+import android.os.Build
 import android.os.Environment
 import android.os.StatFs
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.vm.base.BaseVM
-import com.tqs.filemanager.vm.utils.FileManagerUtil
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.tqs.filemanager.vm.utils.FileUtils
 
 class FileManagerVM : BaseVM() {
     override val title : LiveData<String>
@@ -33,8 +32,10 @@ class FileManagerVM : BaseVM() {
     var documentsListSize = MutableLiveData<Long>(0L)
     var downloadListSize = MutableLiveData<Long>(0L)
 
-    private val memoryUnit : Int = 1000 * 1000 * 1000
-    private val spaceUnit : Int = 1000 * 1000
+    private val memoryUnit:Int = 1000
+    private val kBUnit : Int = memoryUnit
+    private val mBUnit : Int = kBUnit * memoryUnit
+    private val gBUnit : Int = mBUnit * memoryUnit
     fun getMemoryInfo() {
         val state = Environment.getExternalStorageState()
         if (Environment.MEDIA_MOUNTED == state) {
@@ -43,31 +44,31 @@ class FileManagerVM : BaseVM() {
             val blockSize = sf.blockSizeLong
             val blockCount = sf.blockCountLong
             val availCount = sf.availableBlocksLong
-            totalSpace.value = blockSize * blockCount / memoryUnit
-            availSpace.value = availCount * blockSize / memoryUnit
+            totalSpace.value = blockSize * blockCount / gBUnit
+            availSpace.value = availCount * blockSize / gBUnit
             progressValue.value = availSpace.value
         }
     }
 
     fun getImageList(context: Context){
-        imageList.value = FileManagerUtil.getImgList(context)
+        imageList.value = FileUtils.getImgList(context)
     }
 
     fun getVideoList(context: Context){
-        videoList.value = FileManagerUtil.getVideoList(context)
+        videoList.value = FileUtils.getVideoList(context)
 
     }
 
     fun getAudioList(context: Context){
-        audioList.value = FileManagerUtil.getAudioList(context)
+        audioList.value = FileUtils.getAudioList(context)
     }
 
     fun getDocumentsList(context: Context){
-        documentsList.value = FileManagerUtil.getDocList(context)
+        documentsList.value = FileUtils.getDocList(context)
     }
 
     fun getDownloadList(context: Context){
-        downloadList.value = FileManagerUtil.getDownloadList(context)
+        downloadList.value = FileUtils.getDownloadList(context)
     }
 
     fun getImageListSize(){
@@ -75,7 +76,7 @@ class FileManagerVM : BaseVM() {
         for (fileEntity in imageList.value!!){
             imageListSize.value = imageListSize.value!! + fileEntity.size
         }
-        imageListSize.value = imageListSize.value!! /  spaceUnit
+        imageListSize.value = imageListSize.value!! /  mBUnit
     }
 
     fun getVideoListSize(){
@@ -83,7 +84,7 @@ class FileManagerVM : BaseVM() {
         for (fileEntity in videoList.value!!){
             videoListSize.value = videoListSize.value!! + fileEntity.size
         }
-        videoListSize.value = videoListSize.value!! /  spaceUnit
+        videoListSize.value = videoListSize.value!! /  mBUnit
     }
 
     fun getAudioListSize(){
@@ -91,7 +92,7 @@ class FileManagerVM : BaseVM() {
         for (fileEntity in audioList.value!!){
             audioListSize.value = audioListSize.value!! + fileEntity.size
         }
-        audioListSize.value = audioListSize.value!! /  spaceUnit
+        audioListSize.value = audioListSize.value!! /  mBUnit
     }
 
     fun getDocumentsListSize(){
@@ -99,7 +100,7 @@ class FileManagerVM : BaseVM() {
         for (fileEntity in documentsList.value!!){
             documentsListSize.value = documentsListSize.value!! + fileEntity.size
         }
-        documentsListSize.value = documentsListSize.value!! /  spaceUnit
+        documentsListSize.value = documentsListSize.value!! /  mBUnit
     }
 
     fun getDownloadListSize(){
@@ -107,7 +108,7 @@ class FileManagerVM : BaseVM() {
         for (fileEntity in downloadList.value!!){
             downloadListSize.value = downloadListSize.value!! + fileEntity.size
         }
-        downloadListSize.value = downloadListSize.value!! /  spaceUnit
+        downloadListSize.value = downloadListSize.value!! /  mBUnit
     }
 
 

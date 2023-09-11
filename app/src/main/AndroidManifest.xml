@@ -21,19 +21,13 @@
             android:name="com.tqs.filemanager.ui.activity.documents.DocumentsListActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.audio.AudioListActivity"
+            android:name="com.tqs.filemanager.ui.activity.DocListActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.video.VideoPreviewActivity"
+            android:name="com.tqs.filemanager.ui.activity.PreviewActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.video.VideoListActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.tqs.filemanager.ui.activity.image.ImagePreviewActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.tqs.filemanager.ui.activity.image.ImageListActivity"
+            android:name="com.tqs.filemanager.ui.activity.ImageListActivity"
             android:exported="false" />
         <activity
             android:name="com.tqs.filemanager.ui.activity.SplashActivity"

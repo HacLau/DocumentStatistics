@@ -5,7 +5,6 @@ import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityDownloadListBinding
 import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.vm.activity.download.DownloadListVM
-import com.tqs.filemanager.vm.activity.image.ImageListVM
 
 class DownloadListActivity : BaseActivity<ActivityDownloadListBinding, DownloadListVM>() {
     override val layoutId: Int

@@ -9,15 +9,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.FragmentFileManagerBinding
-import com.tqs.filemanager.ui.activity.audio.AudioListActivity
-import com.tqs.filemanager.ui.activity.documents.DocumentsListActivity
-import com.tqs.filemanager.ui.activity.download.DownloadListActivity
-import com.tqs.filemanager.ui.activity.image.ImageListActivity
-import com.tqs.filemanager.ui.activity.video.VideoListActivity
+import com.tqs.filemanager.ui.activity.DocListActivity
+import com.tqs.filemanager.ui.activity.ImageListActivity
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.FileManagerVM
+import com.tqs.filemanager.vm.utils.Common
 
-class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerVM>(),
+class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
     View.OnClickListener {
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
@@ -43,44 +41,46 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
     }
 
     private fun setProgressValue() {
-        viewModel.progressValue.observe(requireActivity()){
-            binding.mainProgressBar.progress = (it * 1.0f / viewModel.totalSpace.value!! * 100).toInt()
-            binding.tvSpaceProportion.text = Html.fromHtml("<font color='#FF4F15'>${viewModel.availSpace.value  } GB</font> / ${viewModel.totalSpace.value }  GB")
+        viewModel.progressValue.observe(requireActivity()) {
+            binding.mainProgressBar.progress =
+                (it * 1.0f / viewModel.totalSpace.value!! * 100).toInt()
+            binding.tvSpaceProportion.text =
+                Html.fromHtml("<font color='#FF4F15'>${viewModel.availSpace.value} GB</font> / ${viewModel.totalSpace.value}  GB")
         }
     }
 
     private fun setMediaList() {
-        viewModel.imageList.observe(requireActivity()){
+        viewModel.imageList.observe(requireActivity()) {
             viewModel.getImageListSize()
         }
-        viewModel.audioList.observe(requireActivity()){
+        viewModel.audioList.observe(requireActivity()) {
             viewModel.getAudioListSize()
         }
-        viewModel.videoList.observe(requireActivity()){
+        viewModel.videoList.observe(requireActivity()) {
             viewModel.getVideoListSize()
         }
-        viewModel.documentsList.observe(requireActivity()){
+        viewModel.documentsList.observe(requireActivity()) {
             viewModel.getDocumentsListSize()
         }
-        viewModel.downloadList.observe(requireActivity()){
+        viewModel.downloadList.observe(requireActivity()) {
             viewModel.getDownloadListSize()
         }
     }
 
     private fun setMediaListSize() {
-        viewModel.imageListSize.observe(requireActivity()){
+        viewModel.imageListSize.observe(requireActivity()) {
             binding.tvImageSpace.text = "$it MB"
         }
-        viewModel.videoListSize.observe(requireActivity()){
+        viewModel.videoListSize.observe(requireActivity()) {
             binding.tvVideoSpace.text = "$it MB"
         }
-        viewModel.audioListSize.observe(requireActivity()){
+        viewModel.audioListSize.observe(requireActivity()) {
             binding.tvAudioSpace.text = "$it MB"
         }
-        viewModel.documentsListSize.observe(requireActivity()){
+        viewModel.documentsListSize.observe(requireActivity()) {
             binding.tvDocumentsSpace.text = "$it MB"
         }
-        viewModel.downloadListSize.observe(requireActivity()){
+        viewModel.downloadListSize.observe(requireActivity()) {
             binding.tvDownloadSpace.text = "$it MB"
         }
     }
@@ -91,7 +91,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
         viewModel.getAudioList(requireContext())
         viewModel.getVideoList(requireContext())
         viewModel.getDocumentsList(requireContext())
-//        viewModel.getDownloadList(requireContext())
+        viewModel.getDownloadList(requireContext())
     }
 
     private fun setClickListener() {
@@ -107,47 +107,56 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding,FileManagerV
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.cl_file_manager_image ->{
+        when (v?.id) {
+            R.id.cl_file_manager_image -> {
                 jumpImageListActivity()
             }
-            R.id.cl_file_manager_documents ->{
+
+            R.id.cl_file_manager_documents -> {
                 jumpDocumentsListActivity()
             }
-            R.id.cl_file_manager_audio->{
+
+            R.id.cl_file_manager_audio -> {
                 jumpAudioListActivity()
             }
-            R.id.cl_file_manager_video->{
+
+            R.id.cl_file_manager_video -> {
                 jumpVideoListActivity()
             }
-            R.id.cl_file_manager_download ->{
+
+            R.id.cl_file_manager_download -> {
                 jumpDownloadListActivity()
             }
-
         }
     }
 
     private fun jumpImageListActivity() {
         val intent = Intent(requireActivity(), ImageListActivity::class.java)
+        intent.putExtra(Common.PAGE_TYPE, Common.IMAGE_LIST)
         startActivity(intent)
     }
+
     private fun jumpDocumentsListActivity() {
-        val intent = Intent(requireActivity(), DocumentsListActivity::class.java)
+        val intent = Intent(requireActivity(), DocListActivity::class.java)
+        intent.putExtra(Common.PAGE_TYPE, Common.DOCUMENTS_LIST)
         startActivity(intent)
     }
 
     private fun jumpAudioListActivity() {
-        val intent = Intent(requireActivity(), AudioListActivity::class.java)
+        val intent = Intent(requireActivity(), DocListActivity::class.java)
+        intent.putExtra(Common.PAGE_TYPE, Common.AUDIO_LIST)
         startActivity(intent)
     }
 
     private fun jumpVideoListActivity() {
-        val intent = Intent(requireActivity(), VideoListActivity::class.java)
+        val intent = Intent(requireActivity(), ImageListActivity::class.java)
+        intent.putExtra(Common.PAGE_TYPE, Common.VIDEO_LIST)
         startActivity(intent)
     }
 
     private fun jumpDownloadListActivity() {
-        val intent = Intent(requireActivity(), DownloadListActivity::class.java)
+        val intent = Intent(requireActivity(), DocListActivity::class.java)
+        intent.putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
         startActivity(intent)
     }
 }
