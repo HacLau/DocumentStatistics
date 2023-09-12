@@ -8,18 +8,19 @@ import com.tqs.filemanager.ui.activity.DocListActivity
 import com.tqs.filemanager.vm.base.BaseVM
 import com.tqs.filemanager.vm.utils.FileUtils
 
-class DocListVM:BaseVM() {
+class DocListVM : BaseVM() {
     var dataList = MutableLiveData<ArrayList<FileEntity>>()
+    var listSelectCount = MutableLiveData<Int>(0)
     fun getAudioList(context: Context) {
         dataList.value = FileUtils.getAudioList(context)
     }
 
     fun getDocumentsList(context: Context) {
-        dataList.value = FileUtils.getImgList(context)
+        dataList.value = FileUtils.getDocList(context)
     }
 
     fun getDownloadList(context: Context) {
-        dataList.value = FileUtils.getVideoList(context)
+        dataList.value = FileUtils.getDownloadList(context)
     }
 
     override val title: LiveData<String>

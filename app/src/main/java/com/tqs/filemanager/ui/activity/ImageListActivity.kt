@@ -21,7 +21,8 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         get() = R.layout.activity_image_list
     override val TAG: String
         get() = this.packageName
-    private var showImageList: ArrayList<FileEntity>? = null
+    private var showImageList: ArrayList<FileEntity> = arrayListOf()
+    private lateinit var mImageAdapter:ImageVideoListAdapter
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
@@ -39,15 +40,20 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
                 binding.titleBar.setTitleText("Video")
             }
         }
+        getImageViewShowList()
         setImageListAdapter()
     }
 
-    private fun setImageListAdapter() {
+    private fun getImageViewShowList() {
         showImageList = viewModel.changeShowImageList(viewModel.imageList.value)
+    }
+
+    private fun setImageListAdapter() {
+
         val manager = GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false)
         manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (TextUtils.isEmpty(showImageList?.get(position)?.dateString)) {
+                return if (TextUtils.isEmpty(showImageList[position].dateString)) {
                     1
                 } else {
                     3
@@ -56,31 +62,45 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         }
         binding.rvImageList.layoutManager = manager
         binding.rvImageList.addItemDecoration(MediaItemDecoration(6))
-        val imageVideoListAdapter = ImageVideoListAdapter(this, showImageList!!)
-        imageVideoListAdapter.setOnItemClickListener(object : ImageVideoListAdapter.OnItemClickListener {
+        mImageAdapter = ImageVideoListAdapter(this, showImageList)
+        mImageAdapter.setOnItemClickListener(object : ImageVideoListAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, touchView: String) {
-                when (touchView) {
-                    imageVideoListAdapter.TOUCHIMAGEVIEW -> {
-                        toPreviewImage(position)
+                if (mImageAdapter.touchState == mImageAdapter.LONGSTATE){
+                    if (showImageList[position].selected){
+                        viewModel.listSelectCount.value = viewModel.listSelectCount.value?.minus(1)
+                    }else{
+                        viewModel.listSelectCount.value = viewModel.listSelectCount.value?.plus(1)
                     }
-                    imageVideoListAdapter.TOUCHPLAYVIEW -> {
-                        toPreviewImage(position)
+                    showImageList[position].selected = !showImageList[position].selected
+                    mImageAdapter.setData(showImageList)
+                    mImageAdapter.notifyItemChanged(position)
+                }else {
+                    when (touchView) {
+                        mImageAdapter.TOUCHIMAGEVIEW -> {
+                            toPreviewImage(position)
+                        }
+                        mImageAdapter.TOUCHPLAYVIEW -> {
+                            toPreviewImage(position)
+                        }
                     }
                 }
-                Log.e(TAG, "click $touchView and list data ${showImageList?.get(position)?.name}")
+                Log.e(TAG, "click $touchView and list data ${showImageList[position].name}")
             }
         })
 
-        imageVideoListAdapter.setOnItemLongClickListener(object :
+        mImageAdapter.setOnItemLongClickListener(object :
             ImageVideoListAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
-                Log.e(TAG, "long click $position and list data ${showImageList?.get(position)?.name}")
+                Log.e(TAG, "long click $position and list data ${showImageList[position].name}")
                 // show select all and radio
-                imageVideoListAdapter.touchState = imageVideoListAdapter.LONGSTATE
+                showImageList[position].selected = !showImageList[position].selected
+                mImageAdapter.touchState = mImageAdapter.LONGSTATE
+                mImageAdapter.setData(showImageList)
+                mImageAdapter.notifyDataSetChanged()
             }
 
         })
-        binding.rvImageList.adapter = imageVideoListAdapter
+        binding.rvImageList.adapter = mImageAdapter
 
     }
 
@@ -89,5 +109,20 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         intent.putExtra("selectImageIndex", position - viewModel.getEmptyData(position,showImageList))
         intent.putExtra("previewFileList", Gson().toJson(viewModel.imageList.value))
         startActivity(intent)
+    }
+
+    override fun onBackPressed() {
+        if (viewModel.listSelectCount.value!! > 0){
+            viewModel.listSelectCount.value = 0
+            for (file in viewModel.imageList.value!!){
+                if (TextUtils.isEmpty(file.dateString))
+                    file.selected = false
+            }
+            mImageAdapter.touchState = mImageAdapter.CLICKSTATE
+            mImageAdapter.setData(showImageList)
+            mImageAdapter.notifyDataSetChanged()
+        }else{
+            super.onBackPressed()
+        }
     }
 }

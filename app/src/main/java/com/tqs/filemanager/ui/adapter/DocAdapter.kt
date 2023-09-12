@@ -8,12 +8,14 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.tqs.document.statistics.R
-import com.tqs.filemanager.model.FileEntity
-import com.tqs.filemanager.vm.utils.DateUtils
+import com.tqs.filemanager.model.DocumentEntity
+import com.tqs.filemanager.vm.utils.FileUtils
 
 class DocAdapter(
     private val context: Context,
-    private val data: ArrayList<FileEntity>): BaseAdapter() {
+    private var data: ArrayList<DocumentEntity>
+) : BaseAdapter() {
+    private var selecting: Boolean = false
     override fun getCount(): Int {
         return data.size
     }
@@ -27,22 +29,63 @@ class DocAdapter(
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var holder:ViewHolder? = null
-        var view:View
-        if (convertView == null){
+        var holder: ViewHolder? = null
+        val view: View
+        if (convertView == null) {
             view = View.inflate(context, R.layout.file_item, null)
             holder = ViewHolder(view)
             view.tag = holder
-        }else{
+        } else {
             view = convertView
             holder = view.tag as ViewHolder
         }
-        val fileEntity = data[position]
-        holder.date.text = DateUtils.second2yyMM(fileEntity.date)
+        holder.title.text = data[position].suffix
+        holder.date.text = data[position].number.toString()
+        when (data[position].typeFile) {
+            FileUtils.TYPEIMAGE -> {
+                holder.icon.setImageResource(R.mipmap.ic_image_icon)
+            }
+
+            FileUtils.TYPEVIDEO -> {
+                holder.icon.setImageResource(R.mipmap.ic_video_icon)
+            }
+
+            FileUtils.TYPEAUDIO -> {
+                holder.icon.setImageResource(R.mipmap.ic_audio_icon)
+            }
+
+            FileUtils.TYPEDOCUMENT -> {
+                holder.icon.setImageResource(R.mipmap.ic_dir_icon)
+            }
+
+            FileUtils.TYPEDOWNLOAD -> {
+                holder.icon.setImageResource(R.mipmap.ic_rubblish_icon)
+            }
+        }
+        holder.select.isChecked = data[position].selected
+        if (selecting) {
+            holder.select.visibility = View.VISIBLE
+        } else {
+            holder.select.visibility = View.GONE
+        }
         return view
     }
 
-    inner class ViewHolder(view: View){
+    fun setData(data: ArrayList<DocumentEntity>) {
+        this.data = data
+        notifyDataSetChanged()
+    }
+
+    fun setSelected(select: Boolean) {
+        this.selecting = select
+        notifyDataSetChanged()
+    }
+
+    fun getSelected(): Boolean {
+        return this.selecting
+    }
+
+    inner class ViewHolder(view: View) {
         var icon = view.findViewById<ImageView>(R.id.item_file_icon)
         var title = view.findViewById<TextView>(R.id.item_file_title)
         var date = view.findViewById<TextView>(R.id.item_file_date)

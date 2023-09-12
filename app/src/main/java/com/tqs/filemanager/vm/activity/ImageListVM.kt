@@ -12,6 +12,7 @@ import com.tqs.filemanager.vm.utils.FileUtils
 
 class ImageListVM : BaseVM() {
     var imageList = MutableLiveData<ArrayList<FileEntity>>()
+    var listSelectCount = MutableLiveData<Int>(0)
     override val title: LiveData<String>
         get() = MutableLiveData<String>().apply {
             value = "ImageListVM"

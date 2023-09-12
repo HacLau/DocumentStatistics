@@ -18,7 +18,7 @@ import java.io.File
 
 class ImageVideoListAdapter(
     private val context: Context,
-    private val data: List<FileEntity>
+    private var data: List<FileEntity>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val TITLE = 0
@@ -27,17 +27,17 @@ class ImageVideoListAdapter(
     private var mOnItemClickListener: OnItemClickListener? = null
     private var mOnItemLongClickListener: OnItemLongClickListener? = null
 
-    public val CLICKSTATE: Int = 11
-    public val LONGSTATE: Int = 12
+    val CLICKSTATE: Int = 11
+    val LONGSTATE: Int = 12
 
     // 1 click 2 Long click
-    public var touchState: Int = CLICKSTATE
+    var touchState: Int = CLICKSTATE
 
-    public val TOUCHTITLEVIEW = "touchTitleView"
-    public val TOUCHSELECTVIEW = "touchSelectView"
-    public val TOUCHRADIOVIEW = "touchRadioView"
-    public val TOUCHIMAGEVIEW = "touchImageView"
-    public val TOUCHPLAYVIEW = "touchPlayView"
+    val TOUCHTITLEVIEW = "touchTitleView"
+    val TOUCHSELECTVIEW = "touchSelectView"
+    val TOUCHRADIOVIEW = "touchRadioView"
+    val TOUCHIMAGEVIEW = "touchImageView"
+    val TOUCHPLAYVIEW = "touchPlayView"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -78,6 +78,11 @@ class ImageVideoListAdapter(
                     holder.titleDate.setOnClickListener {
                         mOnItemClickListener?.onItemClick(position, TOUCHTITLEVIEW)
                     }
+                    if (touchState == LONGSTATE){
+                        holder.titleSelectAll.visibility = View.VISIBLE
+                    }else{
+                        holder.titleSelectAll.visibility = View.GONE
+                    }
                 }
             }
 
@@ -98,22 +103,15 @@ class ImageVideoListAdapter(
                             holder.itemPlay.visibility = View.VISIBLE
                         }
                     }
-                    holder.imageSize.text = "${data[position].size / 1000}MB"
-                    if (data[position].selected) {
+                    holder.imageSize.text = FileUtils.getTwoDigitsSpace(data[position].size)
+                    if (touchState == LONGSTATE){
                         holder.selectedImage.visibility = View.VISIBLE
-                    } else {
+                    }else{
                         holder.selectedImage.visibility = View.GONE
                     }
+                    holder.selectedImage.isChecked = data[position].selected
                     holder.contentImage.setOnClickListener {
-                        when (touchState) {
-                            CLICKSTATE -> {
-                                mOnItemClickListener?.onItemClick(position, TOUCHIMAGEVIEW)
-                            }
-
-                            LONGSTATE -> {
-                                mOnItemLongClickListener?.onItemLongClick(position)
-                            }
-                        }
+                        mOnItemClickListener?.onItemClick(position, TOUCHIMAGEVIEW)
                     }
                     holder.contentImage.setOnLongClickListener {
                         mOnItemLongClickListener?.onItemLongClick(position)
@@ -153,6 +151,11 @@ class ImageVideoListAdapter(
         var itemPlay = view.findViewById<ImageView>(R.id.item_play)
         var imageSize = view.findViewById<TextView>(R.id.item_size)
     }
+
+    fun setData(list: ArrayList<FileEntity>) {
+        this.data = list
+    }
+
 
     public fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener

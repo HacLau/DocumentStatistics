@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -36,7 +38,13 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    android.applicationVariants.all{
+        this.outputs.all {
+
+        }
+    }
 }
+
 
 dependencies {
 

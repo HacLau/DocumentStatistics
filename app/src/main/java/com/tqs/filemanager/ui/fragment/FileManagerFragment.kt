@@ -1,5 +1,6 @@
 package com.tqs.filemanager.ui.fragment
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.text.Html
@@ -14,11 +15,18 @@ import com.tqs.filemanager.ui.activity.ImageListActivity
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.FileManagerVM
 import com.tqs.filemanager.vm.utils.Common
+import com.tqs.filemanager.vm.utils.SharedUtils
 
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
     View.OnClickListener {
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
+
+    private var REQUEST_CODE_PERMISSION = 0x00099
+    var permissions = arrayOf<String>(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +41,11 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     override fun initData() {
         viewModel = ViewModelProvider(this)[FileManagerVM::class.java]
+//        requestPermission(permissions,REQUEST_CODE_PERMISSION)
+        setData()
+    }
+
+    private fun setData() {
         setProgressValue()
         setMediaList()
         setMediaListSize()
@@ -42,10 +55,9 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     private fun setProgressValue() {
         viewModel.progressValue.observe(requireActivity()) {
-            binding.mainProgressBar.progress =
-                (it * 1.0f / viewModel.totalSpace.value!! * 100).toInt()
+            binding.mainProgressBar.progress = it
             binding.tvSpaceProportion.text =
-                Html.fromHtml("<font color='#FF4F15'>${viewModel.availSpace.value} GB</font> / ${viewModel.totalSpace.value}  GB")
+                Html.fromHtml("<font color='#FF4F15'>${viewModel.availSpace.value}</font> / ${viewModel.totalSpace.value}")
         }
     }
 
@@ -68,20 +80,20 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun setMediaListSize() {
-        viewModel.imageListSize.observe(requireActivity()) {
-            binding.tvImageSpace.text = "$it MB"
+        viewModel.imageSpaceSize.observe(requireActivity()) {
+            binding.tvImageSpace.text = it
         }
-        viewModel.videoListSize.observe(requireActivity()) {
-            binding.tvVideoSpace.text = "$it MB"
+        viewModel.videoSpaceSize.observe(requireActivity()) {
+            binding.tvVideoSpace.text = it
         }
-        viewModel.audioListSize.observe(requireActivity()) {
-            binding.tvAudioSpace.text = "$it MB"
+        viewModel.audioSpaceSize.observe(requireActivity()) {
+            binding.tvAudioSpace.text = it
         }
-        viewModel.documentsListSize.observe(requireActivity()) {
-            binding.tvDocumentsSpace.text = "$it MB"
+        viewModel.documentsSpaceSize.observe(requireActivity()) {
+            binding.tvDocumentsSpace.text = it
         }
-        viewModel.downloadListSize.observe(requireActivity()) {
-            binding.tvDownloadSpace.text = "$it MB"
+        viewModel.downloadSpaceSize.observe(requireActivity()) {
+            binding.tvDownloadSpace.text = it
         }
     }
 
@@ -107,6 +119,10 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     override fun onClick(v: View?) {
+        if (SharedUtils.getValue(requireContext(),Common.EXTERNAL_STORAGE_PERMISSION,false)?.equals(false) == true){
+            requestPermission(permissions, REQUEST_CODE_PERMISSION)
+            return
+        }
         when (v?.id) {
             R.id.cl_file_manager_image -> {
                 jumpImageListActivity()
@@ -158,5 +174,17 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         val intent = Intent(requireActivity(), DocListActivity::class.java)
         intent.putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
         startActivity(intent)
+    }
+
+    override fun permissionSuccess(requestCode: Int) {
+        super.permissionSuccess(requestCode)
+        if (requestCode == REQUEST_CODE_PERMISSION){
+            setData()
+        }
+    }
+
+    override fun permissionFail(requestCode: Int) {
+        super.permissionFail(requestCode)
+
     }
 }

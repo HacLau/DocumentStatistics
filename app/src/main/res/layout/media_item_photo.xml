@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
@@ -19,10 +20,10 @@
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:button="@null"
-        android:checked="true"
         android:visibility="gone"
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
+        android:clickable="false"
         android:background="@drawable/bg_checkbox_circle"
         app:layout_constraintTop_toTopOf="@id/item_image"
         app:layout_constraintRight_toRightOf="@id/item_image"/>
@@ -43,7 +44,6 @@
         android:text="2.2MB"
         android:textSize="@dimen/text_size_12"
         android:textColor="@color/white"
-        android:visibility="gone"
         android:layout_marginRight="9dp"
         android:layout_marginBottom="9dp"
         app:layout_constraintBottom_toBottomOf="@id/item_image"

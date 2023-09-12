@@ -8,4 +8,6 @@ object Common {
     const val DOCUMENTS_LIST = "documentsList"
     const val DOWNLOAD_LIST = "downloadList"
 
+    const val EXTERNAL_STORAGE_PERMISSION = "EXTERNAL_STORAGE_PERMISSION"
+
 }

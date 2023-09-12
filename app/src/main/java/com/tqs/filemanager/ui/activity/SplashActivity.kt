@@ -22,11 +22,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         get() = this.packageName
     private var timer: Timer? = null
     private var task: TimerTask? = null
-    private var REQUEST_CODE_PERMISSION = 0x00099
-    var permissions = arrayOf<String>(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
     private val handler: Handler = object :Handler(){
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
@@ -59,11 +54,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
                 }
             }
         }
-        requestPermission(permissions,REQUEST_CODE_PERMISSION)
+        startTimer()
     }
 
     private fun startTimer() {
-        timer?.schedule(task,20, 20)
+        timer?.schedule(task,10, 10)
     }
 
 
@@ -76,18 +71,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
     override fun onDestroy() {
         super.onDestroy()
         timer = null
-    }
-
-    override fun permissionSuccess(requestCode: Int) {
-        super.permissionSuccess(requestCode)
-        if (requestCode == REQUEST_CODE_PERMISSION){
-            startTimer()
-        }
-    }
-
-    override fun permissionFail(requestCode: Int) {
-        super.permissionFail(requestCode)
-        startTimer()
     }
 
 

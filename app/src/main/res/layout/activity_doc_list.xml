@@ -44,6 +44,7 @@
             app:layout_constraintTop_toTopOf="@id/iv_file_icon" />
 
         <TextView
+            android:id="@+id/tv_file_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="19dp"
@@ -54,14 +55,15 @@
         <ListView
             android:id="@+id/lv_file_list"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="0dp"
             android:layout_marginLeft="19dp"
             android:layout_marginRight="19dp"
             android:divider="@color/trans"
             android:layout_marginTop="26dp"
             android:dividerHeight="10dp"
             android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/iv_file_icon"/>
+            app:layout_constraintTop_toBottomOf="@id/iv_file_icon"
+            app:layout_constraintBottom_toTopOf="@id/v_file_delete"/>
 
         <View
             android:id="@+id/v_file_delete"

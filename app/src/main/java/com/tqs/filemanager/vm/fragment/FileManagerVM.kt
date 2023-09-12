@@ -16,9 +16,9 @@ class FileManagerVM : BaseVM() {
         get() = MutableLiveData<String>().apply {
             value = "This is File Manager Fragment"
         }
-    var totalSpace = MutableLiveData<Long>(0L)
-    var availSpace = MutableLiveData<Long>(0L)
-    var progressValue = MutableLiveData<Long>(0L)
+    var totalSpace = MutableLiveData<String>()
+    var availSpace = MutableLiveData<String>()
+    var progressValue = MutableLiveData<Int>(0)
 
     var imageList = MutableLiveData<ArrayList<FileEntity>>()
     var audioList = MutableLiveData<ArrayList<FileEntity>>()
@@ -26,16 +26,12 @@ class FileManagerVM : BaseVM() {
     var documentsList = MutableLiveData<ArrayList<FileEntity>>()
     var downloadList = MutableLiveData<ArrayList<FileEntity>>()
 
-    var imageListSize = MutableLiveData<Long>(0L)
-    var audioListSize = MutableLiveData<Long>(0L)
-    var videoListSize = MutableLiveData<Long>(0L)
-    var documentsListSize = MutableLiveData<Long>(0L)
-    var downloadListSize = MutableLiveData<Long>(0L)
+    var imageSpaceSize = MutableLiveData<String>()
+    var audioSpaceSize = MutableLiveData<String>()
+    var videoSpaceSize = MutableLiveData<String>()
+    var documentsSpaceSize = MutableLiveData<String>()
+    var downloadSpaceSize = MutableLiveData<String>()
 
-    private val memoryUnit:Int = 1000
-    private val kBUnit : Int = memoryUnit
-    private val mBUnit : Int = kBUnit * memoryUnit
-    private val gBUnit : Int = mBUnit * memoryUnit
     fun getMemoryInfo() {
         val state = Environment.getExternalStorageState()
         if (Environment.MEDIA_MOUNTED == state) {
@@ -44,9 +40,9 @@ class FileManagerVM : BaseVM() {
             val blockSize = sf.blockSizeLong
             val blockCount = sf.blockCountLong
             val availCount = sf.availableBlocksLong
-            totalSpace.value = blockSize * blockCount / gBUnit
-            availSpace.value = availCount * blockSize / gBUnit
-            progressValue.value = availSpace.value
+            totalSpace.value = FileUtils.getTwoDigitsSpace(blockSize * blockCount)
+            availSpace.value = FileUtils.getTwoDigitsSpace(availCount * blockSize)
+            progressValue.value = (availCount * 1.0 / blockCount * 100).toInt()
         }
     }
 
@@ -72,43 +68,43 @@ class FileManagerVM : BaseVM() {
     }
 
     fun getImageListSize(){
-        imageListSize.value = 0L
+        var size = 0L
         for (fileEntity in imageList.value!!){
-            imageListSize.value = imageListSize.value!! + fileEntity.size
+            size += fileEntity.size
         }
-        imageListSize.value = imageListSize.value!! /  mBUnit
+        imageSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
     fun getVideoListSize(){
-        videoListSize.value = 0L
+        var size = 0L
         for (fileEntity in videoList.value!!){
-            videoListSize.value = videoListSize.value!! + fileEntity.size
+            size += fileEntity.size
         }
-        videoListSize.value = videoListSize.value!! /  mBUnit
+        videoSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
     fun getAudioListSize(){
-        audioListSize.value = 0L
+        var size = 0L
         for (fileEntity in audioList.value!!){
-            audioListSize.value = audioListSize.value!! + fileEntity.size
+            size += fileEntity.size
         }
-        audioListSize.value = audioListSize.value!! /  mBUnit
+        audioSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
     fun getDocumentsListSize(){
-        documentsListSize.value = 0L
+        var size = 0L
         for (fileEntity in documentsList.value!!){
-            documentsListSize.value = documentsListSize.value!! + fileEntity.size
+            size += fileEntity.size
         }
-        documentsListSize.value = documentsListSize.value!! /  mBUnit
+        documentsSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
     fun getDownloadListSize(){
-        downloadListSize.value = 0L
+        var size = 0L
         for (fileEntity in downloadList.value!!){
-            downloadListSize.value = downloadListSize.value!! + fileEntity.size
+            size += fileEntity.size
         }
-        downloadListSize.value = downloadListSize.value!! /  mBUnit
+        downloadSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
 

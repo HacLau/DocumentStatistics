@@ -6,7 +6,10 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import com.tqs.filemanager.model.FileEntity
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 object FileUtils {
@@ -18,6 +21,45 @@ object FileUtils {
     val TYPEAUDIO = 3
     val TYPEDOCUMENT = 4
     val TYPEDOWNLOAD = 5
+    fun getTwoDigits(number: Int): Float {
+        return getTwoDigits(number.toLong())
+    }
+    fun getTwoDigits(number: Float): Float {
+        return getTwoDigits(number.toLong())
+    }
+    fun getTwoDigits(number: Long): Float {
+        val format = DecimalFormat("0.##")
+        format.roundingMode = RoundingMode.FLOOR
+        return format.format(number).toFloat()
+    }
+    fun getTwoDigitsSpace(number: Int): String {
+        return getTwoDigitsSpace(number.toLong())
+    }
+    fun getTwoDigitsSpace(number: Long): String {
+        val format = DecimalFormat("0.##")
+        format.roundingMode = RoundingMode.FLOOR
+        return when (number) {
+            in 0..0 ->{
+                "0"
+            }
+            in 1..1023 -> {
+                "${format.format(number)}B"
+            }
+
+            in 1024..1024 * 1024 -> {
+                "${format.format(number / 1024.0)}KB"
+            }
+
+            in 1024 * 1024..1024 * 1024 * 1024 -> {
+                "${format.format(number / 1024.0 / 1024.0)}MB"
+            }
+
+            else -> {
+                "${format.format(number / 1024.0 / 1024.0 / 1024.0)}GB"
+            }
+        }
+    }
+
     private fun getContentProvider(context: Context) {
         if (mContentResolver == null) {
             mContentResolver = context.contentResolver
@@ -26,17 +68,18 @@ object FileUtils {
 
     fun getImgList(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
-        val projection = arrayOf(
-            MediaStore.Images.ImageColumns._ID,
-            MediaStore.Images.ImageColumns.DATA,
-            MediaStore.Images.ImageColumns.DISPLAY_NAME
-        )
-
-
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.jpg'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.jpeg'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.png'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.gif'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.bmp'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.webp'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.heif'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.raw'"
         return getFileList(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             null,
-            null,
+            selection,
             null,
             MediaStore.Images.ImageColumns.DATE_MODIFIED + "  desc",
             TYPEIMAGE
@@ -45,49 +88,63 @@ object FileUtils {
 
     fun getVideoList(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
-        mCursor = mContentResolver?.query(
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.mkv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.avi'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.flv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.wmv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.rmvb'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mp4'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mov'"
+        return getFileList(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             null,
+            selection,
             null,
-            null,
-            "date_modified desc"
+            MediaStore.Video.Media.DATE_MODIFIED + " desc",
+            TYPEVIDEO
         )
-        return getFileList(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,null,null,null,MediaStore.Video.Media.DATE_MODIFIED + " desc",TYPEVIDEO)
     }
 
     fun getAudioList(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
-        return getFileList(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,null,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER,TYPEAUDIO)
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.3gp'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mp3'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.ogg'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.flac'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mid'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.wav'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.m4a'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.aac'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.wma'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.aiff'"
+        return getFileList(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            null,
+            selection,
+            null,
+            MediaStore.Audio.Media.DEFAULT_SORT_ORDER,
+            TYPEAUDIO
+        )
     }
 
 
     fun getDocList(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
-        val selection = (MediaStore.Files.FileColumns.MIME_TYPE + "= ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-                + " or " + MediaStore.Files.FileColumns.MIME_TYPE + " = ? ")
-
-        val selectionArgs = arrayOf(
-            "text/plain",
-            "application/msword",
-            "application/pdf",
-            "application/vnd.ms-powerpoint",
-            "application/vnd.ms-excel",
-            "text/html",
-            "text/xml",
-            "application/rtf"
-        )
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.docx'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.xlsx'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.pptx'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.pdf'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.txt'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.rtf'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.html'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.xml'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.csv'"
 
         return getFileList(
             MediaStore.Files.getContentUri("external"),
             null,
             selection,
-            selectionArgs,
+            null,
             MediaStore.Files.FileColumns.DATE_MODIFIED + "  desc",
             TYPEDOCUMENT
         )
@@ -96,16 +153,12 @@ object FileUtils {
 
     fun getDownloadList(context: Context): ArrayList<FileEntity>? {
         getContentProvider(context)
-        val selection = MediaStore.Files.FileColumns.MIME_TYPE + " = ? "
-
-        val selectionArgs = arrayOf(
-            "application/vnd.android.package-archive"
-        )
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.apk'"
         return getFileList(
             MediaStore.Files.getContentUri("external"),
             null,
             selection,
-            selectionArgs,
+            null,
             MediaStore.Files.FileColumns.DATE_MODIFIED + "  desc",
             TYPEDOWNLOAD
         )
@@ -139,6 +192,7 @@ object FileUtils {
                     val fileEntity = FileEntity()
                     fileEntity.id = id
                     fileEntity.path = path
+                    Log.e(" fileUtils ", path)
                     fileEntity.size = size
                     if (path.isNotEmpty()) {
                         val olaName = path.substring(path.lastIndexOf("/") + 1, path.length)
