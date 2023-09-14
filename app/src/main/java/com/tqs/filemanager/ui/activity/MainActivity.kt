@@ -13,6 +13,7 @@ import androidx.core.os.BuildCompat
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.tqs.document.statistics.BuildConfig
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityMainBinding
 import com.tqs.filemanager.ui.base.BaseActivity
@@ -28,10 +29,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         get() = this.packageName
     private lateinit var navController: NavController
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
-    var permissions = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
+
 
     override fun initData() {
         setContentView(binding.root)
@@ -82,7 +80,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     private fun jumpToUpdate() {
         kotlin.runCatching {
             startActivity(Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("market://details?id=com.tqs.file")
+                data = Uri.parse("market://details?id=${BuildConfig.APPLICATION_ID}")
                 setPackage("com.android.vending")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
@@ -93,7 +91,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         kotlin.runCatching {
             startActivity(Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.tqs.file")
+                putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}")
             })
         }
     }
@@ -139,7 +137,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
 
     private fun judgePermission(): Boolean {
         if (!(SharedUtils.getValue(this, Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean)) {
-            requestPermission(permissions, REQUEST_CODE_PERMISSION)
+            requestPermission(Common.permissions, REQUEST_CODE_PERMISSION)
             return false
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()

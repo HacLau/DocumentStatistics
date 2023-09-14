@@ -30,10 +30,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
 
-    var permissions = arrayOf<String>(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
 
     override fun onCreateView(
@@ -231,7 +227,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     private fun judgePermission(): Boolean {
         if (!(SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean)) {
-            requestPermission(permissions, REQUEST_CODE_PERMISSION)
+            requestPermission(Common.permissions, REQUEST_CODE_PERMISSION)
             return false
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()

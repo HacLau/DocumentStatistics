@@ -30,7 +30,7 @@ class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyP
     override fun initData() {
         viewModel =
             ViewModelProvider(this).get(PrivacyPolicyVM::class.java)
-        binding.wv.loadUrl("https://www.baidu.com")
+        binding.wv.loadUrl("https://sites.google.com/view/file-commander-privacy-policy/home")
 
     }
 
