@@ -3,16 +3,12 @@ package com.tqs.filemanager.ui.activity
 import android.Manifest
 import android.view.Gravity
 import android.view.View
-import android.widget.ImageView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityMainBinding
 import com.tqs.filemanager.ui.base.BaseActivity
-import com.tqs.filemanager.ui.view.CustomNavigator
 import com.tqs.filemanager.ui.view.TitleBar
 import com.tqs.filemanager.vm.activity.MainVM
 import com.tqs.filemanager.vm.utils.Common
@@ -36,14 +32,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         setContentView(binding.root)
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
-        navController.navigatorProvider.addNavigator(
-            CustomNavigator(
-                this,
-                supportFragmentManager,
-                R.id.nav_host_fragment_content_main
-            )
-        )
+        var fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        if (fragment != null) {
+            navController = Navigation.findNavController(this,fragment.id)
+        }
         binding.appBarMain.findViewById<TitleBar>(R.id.title_bar_main).setLeftClickListener {
             binding.drawerLayout.openDrawer(Gravity.LEFT)
         }

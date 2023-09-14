@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tqs.document.statistics.R
 import com.tqs.filemanager.model.FileEntity
+import com.tqs.filemanager.vm.utils.DateUtils
 import com.tqs.filemanager.vm.utils.FileUtils
 import com.tqs.filemanager.vm.utils.VideoUtils
 import java.io.File
@@ -70,18 +71,10 @@ class ImageVideoListAdapter(
         when (getItemViewType(position)) {
             TITLE -> {
                 if (holder is TitleViewHolder) {
-                    holder.titleDate.text = data[position].dateString
-                    holder.titleSelectAll.setOnClickListener {
-                        mOnItemClickListener?.onItemClick(position, TOUCHSELECTVIEW)
-                    }
+                    holder.titleDate.text = DateUtils.getMonthTimeBySecond(data[position].date)
 
                     holder.titleDate.setOnClickListener {
                         mOnItemClickListener?.onItemClick(position, TOUCHTITLEVIEW)
-                    }
-                    if (touchState == LONGSTATE){
-                        holder.titleSelectAll.visibility = View.VISIBLE
-                    }else{
-                        holder.titleSelectAll.visibility = View.GONE
                     }
                 }
             }
@@ -131,17 +124,16 @@ class ImageVideoListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (TextUtils.isEmpty(data[position].dateString)) {
-            CONTENT
-        } else {
+        return if (data[position].isTitle) {
             TITLE
+        } else {
+            CONTENT
         }
     }
 
 
     inner class TitleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var titleDate = view.findViewById<TextView>(R.id.item_title)
-        var titleSelectAll = view.findViewById<TextView>(R.id.item_select_all)
 
     }
 

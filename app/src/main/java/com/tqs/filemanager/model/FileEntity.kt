@@ -8,7 +8,7 @@ data class FileEntity(
     var mimeType: String? = "",
     var date: Long = 0L,
     var fileType: Int = 1,
-    var dateString: String? = "",
+    var isTitle: Boolean = false,
     var selected:Boolean = false,
     var deleted:Boolean = false
 ) {

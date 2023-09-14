@@ -32,7 +32,7 @@ class DocAdapter(
         var holder: ViewHolder? = null
         val view: View
         if (convertView == null) {
-            view = View.inflate(context, R.layout.file_item, null)
+            view = View.inflate(context, R.layout.media_item_doc, null)
             holder = ViewHolder(view)
             view.tag = holder
         } else {

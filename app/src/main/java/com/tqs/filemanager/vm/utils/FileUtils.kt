@@ -66,7 +66,7 @@ object FileUtils {
         }
     }
 
-    fun getImgList(context: Context): ArrayList<FileEntity> {
+    fun getImgListOrderDescByDate(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
         val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.jpg'" +
                 "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.jpeg'" +
@@ -86,7 +86,27 @@ object FileUtils {
         )
     }
 
-    fun getVideoList(context: Context): ArrayList<FileEntity> {
+    fun getImgListOrderAscByDate(context: Context): ArrayList<FileEntity> {
+        getContentProvider(context)
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.jpg'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.jpeg'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.png'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.gif'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.bmp'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.webp'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.heif'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.raw'"
+        return getFileList(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            null,
+            selection,
+            null,
+            MediaStore.Images.ImageColumns.DATE_MODIFIED + "  asc",
+            TYPEIMAGE
+        )
+    }
+
+    fun getVideoListOrderDescByDate(context: Context): ArrayList<FileEntity> {
         getContentProvider(context)
         val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.mkv'" +
                 "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.avi'" +
@@ -101,6 +121,25 @@ object FileUtils {
             selection,
             null,
             MediaStore.Video.Media.DATE_MODIFIED + " desc",
+            TYPEVIDEO
+        )
+    }
+
+    fun getVideoListOrderAscByDate(context: Context): ArrayList<FileEntity> {
+        getContentProvider(context)
+        val selection = "${MediaStore.Files.FileColumns.DATA} LIKE '%.mkv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.avi'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.flv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.wmv'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.rmvb'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mp4'" +
+                "or ${MediaStore.Files.FileColumns.DATA} LIKE '%.mov'"
+        return getFileList(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            null,
+            selection,
+            null,
+            MediaStore.Video.Media.DATE_MODIFIED + " asc",
             TYPEVIDEO
         )
     }
@@ -192,7 +231,6 @@ object FileUtils {
                     val fileEntity = FileEntity()
                     fileEntity.id = id
                     fileEntity.path = path
-                    Log.e(" fileUtils ", path)
                     fileEntity.size = size
                     if (path.isNotEmpty()) {
                         val olaName = path.substring(path.lastIndexOf("/") + 1, path.length)
@@ -209,6 +247,7 @@ object FileUtils {
         } finally {
             mCursor?.close()
         }
+        Log.e("fileUtils" , "fileEntities.size = ${fileEntities.size}")
         return fileEntities as ArrayList<FileEntity>
     }
 

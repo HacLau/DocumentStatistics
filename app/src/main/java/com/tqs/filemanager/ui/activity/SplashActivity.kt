@@ -1,8 +1,10 @@
 package com.tqs.filemanager.ui.activity
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
@@ -22,15 +24,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         get() = this.packageName
     private var timer: Timer? = null
     private var task: TimerTask? = null
-    private val handler: Handler = object :Handler(){
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            if (msg.what == 1){
-                Log.e(TAG,"what = ${msg.what} and ${viewModel.progressValue.value}")
-                viewModel.progressValue.value = viewModel.progressValue.value?.plus(1)
-            }
-        }
-    }
+    private val handler: Handler = MyHandler()
+    private var hadJumpMain: Boolean = false
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
@@ -38,8 +33,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         viewModel.progressValue.observe(this){
             binding.splashProgressBar.progress = it
             if (it > 100){
-                toJumpMainActivity()
                 timer?.cancel()
+                if (!hadJumpMain) {
+                    hadJumpMain = true
+                    toJumpMainActivity()
+                }
             }
         }
         timer = Timer()
@@ -71,6 +69,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
     override fun onDestroy() {
         super.onDestroy()
         timer = null
+    }
+
+    inner class MyHandler():Handler(){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if (msg.what == 1){
+                Log.e(TAG,"what = ${msg.what} and ${viewModel.progressValue.value}")
+                viewModel.progressValue.value = viewModel.progressValue.value?.plus(1)
+            }
+        }
     }
 
 

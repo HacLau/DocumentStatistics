@@ -99,6 +99,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView
+                android:id="@+id/tv_image_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
@@ -107,63 +108,70 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_image_space"
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_file_manager_documents"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:layout_marginBottom="-30dp"
             android:background="@mipmap/bg_documents"
+            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_audio"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_audio">
+            app:layout_constraintRight_toRightOf="parent">
+
             <ImageView
                 android:id="@+id/iv_documents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_documents"
                 android:layout_marginStart="26dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"/>
+                android:src="@mipmap/ic_documents"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/tv_documents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_20"
                 android:layout_marginTop="4dp"
-                android:textColor="#000000"
                 android:text="@string/tx_documents"
+                android:textColor="#000000"
+                android:textSize="@dimen/text_size_20"
                 app:layout_constraintLeft_toLeftOf="@id/iv_documents"
-                app:layout_constraintTop_toBottomOf="@id/iv_documents"/>
+                app:layout_constraintTop_toBottomOf="@id/iv_documents" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="@string/tx_last_update"
                 android:textSize="@dimen/text_size_12"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_documents"
-                app:layout_constraintLeft_toLeftOf="@id/tv_documents"/>
+                app:layout_constraintLeft_toLeftOf="@id/tv_documents"
+                app:layout_constraintTop_toBottomOf="@id/tv_documents" />
 
             <TextView
                 android:id="@+id/tv_documents_space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
-                android:textSize="@dimen/text_size_24"
                 android:textColor="#000000"
+                android:textSize="@dimen/text_size_24"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
+                android:id="@+id/tv_documents_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
                 android:textSize="@dimen/text_size_13"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_documents_space"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/tv_documents_space" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_file_manager_audio"
             android:layout_width="match_parent"
@@ -214,6 +222,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView
+                android:id="@+id/tv_audio_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
@@ -272,6 +281,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView
+                android:id="@+id/tv_video_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
@@ -329,6 +339,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView
+                android:id="@+id/tv_download_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"

@@ -3,6 +3,9 @@
     <style name="CustomProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/bg_progressbar</item>
     </style>
+    <style name="CustomProgressBarVideo" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/bg_progressbar_video</item>
+    </style>
     <declare-styleable name="TitleBar">
         <attr name="titleBar_title_text" format="string"/>
         <attr name="titleBar_title_visible" >

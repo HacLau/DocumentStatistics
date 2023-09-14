@@ -46,12 +46,12 @@ class FileManagerVM : BaseVM() {
         }
     }
 
-    fun getImageList(context: Context){
-        imageList.value = FileUtils.getImgList(context)
+    fun getImgListOrderDescByDate(context: Context){
+        imageList.value = FileUtils.getImgListOrderDescByDate(context)
     }
 
-    fun getVideoList(context: Context){
-        videoList.value = FileUtils.getVideoList(context)
+    fun getVideoListOrderDescByDate(context: Context){
+        videoList.value = FileUtils.getVideoListOrderDescByDate(context)
 
     }
 

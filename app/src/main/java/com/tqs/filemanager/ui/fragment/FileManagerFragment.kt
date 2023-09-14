@@ -7,6 +7,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.FragmentFileManagerBinding
@@ -15,6 +16,7 @@ import com.tqs.filemanager.ui.activity.ImageListActivity
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.FileManagerVM
 import com.tqs.filemanager.vm.utils.Common
+import com.tqs.filemanager.vm.utils.DateUtils
 import com.tqs.filemanager.vm.utils.SharedUtils
 
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
@@ -64,18 +66,23 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     private fun setMediaList() {
         viewModel.imageList.observe(requireActivity()) {
             viewModel.getImageListSize()
+            binding.tvImageTime.text = DateUtils.getCurrentTime()
         }
         viewModel.audioList.observe(requireActivity()) {
             viewModel.getAudioListSize()
+            binding.tvAudioTime.text = DateUtils.getCurrentTime()
         }
         viewModel.videoList.observe(requireActivity()) {
             viewModel.getVideoListSize()
+            binding.tvVideoTime.text = DateUtils.getCurrentTime()
         }
         viewModel.documentsList.observe(requireActivity()) {
             viewModel.getDocumentsListSize()
+            binding.tvDocumentsTime.text = DateUtils.getCurrentTime()
         }
         viewModel.downloadList.observe(requireActivity()) {
             viewModel.getDownloadListSize()
+            binding.tvDownloadTime.text = DateUtils.getCurrentTime()
         }
     }
 
@@ -99,9 +106,9 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     private fun getMediaInfo() {
         viewModel.getMemoryInfo()
-        viewModel.getImageList(requireContext())
+        viewModel.getImgListOrderDescByDate(requireContext())
         viewModel.getAudioList(requireContext())
-        viewModel.getVideoList(requireContext())
+        viewModel.getVideoListOrderDescByDate(requireContext())
         viewModel.getDocumentsList(requireContext())
         viewModel.getDownloadList(requireContext())
     }
@@ -185,6 +192,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     override fun permissionFail(requestCode: Int) {
         super.permissionFail(requestCode)
-
+        Toast.makeText(requireContext(),"Please allow us access to your directories and files, including photos, videos, and audio files.",Toast.LENGTH_SHORT).show()
     }
 }

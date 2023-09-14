@@ -18,12 +18,19 @@ class ImageListVM : BaseVM() {
             value = "ImageListVM"
         }
 
-    fun getVideoList(context: Context) {
-        imageList.value = FileUtils.getVideoList(context)
+    fun getVideoListOrderDescByDate(context: Context) {
+        imageList.value = FileUtils.getVideoListOrderDescByDate(context)
+    }
+    fun getVideoListOrderAscByDate(context: Context) {
+        imageList.value = FileUtils.getVideoListOrderAscByDate(context)
     }
 
-    fun getImageList(context: Context) {
-        imageList.value = FileUtils.getImgList(context)
+    fun getImageListOrderDescByDate(context: Context) {
+        imageList.value = FileUtils.getImgListOrderDescByDate(context)
+    }
+
+    fun getImageListOrderAscByDate(context: Context) {
+        imageList.value = FileUtils.getImgListOrderAscByDate(context)
     }
 
     fun changeShowImageList(list: ArrayList<FileEntity>?): ArrayList<FileEntity> {
@@ -31,10 +38,9 @@ class ImageListVM : BaseVM() {
         var date = ""
         if (list != null) {
             for (fileEntity in list) {
-                Log.e("Image", "${fileEntity.date}")
-                val yyMM = DateUtils.second2yyMM(fileEntity.date)
+                val yyMM = DateUtils.getMonthTimeBySecond(fileEntity.date)
                 if (yyMM != date) {
-                    showImageList.add(FileEntity(dateString = yyMM))
+                    showImageList.add(FileEntity(isTitle = true, date = fileEntity.date))
                     date = yyMM
                 }
                 showImageList.add(fileEntity)
@@ -46,7 +52,7 @@ class ImageListVM : BaseVM() {
     fun getEmptyData(position: Int, showImageList: ArrayList<FileEntity>?): Int {
         var count: Int = 0
         for (i in 0..showImageList?.size!!) {
-            if (i <= position && !TextUtils.isEmpty(showImageList[i].dateString)) {
+            if (i <= position && showImageList[i].isTitle) {
                 count++
             }
         }
