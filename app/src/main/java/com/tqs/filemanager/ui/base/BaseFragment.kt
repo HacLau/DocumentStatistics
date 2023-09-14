@@ -1,27 +1,18 @@
 package com.tqs.filemanager.ui.base
 
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.tqs.document.statistics.databinding.FragmentUpgradeBinding
-import com.tqs.filemanager.vm.fragment.UpgradeVM
 
-abstract class BaseFragment<VB: ViewDataBinding,VM:ViewModel>: Fragment()  {
+abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
     protected lateinit var binding: VB
     protected lateinit var viewModel: VM
-    abstract val layoutId:Int
-    private var REQUEST_CODE_PERMISSION = 0x00099
+    abstract val layoutId: Int
+    public var REQUEST_CODE_PERMISSION = 0x00099
 
     abstract fun initData()
 
@@ -42,15 +33,12 @@ abstract class BaseFragment<VB: ViewDataBinding,VM:ViewModel>: Fragment()  {
                     REQUEST_CODE_PERMISSION
                 )
             } catch (e: Exception) {
-                Log.e("BaseActivity", "获取权限失败 Exception = $e")
+                Log.e("BaseFragment", "Exception = $e")
             }
         }
     }
 
-    fun checkPermissions(permissions: Array<String>): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true
-        }
+    private fun checkPermissions(permissions: Array<String>): Boolean {
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(
                     requireActivity(),
@@ -63,7 +51,7 @@ abstract class BaseFragment<VB: ViewDataBinding,VM:ViewModel>: Fragment()  {
         return true
     }
 
-    fun getDeniedPermissions(permissions: Array<String>): List<String> {
+    private fun getDeniedPermissions(permissions: Array<String>): List<String> {
         val needRequestPermissionList: MutableList<String> =
             ArrayList()
         for (permission in permissions) {
@@ -77,24 +65,6 @@ abstract class BaseFragment<VB: ViewDataBinding,VM:ViewModel>: Fragment()  {
         return needRequestPermissionList
     }
 
-    /**
-     * 系统请求权限回调
-     */
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSION) {
-            if (verifyPermissions(grantResults)) {
-                permissionSuccess(REQUEST_CODE_PERMISSION)
-            } else {
-                permissionFail(REQUEST_CODE_PERMISSION)
-            }
-        }
-    }
-
     private fun verifyPermissions(grantResults: IntArray): Boolean {
         for (grantResult in grantResults) {
             if (grantResult != PackageManager.PERMISSION_GRANTED) {
@@ -106,6 +76,7 @@ abstract class BaseFragment<VB: ViewDataBinding,VM:ViewModel>: Fragment()  {
 
     open fun permissionSuccess(requestCode: Int) {
     }
+
     open fun permissionFail(requestCode: Int) {
     }
 }

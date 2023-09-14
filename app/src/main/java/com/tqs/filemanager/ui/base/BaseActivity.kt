@@ -21,7 +21,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
     abstract val TAG: String
-    private var REQUEST_CODE_PERMISSION = 0x00099
+    var REQUEST_CODE_PERMISSION = 0x00099
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,31 +33,22 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
 
     open fun setStatusBarLightMode(activity: Activity,isLightMode: Boolean) {
         val window = activity.window
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            var option = window.decorView.systemUiVisibility
-            option = if (isLightMode) {
-                option or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            } else {
-                option and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            }
-            window.decorView.systemUiVisibility = option
+        var option = window.decorView.systemUiVisibility
+        option = if (isLightMode) {
+            option or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            option and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
+        window.decorView.systemUiVisibility = option
     }
     open fun setStatusBarTransparent(activity: Activity) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return
-        }
         val window = activity.window
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            val option =
-                window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            window.decorView.systemUiVisibility = option
-            window.statusBarColor = Color.TRANSPARENT
-        } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        val option =
+            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        window.decorView.systemUiVisibility = option
+        window.statusBarColor = Color.TRANSPARENT
     }
 
     open fun requestPermission(
@@ -77,21 +68,14 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
                     REQUEST_CODE_PERMISSION
                 )
             } catch (e: Exception) {
-                Log.e("BaseActivity", "获取权限失败 Exception = $e")
+                Log.e("BaseActivity", "Exception = $e")
             }
         }
     }
 
     fun checkPermissions(permissions: Array<String>): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true
-        }
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
@@ -112,9 +96,6 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
         return needRequestPermissionList
     }
 
-    /**
-     * 系统请求权限回调
-     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String?>,
@@ -129,7 +110,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
             }
         }
     }
-    private fun verifyPermissions(grantResults: IntArray): Boolean {
+    fun verifyPermissions(grantResults: IntArray): Boolean {
         for (grantResult in grantResults) {
             if (grantResult != PackageManager.PERMISSION_GRANTED) {
                 return false

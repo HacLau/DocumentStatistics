@@ -2,8 +2,14 @@ package com.tqs.filemanager.ui.fragment
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
+import android.nfc.Tag
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +30,11 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
 
-    private var REQUEST_CODE_PERMISSION = 0x00099
     var permissions = arrayOf<String>(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
+    private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +49,20 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     override fun initData() {
         viewModel = ViewModelProvider(this)[FileManagerVM::class.java]
-//        requestPermission(permissions,REQUEST_CODE_PERMISSION)
-        setData()
+        setClickListener()
+        viewModel.hadPermission.observe(requireActivity()) {
+            if (it)
+                setData()
+        }
+        viewModel.hadPermission.value = false
+        getHadPermission()
+    }
+
+    private fun getHadPermission() {
+        if(SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean
+            && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || SharedUtils.getValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)){
+            viewModel.hadPermission.value = true
+        }
     }
 
     private fun setData() {
@@ -52,7 +70,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         setMediaList()
         setMediaListSize()
         getMediaInfo()
-        setClickListener()
     }
 
     private fun setProgressValue() {
@@ -126,8 +143,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     override fun onClick(v: View?) {
-        if (SharedUtils.getValue(requireContext(),Common.EXTERNAL_STORAGE_PERMISSION,false)?.equals(false) == true){
-            requestPermission(permissions, REQUEST_CODE_PERMISSION)
+        if (!judgePermission()) {
             return
         }
         when (v?.id) {
@@ -185,13 +201,47 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
 
     override fun permissionSuccess(requestCode: Int) {
         super.permissionSuccess(requestCode)
-        if (requestCode == REQUEST_CODE_PERMISSION){
-            setData()
+        if (requestCode == REQUEST_CODE_PERMISSION) {
+            SharedUtils.putValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, true)
+            judgePermission()
         }
     }
 
     override fun permissionFail(requestCode: Int) {
         super.permissionFail(requestCode)
-        Toast.makeText(requireContext(),"Please allow us access to your directories and files, including photos, videos, and audio files.",Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Please allow us access to your directories and files, including photos, videos, and audio files.",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.e("FileManager", "$resultCode")
+        when (requestCode) {
+            REQUEST_CODE_MANAGE_EXTERNAL_STORAGE -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                    SharedUtils.putValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, true)
+                    judgePermission()
+                }
+            }
+        }
+    }
+
+    private fun judgePermission(): Boolean {
+        if (!(SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean)) {
+            requestPermission(permissions, REQUEST_CODE_PERMISSION)
+            return false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()
+            && !(SharedUtils.getValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)
+        ) {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.parse("package:${requireActivity().packageName}")
+            startActivityForResult(intent, REQUEST_CODE_MANAGE_EXTERNAL_STORAGE)
+            return false
+        }
+        return true
     }
 }

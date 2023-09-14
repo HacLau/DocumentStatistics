@@ -19,6 +19,7 @@ class FileManagerVM : BaseVM() {
     var totalSpace = MutableLiveData<String>()
     var availSpace = MutableLiveData<String>()
     var progressValue = MutableLiveData<Int>(0)
+    var hadPermission = MutableLiveData<Boolean>(false)
 
     var imageList = MutableLiveData<ArrayList<FileEntity>>()
     var audioList = MutableLiveData<ArrayList<FileEntity>>()

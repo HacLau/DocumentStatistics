@@ -30,11 +30,8 @@ class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyP
     override fun initData() {
         viewModel =
             ViewModelProvider(this).get(PrivacyPolicyVM::class.java)
+        binding.wv.loadUrl("https://www.baidu.com")
 
-        val textView: TextView = binding.textGallery
-        viewModel.title.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
     }
 
     override fun onDestroyView() {

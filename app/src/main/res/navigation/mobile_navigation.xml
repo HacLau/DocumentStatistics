@@ -9,7 +9,8 @@
         android:id="@+id/nav_file_manager"
         android:name="com.tqs.filemanager.ui.fragment.FileManagerFragment"
         android:label="@string/menu_file_manager"
-        tools:layout="@layout/fragment_file_manager" />
+        tools:layout="@layout/fragment_file_manager" >
+    </fragment>
 
     <fragment
         android:id="@+id/nav_contact_us"

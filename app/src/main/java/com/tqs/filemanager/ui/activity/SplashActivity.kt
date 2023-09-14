@@ -75,7 +75,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             if (msg.what == 1){
-                Log.e(TAG,"what = ${msg.what} and ${viewModel.progressValue.value}")
                 viewModel.progressValue.value = viewModel.progressValue.value?.plus(1)
             }
         }

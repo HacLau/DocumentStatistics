@@ -1,6 +1,7 @@
 package com.tqs.filemanager.vm.utils
 
 object Common {
+    const val EMAIL: String = ""
     const val PAGE_TYPE = "pageType"
     const val IMAGE_LIST = "imageList"
     const val VIDEO_LIST = "videoList"
@@ -9,5 +10,6 @@ object Common {
     const val DOWNLOAD_LIST = "downloadList"
 
     const val EXTERNAL_STORAGE_PERMISSION = "EXTERNAL_STORAGE_PERMISSION"
+    const val REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = "REQUEST_CODE_MANAGE_EXTERNAL_STORAGE"
 
 }

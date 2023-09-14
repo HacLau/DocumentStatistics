@@ -38,7 +38,6 @@ object DateUtils {
         val date = calendar.get(Calendar.DATE)
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
-        Log.e("DATE","$year $month $date $hour")
         val monthString = getMonthString(month)
         val hourMinuteString = getHourMinuteString(hour,minute)
         return "$hourMinuteString, $date $monthString"
