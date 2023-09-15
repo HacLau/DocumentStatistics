@@ -36,6 +36,7 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
     private var mPopupWindow: FileDetailPopupWindow? = null
     private var mPreviewAdapter: PreviewAdapter? = null
     private var mPageType: String = Common.IMAGE_LIST
+    private var deletedFile: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun initData() {
@@ -43,6 +44,7 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[PreviewVM::class.java]
         binding.titleBar.setLeftClickListener {
+            setResult()
             finish()
         }
         currentIndex = intent.getIntExtra("selectImageIndex", 0)
@@ -113,16 +115,14 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
                 mDialog?.dismiss()
             }, {
                 mDialog?.dismiss()
-                if (previewMediaList?.get(currentIndex)?.let { it.path?.let { path -> FileUtils.deleteFile(path) } } == true) {
+                if (FileUtils.deleteFile(previewMediaList!![currentIndex].path!!)) {
+                    deletedFile = true
                     previewMediaList!!.remove(previewMediaList?.get(currentIndex))
                     mPreviewAdapter?.setData(previewMediaList!!)
-                    setResult(RESULT_OK, Intent().apply {
-                        putExtra("currentIndex", currentIndex)
-                        putExtra("deleteResult", true)
-                    })
                     mPreviewAdapter?.destroyItem(binding.vpShowMedia, -1, binding.vpShowMedia.rootView)
                     mPreviewAdapter?.notifyDataSetChanged()
                     setTitleText()
+                    setResult()
                 }
             })
 
@@ -144,7 +144,19 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        setResult(RESULT_CANCELED, Intent().apply {
-        })
+        setResult()
+    }
+
+    private fun setResult() {
+        if (deletedFile) {
+            setResult(RESULT_OK, Intent().apply {
+                putExtra("currentIndex", currentIndex)
+                putExtra("deleteResult", true)
+            })
+        } else {
+            setResult(RESULT_CANCELED, Intent().apply {
+            })
+        }
+
     }
 }

@@ -1,10 +1,8 @@
 package com.tqs.filemanager.ui.activity
 
 import android.content.Intent
-import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,27 +34,41 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
     private val NONE: String = "NONE"
     private var currentSelect = NONE
     private var mPageType: String = Common.IMAGE_LIST
+    private var deletedFile: Boolean? = false
     private var registerForActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
-            val intExtra = it.data?.getIntExtra("currentIndex", 0)
-            val booleanExtra = it.data?.getBooleanExtra("deleteResult", false)
-            if (booleanExtra == true) {
+            deletedFile = it.data?.getBooleanExtra("deleteResult", false)
+            if (deletedFile == true) {
                 orderShowImageList()
             }
-            setResult(RESULT_OK, it.data)
+            setResult()
         }
     }
+
+    private fun setResult() {
+        if (deletedFile == true) {
+            setResult(RESULT_OK, Intent().apply {
+                putExtra("deleteResult", true)
+            })
+        } else {
+            setResult(RESULT_CANCELED, Intent().apply {
+            })
+        }
+
+    }
+
     private var mDeleteDialog: ConfirmAndCancelDialog? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[ImageListVM::class.java]
         binding.titleBar.setLeftClickListener {
+            setResult()
             finish()
         }
         binding.titleBar.setOrderVisible(true)
         binding.titleBar.setOrderClickListener {
-            currentOrder = when (currentOrder){
+            currentOrder = when (currentOrder) {
                 DESC -> ASC
                 ASC -> DESC
                 else -> {
@@ -260,6 +272,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
             binding.vImageDelete.visibility = View.GONE
         } else {
             super.onBackPressed()
+            setResult()
         }
     }
 }
