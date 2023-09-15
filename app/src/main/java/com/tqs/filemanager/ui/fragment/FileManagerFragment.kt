@@ -1,6 +1,7 @@
 package com.tqs.filemanager.ui.fragment
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.nfc.Tag
@@ -14,6 +15,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.FragmentFileManagerBinding
@@ -31,7 +34,11 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         get() = R.layout.fragment_file_manager
 
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
-
+    private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK){
+            getMediaInfo()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -166,33 +173,33 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun jumpImageListActivity() {
-        val intent = Intent(requireActivity(), ImageListActivity::class.java)
-        intent.putExtra(Common.PAGE_TYPE, Common.IMAGE_LIST)
-        startActivity(intent)
+        startActivityForResult.launch(Intent(requireActivity(), ImageListActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, Common.IMAGE_LIST)
+        })
     }
 
     private fun jumpDocumentsListActivity() {
-        val intent = Intent(requireActivity(), DocListActivity::class.java)
-        intent.putExtra(Common.PAGE_TYPE, Common.DOCUMENTS_LIST)
-        startActivity(intent)
+        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, Common.DOCUMENTS_LIST)
+        })
     }
 
     private fun jumpAudioListActivity() {
-        val intent = Intent(requireActivity(), DocListActivity::class.java)
-        intent.putExtra(Common.PAGE_TYPE, Common.AUDIO_LIST)
-        startActivity(intent)
+        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, Common.AUDIO_LIST)
+        })
     }
 
     private fun jumpVideoListActivity() {
-        val intent = Intent(requireActivity(), ImageListActivity::class.java)
-        intent.putExtra(Common.PAGE_TYPE, Common.VIDEO_LIST)
-        startActivity(intent)
+        startActivityForResult.launch(Intent(requireActivity(), ImageListActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, Common.VIDEO_LIST)
+        })
     }
 
     private fun jumpDownloadListActivity() {
-        val intent = Intent(requireActivity(), DocListActivity::class.java)
-        intent.putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
-        startActivity(intent)
+        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
+        })
     }
 
     override fun permissionSuccess(requestCode: Int) {

@@ -1,15 +1,13 @@
 package com.tqs.filemanager.ui.activity
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import androidx.core.os.BuildCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -29,7 +27,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         get() = this.packageName
     private lateinit var navController: NavController
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
+    val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {result:Map<String,Boolean>->
 
+    }
 
     override fun initData() {
         setContentView(binding.root)
@@ -106,7 +106,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     }
 
     private fun selectedMenu(resID: Int) {
-        binding.drawerLayout.closeDrawer(Gravity.LEFT)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         Log.e(TAG, "resID = $resID")
         navController.navigate(resID)
     }
@@ -123,38 +123,33 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         super.permissionFail(requestCode)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQUEST_CODE_MANAGE_EXTERNAL_STORAGE -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
-                    SharedUtils.putValue(this, Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, true)
-                    judgePermission()
-                }
-            }
-        }
-    }
-
     private fun judgePermission(): Boolean {
         if (!(SharedUtils.getValue(this, Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean)) {
-            requestPermission(Common.permissions, REQUEST_CODE_PERMISSION)
+            requestPermission.launch(Common.permissions)
             return false
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()
             && !(SharedUtils.getValue(this, Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)
         ) {
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            intent.data = Uri.parse("package:${packageName}")
-            startActivityForResult(intent, REQUEST_CODE_MANAGE_EXTERNAL_STORAGE)
+            val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                if (it.resultCode == RESULT_OK){
+                    if (Environment.isExternalStorageManager()) {
+                        SharedUtils.putValue(this, Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, true)
+                        judgePermission()
+                    }
+                }
+            }
+            startActivity.launch(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                data = Uri.parse("package:${packageName}")
+            })
+
             return false
         }
         selectedMenu(R.id.nav_file_manager)
         return true
     }
 
-//    val perot = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-//
-//    }
+
 
     override fun onBackPressed() {
         super.onBackPressed()

@@ -1,21 +1,13 @@
 package com.tqs.filemanager.ui.activity
 
-import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
+import android.content.Intent
+import android.content.Intent.createChooser
 import android.os.Build
-import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Display
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.WindowManager
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.FileProvider
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.gson.Gson
@@ -29,8 +21,10 @@ import com.tqs.filemanager.ui.view.ConfirmAndCancelDialog
 import com.tqs.filemanager.ui.view.FileDetailPopupWindow
 import com.tqs.filemanager.vm.activity.PreviewVM
 import com.tqs.filemanager.vm.utils.Common
+import com.tqs.filemanager.vm.utils.FileUtils
+import java.io.File
 
-class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>(){
+class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
     override val layoutId: Int
         get() = R.layout.activity_image_preview
     override val TAG: String
@@ -60,7 +54,9 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>(){
         Log.e(TAG, "currentIndex = $currentIndex list = ${previewMediaList?.size}")
         mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         setTitleText()
-        mPreviewAdapter = PreviewAdapter(this, previewMediaList)
+        mPreviewAdapter = PreviewAdapter(this, previewMediaList) { surfaceView, position ->
+
+        }
         binding.vpShowMedia.adapter = mPreviewAdapter
         binding.vpShowMedia.offscreenPageLimit = 0
         binding.vpShowMedia.currentItem = currentIndex
@@ -91,14 +87,19 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>(){
             setDialogConfirmAndCancel()
         }
         binding.ivShareImage.setOnClickListener {
-            setPopupWindow()
+            setSharedFile()
         }
+    }
 
-        mPreviewAdapter?.setOnClickPlayListener(object : PreviewAdapter.OnClickPlayListener {
-            override fun playVideo(surfaceView: SurfaceView, position: Int) {
-            }
-        })
+    private fun setSharedFile() {
+        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", File(previewMediaList?.get(currentIndex)?.path ?: ""))
+        val type = previewMediaList?.get(currentIndex)?.mimeType
 
+        startActivity(createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            setType(type)
+        }, "shared  file to:"))
     }
 
     private fun stopPlayer() {
@@ -108,14 +109,21 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>(){
 
     private fun setDialogConfirmAndCancel() {
         if (mDialog == null) {
-            mDialog = ConfirmAndCancelDialog(this)
-            mDialog?.setCancelClickListener {
+            mDialog = ConfirmAndCancelDialog(this, {
                 mDialog?.dismiss()
-            }
-            mDialog?.setSureClickListener {
+            }, {
                 mDialog?.dismiss()
-                //todo delete file
-            }
+                if (previewMediaList?.get(currentIndex)?.let { it.path?.let { path -> FileUtils.deleteFile(path) } } == true) {
+                    previewMediaList!!.remove(previewMediaList?.get(currentIndex))
+                    mPreviewAdapter?.setData(previewMediaList!!)
+                    mPreviewAdapter?.notifyDataSetChanged()
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra("currentIndex", currentIndex)
+                        putExtra("deleteResult", true)
+                    })
+                }
+            })
+
         }
         mDialog?.show()
     }
@@ -132,4 +140,9 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>(){
         binding.titleBar.setTitleText("${currentIndex + 1} / ${previewMediaList!!.size}")
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        setResult(RESULT_CANCELED, Intent().apply {
+        })
+    }
 }

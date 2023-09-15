@@ -43,6 +43,15 @@
             android:configChanges="orientation|uiMode"
             android:launchMode="singleTask"
             android:exported="false" />
+        <provider
+            android:authorities="com.tqs.document.statistics.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"/>
+        </provider>
     </application>
 
 </manifest>

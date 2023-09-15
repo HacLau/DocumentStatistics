@@ -15,7 +15,9 @@ import android.widget.TextView
 import com.tqs.document.statistics.R
 
 
-class ConfirmAndCancelDialog(context: Context) : Dialog(context), View.OnClickListener {
+class ConfirmAndCancelDialog(context: Context,
+    private val clickCancel:()->Unit,
+    private val clickSure:()->Unit) : Dialog(context) {
     private lateinit var mTitle: TextView
     private lateinit var mContent: TextView
     private lateinit var mCancel: TextView
@@ -26,8 +28,6 @@ class ConfirmAndCancelDialog(context: Context) : Dialog(context), View.OnClickLi
     private var sCancel: String? = null
     private var sSure: String? = null
 
-    private lateinit var cancelOnClickListener: OnClickListener
-    private lateinit var sureOnClickListener: OnClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ class ConfirmAndCancelDialog(context: Context) : Dialog(context), View.OnClickLi
         mSure = findViewById(R.id.dialog_sure)
 
         mTitle.text = if (TextUtils.isEmpty(sTitle)) {
-            "warning"
+            "delete selected file"
         } else {
             sTitle
         }
@@ -68,8 +68,12 @@ class ConfirmAndCancelDialog(context: Context) : Dialog(context), View.OnClickLi
             sSure
         }
 
-        mCancel.setOnClickListener(this)
-        mSure.setOnClickListener(this)
+        mCancel.setOnClickListener{
+            clickCancel()
+        }
+        mSure.setOnClickListener {
+            clickSure()
+        }
     }
 
     fun setTitle(string: String): ConfirmAndCancelDialog {
@@ -90,25 +94,5 @@ class ConfirmAndCancelDialog(context: Context) : Dialog(context), View.OnClickLi
     fun setSure(string: String): ConfirmAndCancelDialog {
         this.sSure = string
         return this
-    }
-
-    fun setCancelClickListener(listener: OnClickListener){
-        this.cancelOnClickListener = listener
-    }
-
-    fun setSureClickListener(listener: OnClickListener){
-        this.sureOnClickListener = listener
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.dialog_cancel -> {
-                cancelOnClickListener.onClick(v)
-            }
-
-            R.id.dialog_sure -> {
-                sureOnClickListener.onClick(v)
-            }
-        }
     }
 }

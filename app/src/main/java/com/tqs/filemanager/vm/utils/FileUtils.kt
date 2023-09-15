@@ -8,6 +8,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import com.tqs.filemanager.model.FileEntity
+import java.io.File
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -24,24 +25,29 @@ object FileUtils {
     fun getTwoDigits(number: Int): Float {
         return getTwoDigits(number.toLong())
     }
+
     fun getTwoDigits(number: Float): Float {
         return getTwoDigits(number.toLong())
     }
+
     fun getTwoDigits(number: Long): Float {
         val format = DecimalFormat("0.##")
         format.roundingMode = RoundingMode.FLOOR
         return format.format(number).toFloat()
     }
+
     fun getTwoDigitsSpace(number: Int): String {
         return getTwoDigitsSpace(number.toLong())
     }
+
     fun getTwoDigitsSpace(number: Long): String {
         val format = DecimalFormat("0.##")
         format.roundingMode = RoundingMode.FLOOR
         return when (number) {
-            in 0..0 ->{
+            in 0..0 -> {
                 "0"
             }
+
             in 1..1023 -> {
                 "${format.format(number)}B"
             }
@@ -58,6 +64,10 @@ object FileUtils {
                 "${format.format(number / 1024.0 / 1024.0 / 1024.0)}GB"
             }
         }
+    }
+
+    fun deleteFile(path: String): Boolean {
+        return File(path).delete()
     }
 
     private fun getContentProvider(context: Context) {
@@ -247,7 +257,7 @@ object FileUtils {
         } finally {
             mCursor?.close()
         }
-        Log.e("fileUtils" , "fileEntities.size = ${fileEntities.size}")
+        Log.e("fileUtils", "fileEntities.size = ${fileEntities.size}")
         return fileEntities as ArrayList<FileEntity>
     }
 

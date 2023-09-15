@@ -2,15 +2,16 @@ package com.tqs.filemanager.ui.adapter
 
 import android.content.Context
 import android.net.Uri
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tqs.document.statistics.R
+import com.tqs.document.statistics.databinding.MediaPreviewBinding
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.vm.utils.DateUtils
 import com.tqs.filemanager.vm.utils.FileUtils
@@ -19,14 +20,13 @@ import java.io.File
 
 class ImageVideoListAdapter(
     private val context: Context,
-    private var data: List<FileEntity>
+    private var data: List<FileEntity>,
+    private var onItemClick: (position: Int, touchView: String) -> Unit,
+    private var onItemLongClick: (position: Int) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val TITLE = 0
     private val CONTENT = 1
-
-    private var mOnItemClickListener: OnItemClickListener? = null
-    private var mOnItemLongClickListener: OnItemLongClickListener? = null
 
     val CLICKSTATE: Int = 11
     val LONGSTATE: Int = 12
@@ -44,6 +44,7 @@ class ImageVideoListAdapter(
 
         return when (viewType) {
             TITLE -> {
+//                val binding: MediaPreviewBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.media_item_title, null, false)
                 TitleViewHolder(
                     LayoutInflater.from(context).inflate(R.layout.media_item_title, parent, false)
                 )
@@ -74,7 +75,7 @@ class ImageVideoListAdapter(
                     holder.titleDate.text = DateUtils.getMonthTimeBySecond(data[position].date)
 
                     holder.titleDate.setOnClickListener {
-                        mOnItemClickListener?.onItemClick(position, TOUCHTITLEVIEW)
+                        onItemClick(position, TOUCHTITLEVIEW)
                     }
                 }
             }
@@ -97,26 +98,26 @@ class ImageVideoListAdapter(
                         }
                     }
                     holder.imageSize.text = FileUtils.getTwoDigitsSpace(data[position].size)
-                    if (touchState == LONGSTATE){
+                    if (touchState == LONGSTATE) {
                         holder.selectedImage.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         holder.selectedImage.visibility = View.GONE
                     }
                     holder.selectedImage.isChecked = data[position].selected
                     holder.contentImage.setOnClickListener {
-                        mOnItemClickListener?.onItemClick(position, TOUCHIMAGEVIEW)
+                        onItemClick(position, TOUCHIMAGEVIEW)
                     }
                     holder.contentImage.setOnLongClickListener {
-                        mOnItemLongClickListener?.onItemLongClick(position)
+                        onItemLongClick(position)
                         true
                     }
 
                     holder.selectedImage.setOnClickListener {
-                        mOnItemClickListener?.onItemClick(position, TOUCHRADIOVIEW)
+                        onItemClick(position, TOUCHRADIOVIEW)
                     }
 
                     holder.itemPlay.setOnClickListener {
-                        mOnItemClickListener?.onItemClick(position, TOUCHPLAYVIEW)
+                        onItemClick(position, TOUCHPLAYVIEW)
                     }
                 }
             }
@@ -133,36 +134,19 @@ class ImageVideoListAdapter(
 
 
     inner class TitleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var titleDate = view.findViewById<TextView>(R.id.item_title)
+        var titleDate: TextView = view.findViewById<TextView>(R.id.item_title)
 
     }
 
     inner class ContentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var contentImage = view.findViewById<ImageView>(R.id.item_image)
-        var selectedImage = view.findViewById<CheckBox>(R.id.item_selected)
-        var itemPlay = view.findViewById<ImageView>(R.id.item_play)
-        var imageSize = view.findViewById<TextView>(R.id.item_size)
+        var contentImage: ImageView = view.findViewById<ImageView>(R.id.item_image)
+        var selectedImage: CheckBox = view.findViewById<CheckBox>(R.id.item_selected)
+        var itemPlay: ImageView = view.findViewById<ImageView>(R.id.item_play)
+        var imageSize: TextView = view.findViewById<TextView>(R.id.item_size)
     }
 
     fun setData(list: ArrayList<FileEntity>) {
         this.data = list
-    }
-
-
-    public fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.mOnItemClickListener = listener
-    }
-
-    public fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
-        this.mOnItemLongClickListener = listener
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(position: Int, touchView: String)
-    }
-
-    interface OnItemLongClickListener {
-        fun onItemLongClick(position: Int)
     }
 
 }
