@@ -116,11 +116,13 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
                 if (previewMediaList?.get(currentIndex)?.let { it.path?.let { path -> FileUtils.deleteFile(path) } } == true) {
                     previewMediaList!!.remove(previewMediaList?.get(currentIndex))
                     mPreviewAdapter?.setData(previewMediaList!!)
-                    mPreviewAdapter?.notifyDataSetChanged()
                     setResult(RESULT_OK, Intent().apply {
                         putExtra("currentIndex", currentIndex)
                         putExtra("deleteResult", true)
                     })
+                    mPreviewAdapter?.destroyItem(binding.vpShowMedia, -1, binding.vpShowMedia.rootView)
+                    mPreviewAdapter?.notifyDataSetChanged()
+                    setTitleText()
                 }
             })
 

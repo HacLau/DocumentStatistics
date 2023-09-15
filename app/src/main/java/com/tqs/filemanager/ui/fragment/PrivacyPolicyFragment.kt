@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
-import com.tqs.document.statistics.databinding.FragmentContactUsBinding
 import com.tqs.document.statistics.databinding.FragmentPrivacyPolicyBinding
 import com.tqs.filemanager.ui.base.BaseFragment
-import com.tqs.filemanager.vm.fragment.ContactUsVM
 import com.tqs.filemanager.vm.fragment.PrivacyPolicyVM
 
 class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyPolicyVM>(){

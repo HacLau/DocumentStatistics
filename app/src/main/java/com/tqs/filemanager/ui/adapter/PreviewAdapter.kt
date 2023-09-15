@@ -9,7 +9,11 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.MediaPreviewBinding
@@ -27,7 +31,6 @@ class PreviewAdapter(
     private var mMediaPlayer: MediaPlayer? = null
     private var currentPosition: Int? = null
     private var currentBinding: MediaPreviewBinding? = null
-
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val binding: MediaPreviewBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.media_preview, null, false)
         when (data?.get(position)?.fileType) {
@@ -109,7 +112,6 @@ class PreviewAdapter(
         }
         mMediaPlayer?.release()
         mMediaPlayer = null
-
     }
 
     override fun getCount(): Int {
@@ -119,8 +121,14 @@ class PreviewAdapter(
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
     }
+    // must be this function and return POSITION_NONE can destroy item by dynamic called destroyItem
+    override fun getItemPosition(`object`: Any): Int {
+//        return super.getItemPosition(`object`)
+        return POSITION_NONE
+    }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        Log.e("destroyItem","destroyItem $position")
         container.removeView(`object` as View)
     }
 
