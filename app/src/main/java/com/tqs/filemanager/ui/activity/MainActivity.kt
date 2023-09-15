@@ -35,9 +35,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         setContentView(binding.root)
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
-        if (fragment != null) {
-            navController = Navigation.findNavController(this, fragment.id)
+        supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)?.let {
+            navController = Navigation.findNavController(this, it.id)
+        }
+        navController?.let {
+            navController.setGraph(R.navigation.mobile_navigation)
         }
         binding.appBarMain.findViewById<TitleBar>(R.id.title_bar_main).setLeftClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -107,8 +109,12 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
 
     private fun selectedMenu(resID: Int) {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
-        Log.e(TAG, "resID = $resID")
-        navController.navigate(resID)
+        // judge current id is or not need replace id,if equals do not
+        if (navController.currentDestination?.id != resID) {
+            // param inclusive = true means is pop stack contains resID self
+            navController.popBackStack(resID,true)
+            navController.navigate(resID)
+        }
     }
 
     override fun permissionSuccess(requestCode: Int) {
