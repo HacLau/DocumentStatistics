@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Gravity
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
-import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.gson.Gson

@@ -8,10 +8,8 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tqs.document.statistics.R
-import com.tqs.document.statistics.databinding.MediaPreviewBinding
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.vm.utils.DateUtils
 import com.tqs.filemanager.vm.utils.FileUtils

@@ -1,13 +1,8 @@
 package com.tqs.filemanager.ui.activity
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.os.Looper
 import android.os.Message
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivitySplashBinding
@@ -17,7 +12,7 @@ import java.util.Timer
 import java.util.TimerTask
 
 
-class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
+class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
     override val layoutId: Int
         get() = R.layout.activity_splash
     override val TAG: String
@@ -30,9 +25,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this).get(SplashVM::class.java)
-        viewModel.progressValue.observe(this){
+        viewModel.progressValue.observe(this) {
             binding.splashProgressBar.progress = it
-            if (it > 100){
+            if (it > 100) {
                 timer?.cancel()
                 if (!hadJumpMain) {
                     hadJumpMain = true
@@ -56,12 +51,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
     }
 
     private fun startTimer() {
-        timer?.schedule(task,10, 10)
+        timer?.schedule(task, 10, 10)
     }
 
 
-    private fun toJumpMainActivity(){
-        val intent = Intent(this,MainActivity::class.java)
+    private fun toJumpMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -71,10 +66,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding,SplashVM>() {
         timer = null
     }
 
-    inner class MyHandler():Handler(){
+    inner class MyHandler() : Handler() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            if (msg.what == 1){
+            if (msg.what == 1) {
                 viewModel.progressValue.value = viewModel.progressValue.value?.plus(1)
             }
         }

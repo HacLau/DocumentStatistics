@@ -1,7 +1,5 @@
 package com.tqs.filemanager.ui.view
 
-import android.R.attr.x
-import android.R.attr.y
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -9,15 +7,15 @@ import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
-import android.view.View.OnClickListener
 import android.widget.TextView
 import com.tqs.document.statistics.R
 
 
-class ConfirmAndCancelDialog(context: Context,
-    private val clickCancel:()->Unit,
-    private val clickSure:()->Unit) : Dialog(context) {
+class ConfirmAndCancelDialog(
+    context: Context,
+    private val clickCancel: () -> Unit,
+    private val clickSure: () -> Unit
+) : Dialog(context) {
     private lateinit var mTitle: TextView
     private lateinit var mContent: TextView
     private lateinit var mCancel: TextView
@@ -68,7 +66,7 @@ class ConfirmAndCancelDialog(context: Context,
             sSure
         }
 
-        mCancel.setOnClickListener{
+        mCancel.setOnClickListener {
             clickCancel()
         }
         mSure.setOnClickListener {

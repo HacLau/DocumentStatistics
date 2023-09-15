@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="24dp"
     android:orientation="vertical"
+    android:paddingTop="24dp"
     tools:context="com.tqs.filemanager.ui.activity.MainActivity">
 
     <com.tqs.filemanager.ui.view.TitleBar
@@ -13,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:titleBar_left_src="@mipmap/ic_order"
-        app:titleBar_title_visible="gone"
         app:titleBar_right_visible="gone"
-        />
+        app:titleBar_title_visible="gone" />
+
     <include layout="@layout/content_main" />
 
 </LinearLayout>

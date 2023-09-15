@@ -1,7 +1,6 @@
 package com.tqs.filemanager.vm.activity
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,6 +20,7 @@ class ImageListVM : BaseVM() {
     fun getVideoListOrderDescByDate(context: Context) {
         imageList.value = FileUtils.getVideoListOrderDescByDate(context)
     }
+
     fun getVideoListOrderAscByDate(context: Context) {
         imageList.value = FileUtils.getVideoListOrderAscByDate(context)
     }

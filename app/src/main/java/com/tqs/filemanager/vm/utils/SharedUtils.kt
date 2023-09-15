@@ -2,7 +2,6 @@ package com.tqs.filemanager.vm.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.lang.IllegalArgumentException
 
 object SharedUtils {
     private val FILE_NAME = "file_manager"

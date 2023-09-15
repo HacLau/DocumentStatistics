@@ -47,7 +47,9 @@ class FileDetailPopupWindow(private val context: Context) : PopupWindow() {
         fileType.text = type
         filePath.text = path
     }
-    fun setFileInfo(fileEntity: FileEntity
+
+    fun setFileInfo(
+        fileEntity: FileEntity
     ) {
         fileName.text = "${fileEntity.name}"
         fileSize.text = FileUtils.getTwoDigitsSpace(fileEntity.size)

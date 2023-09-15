@@ -10,9 +10,10 @@ import com.tqs.document.statistics.databinding.FragmentPrivacyPolicyBinding
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.PrivacyPolicyVM
 
-class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyPolicyVM>(){
+class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding, PrivacyPolicyVM>() {
     override val layoutId: Int
         get() = R.layout.fragment_privacy_policy
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,6 +25,7 @@ class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding,PrivacyP
         initData()
         return root
     }
+
     override fun initData() {
         viewModel =
             ViewModelProvider(this).get(PrivacyPolicyVM::class.java)

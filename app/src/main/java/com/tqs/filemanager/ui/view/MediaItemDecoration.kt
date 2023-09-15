@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.tqs.filemanager.vm.utils.PixesUtils
 
-class MediaItemDecoration(private val itemSpace:Int): ItemDecoration() {
+class MediaItemDecoration(private val itemSpace: Int) : ItemDecoration() {
     override fun getItemOffsets(
         outRect: Rect,
         view: View,
@@ -14,7 +14,7 @@ class MediaItemDecoration(private val itemSpace:Int): ItemDecoration() {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        val spacingPx = PixesUtils.dp2px( parent.context,itemSpace)
+        val spacingPx = PixesUtils.dp2px(parent.context, itemSpace)
         outRect.left = spacingPx
         outRect.right = spacingPx
         outRect.top = spacingPx

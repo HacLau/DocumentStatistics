@@ -1,10 +1,8 @@
 package com.tqs.filemanager.vm.fragment
 
 import android.content.Context
-import android.os.Build
 import android.os.Environment
 import android.os.StatFs
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filemanager.model.FileEntity
@@ -12,7 +10,7 @@ import com.tqs.filemanager.vm.base.BaseVM
 import com.tqs.filemanager.vm.utils.FileUtils
 
 class FileManagerVM : BaseVM() {
-    override val title : LiveData<String>
+    override val title: LiveData<String>
         get() = MutableLiveData<String>().apply {
             value = "This is File Manager Fragment"
         }
@@ -47,62 +45,62 @@ class FileManagerVM : BaseVM() {
         }
     }
 
-    fun getImgListOrderDescByDate(context: Context){
+    fun getImgListOrderDescByDate(context: Context) {
         imageList.value = FileUtils.getImgListOrderDescByDate(context)
     }
 
-    fun getVideoListOrderDescByDate(context: Context){
+    fun getVideoListOrderDescByDate(context: Context) {
         videoList.value = FileUtils.getVideoListOrderDescByDate(context)
 
     }
 
-    fun getAudioList(context: Context){
+    fun getAudioList(context: Context) {
         audioList.value = FileUtils.getAudioList(context)
     }
 
-    fun getDocumentsList(context: Context){
+    fun getDocumentsList(context: Context) {
         documentsList.value = FileUtils.getDocList(context)
     }
 
-    fun getDownloadList(context: Context){
+    fun getDownloadList(context: Context) {
         downloadList.value = FileUtils.getDownloadList(context)
     }
 
-    fun getImageListSize(){
+    fun getImageListSize() {
         var size = 0L
-        for (fileEntity in imageList.value!!){
+        for (fileEntity in imageList.value!!) {
             size += fileEntity.size
         }
         imageSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
-    fun getVideoListSize(){
+    fun getVideoListSize() {
         var size = 0L
-        for (fileEntity in videoList.value!!){
+        for (fileEntity in videoList.value!!) {
             size += fileEntity.size
         }
         videoSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
-    fun getAudioListSize(){
+    fun getAudioListSize() {
         var size = 0L
-        for (fileEntity in audioList.value!!){
+        for (fileEntity in audioList.value!!) {
             size += fileEntity.size
         }
         audioSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
-    fun getDocumentsListSize(){
+    fun getDocumentsListSize() {
         var size = 0L
-        for (fileEntity in documentsList.value!!){
+        for (fileEntity in documentsList.value!!) {
             size += fileEntity.size
         }
         documentsSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
     }
 
-    fun getDownloadListSize(){
+    fun getDownloadListSize() {
         var size = 0L
-        for (fileEntity in downloadList.value!!){
+        for (fileEntity in downloadList.value!!) {
             size += fileEntity.size
         }
         downloadSpaceSize.value = FileUtils.getTwoDigitsSpace(size)

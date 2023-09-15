@@ -1,10 +1,8 @@
 package com.tqs.filemanager.ui.fragment
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -15,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
@@ -34,11 +31,12 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         get() = R.layout.fragment_file_manager
 
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
-    private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK){
+    private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
             getMediaInfo()
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,8 +60,13 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun getHadPermission() {
-        if(SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean
-            && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || SharedUtils.getValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)){
+        if (SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean
+            && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || SharedUtils.getValue(
+                requireContext(),
+                Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE,
+                false
+            ) as Boolean)
+        ) {
             viewModel.hadPermission.value = true
         }
     }

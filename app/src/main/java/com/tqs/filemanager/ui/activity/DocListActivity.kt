@@ -2,8 +2,6 @@ package com.tqs.filemanager.ui.activity
 
 import android.text.Html
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
 import androidx.lifecycle.ViewModelProvider

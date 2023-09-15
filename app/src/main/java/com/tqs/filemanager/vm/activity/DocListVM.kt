@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filemanager.model.FileEntity
-import com.tqs.filemanager.ui.activity.DocListActivity
 import com.tqs.filemanager.vm.base.BaseVM
 import com.tqs.filemanager.vm.utils.FileUtils
 

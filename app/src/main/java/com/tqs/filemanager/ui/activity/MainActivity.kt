@@ -27,7 +27,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         get() = this.packageName
     private lateinit var navController: NavController
     private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
-    val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {result:Map<String,Boolean>->
+    val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
 
     }
 
@@ -112,7 +112,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         // judge current id is or not need replace id,if equals do not
         if (navController.currentDestination?.id != resID) {
             // param inclusive = true means is pop stack contains resID self
-            navController.popBackStack(resID,true)
+            navController.popBackStack(resID, true)
             navController.navigate(resID)
         }
     }
@@ -137,8 +137,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()
             && !(SharedUtils.getValue(this, Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)
         ) {
-            val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-                if (it.resultCode == RESULT_OK){
+            val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
                     if (Environment.isExternalStorageManager()) {
                         SharedUtils.putValue(this, Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, true)
                         judgePermission()
@@ -154,7 +154,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         selectedMenu(R.id.nav_file_manager)
         return true
     }
-
 
 
     override fun onBackPressed() {

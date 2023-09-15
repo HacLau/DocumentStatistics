@@ -9,11 +9,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.MediaPreviewBinding
@@ -121,6 +117,7 @@ class PreviewAdapter(
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
     }
+
     // must be this function and return POSITION_NONE can destroy item by dynamic called destroyItem
     override fun getItemPosition(`object`: Any): Int {
 //        return super.getItemPosition(`object`)
@@ -128,7 +125,7 @@ class PreviewAdapter(
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        Log.e("destroyItem","destroyItem $position")
+        Log.e("destroyItem", "destroyItem $position")
         container.removeView(`object` as View)
     }
 
