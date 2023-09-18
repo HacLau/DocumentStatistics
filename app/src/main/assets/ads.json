@@ -1,0 +1,58 @@
+{
+  "ujn": 40,
+  "koof": 15,
+  "fc_launch": [
+    {
+      "popl": "ca-app-pub-3940256099942544/3419835294",
+      "gbne": "admob",
+      "vtha": "op",
+      "cgabk": 13800,
+      "buy": 1
+    }
+  ],
+  "fc_scan_int": [
+    {
+      "popl": "ca-app-pub-3940256099942544/1033173712",
+      "gbne": "admob",
+      "vtha": "int",
+      "cgabk": 3000,
+      "buy": 1
+    }
+  ],
+  "fc_result_int": [
+    {
+      "popl": "ca-app-pub-3940256099942544/1033173712",
+      "gbne": "admob",
+      "vtha": "int",
+      "cgabk": 3000,
+      "buy": 1
+    }
+  ],
+  "fc_main_nat": [
+    {
+      "popl": "ca-app-pub-3940256099942544/2247696110",
+      "gbne": "admob",
+      "vtha": "nat",
+      "cgabk": 3000,
+      "buy": 1
+    }
+  ],
+  "fc_scan_nat": [
+    {
+      "popl": "ca-app-pub-3940256099942544/2247696110",
+      "gbne": "admob",
+      "vtha": "nat",
+      "cgabk": 3000,
+      "buy": 1
+    }
+  ],
+  "fc_result_nat": [
+    {
+      "popl": "ca-app-pub-3940256099942544/2247696110",
+      "gbne": "admob",
+      "vtha": "nat",
+      "cgabk": 3000,
+      "buy": 1
+    }
+  ]
+}

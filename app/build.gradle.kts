@@ -26,6 +26,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String","AD_UNIT_ID","")
+        }
+        debug {
+            buildConfigField("String","AD_UNIT_ID","\"ca-app-pub-3940256099942544~3347511713\"")
         }
 
     }
@@ -63,4 +68,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation ("com.google.android.gms:play-services-ads:22.4.0")
+    implementation ("com.google.android.ump:user-messaging-platform:2.1.0")
 }

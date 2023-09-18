@@ -1,79 +1,65 @@
 package com.tqs.filemanager.ui.activity
 
 import android.content.Intent
-import android.os.Handler
-import android.os.Message
+import android.os.CountDownTimer
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivitySplashBinding
 import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.vm.activity.SplashVM
-import java.util.Timer
-import java.util.TimerTask
+import com.tqs.filemanager.ads.AdsManager
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
+private const val COUNTER_TIME_MILLISECONDS = 5000L
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
     override val layoutId: Int
         get() = R.layout.activity_splash
     override val TAG: String
         get() = this.packageName
-    private var timer: Timer? = null
-    private var task: TimerTask? = null
-    private val handler: Handler = MyHandler()
-    private var hadJumpMain: Boolean = false
+    private val isMobileAdsInitializeCalled = AtomicBoolean(false)
+    private var secondsRemaining: Long = 0L
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this).get(SplashVM::class.java)
-        viewModel.progressValue.observe(this) {
-            binding.splashProgressBar.progress = it
-            if (it > 100) {
-                timer?.cancel()
-                if (!hadJumpMain) {
-                    hadJumpMain = true
-                    toJumpMainActivity()
-                }
-            }
-        }
-        timer = Timer()
-        task = object : TimerTask() {
-            override fun run() {
-                try {
-                    val message = Message()
-                    message.what = 1
-                    handler.sendMessage(message)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        startTimer()
+        initAdsData()
+        createTimer(COUNTER_TIME_MILLISECONDS)
     }
 
-    private fun startTimer() {
-        timer?.schedule(task, 10, 10)
+    private fun initAdsData() {
+        AdsManager.adsOpen.preLoad(this)
+        AdsManager.adsNativeMain.preLoad(this)
+        AdsManager.adsInsertResultClean.preLoad(this)
+        AdsManager.adsInsertResultScan.preLoad(this)
+        AdsManager.adsNativeResultScan.preLoad(this)
+        AdsManager.adsNativeResultClean.preLoad(this)
     }
 
+    private fun createTimer(time: Long) {
+        val countDownTimer: CountDownTimer =
+            object : CountDownTimer(time, 33) {
+                override fun onTick(millisUntilFinished: Long) {
+                    secondsRemaining = TimeUnit.MILLISECONDS.toMillis(millisUntilFinished) + 1
+                    binding.splashProgressBar.progress = 100 - (secondsRemaining / 50).toInt()
+                }
 
-    private fun toJumpMainActivity() {
+                override fun onFinish() {
+                    secondsRemaining = 0
+                    binding.splashProgressBar.progress = 100
+                    startMainActivity()
+                }
+            }
+        countDownTimer.start()
+    }
+
+    private fun startMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        timer = null
-    }
-
-    inner class MyHandler() : Handler() {
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            if (msg.what == 1) {
-                viewModel.progressValue.value = viewModel.progressValue.value?.plus(1)
-            }
-        }
-    }
 
 
 }
