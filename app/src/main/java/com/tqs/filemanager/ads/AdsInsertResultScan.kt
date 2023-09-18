@@ -1,11 +1,19 @@
 package com.tqs.filemanager.ads
 
-class AdsInsertResultScan:BaseAds() {
-    override fun load() {
+import android.app.Activity
+import android.content.Context
+import android.view.ViewGroup
+
+class AdsInsertResultScan(
+    private val context: Context,
+    private val adsType: AdsType,
+    private val item: AdsItem
+) : BaseAds(adsType, item) {
+    override fun load(onAdLoaded: () -> Unit, onAdLoadFailed: (msg: String?) -> Unit) {
 
     }
 
-    override fun show() {
+    override fun show(activity: Activity, nativeParent: ViewGroup?, onAdDismissed: () -> Unit) {
 
     }
 

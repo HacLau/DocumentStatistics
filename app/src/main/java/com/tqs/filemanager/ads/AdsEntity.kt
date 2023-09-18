@@ -23,13 +23,13 @@ data class AdsEntity(
 
 data class AdsItem(
     @SerializedName("pool")
-    var adsId: String? = "",
+    var adsId: String,
     @SerializedName("gbne")
-    var adsPlatform: String? = "",
+    var adsPlatform: String,
     @SerializedName("vtha")
-    var adsType: String? = "",
+    var adsType: String,
     @SerializedName("cgabk")
-    var adsAliveMillis: Int = 0,
+    var adsAliveMillis: Int,
     @SerializedName("buy")
-    var adsWeight: Int = 0
+    var adsWeight: Int
 )
