@@ -11,9 +11,6 @@ object Common {
     const val DOCUMENTS_LIST = "documentsList"
     const val DOWNLOAD_LIST = "downloadList"
 
-    const val EXTERNAL_STORAGE_PERMISSION = "EXTERNAL_STORAGE_PERMISSION"
-    const val REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = "REQUEST_CODE_MANAGE_EXTERNAL_STORAGE"
-
     val permissions = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,

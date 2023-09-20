@@ -7,6 +7,7 @@ import android.widget.AdapterView.OnItemLongClickListener
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityDocListBinding
+import com.tqs.filemanager.ads.AdsManager
 import com.tqs.filemanager.model.DocumentEntity
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.ui.adapter.DocAdapter
@@ -71,7 +72,9 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
             }
         }
         binding.vFileDelete.setOnClickListener {
-            showDeleteDialog()
+            AdsManager.adsInsertResultClean.showFullScreenAds(this@DocListActivity) {
+                showDeleteDialog()
+            }
         }
     }
 

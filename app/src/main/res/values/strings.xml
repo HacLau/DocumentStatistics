@@ -30,4 +30,6 @@
     <string name="tx_warning_content">are you sure?</string>
     <string name="tx_warning_sure">sure</string>
     <string name="tx_warning_cancel">cancel</string>
+
+    <string name="tx_native_install">Install</string>
 </resources>

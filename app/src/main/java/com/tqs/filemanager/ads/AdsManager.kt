@@ -16,22 +16,22 @@ import com.tqs.document.statistics.BuildConfig
 
 object AdsManager {
     const val TAG = "AdsManager"
-    private var showMax = 0
-    private var clickMax = 0
+    var showAdsCount = 0
+    var clickAdsCount = 0
     private var adsEntity: AdsEntity? = null
-    var adsOpen = AdsHelper(AdsType.ADSOPEN)
-    var adsInsertResultScan = AdsHelper(AdsType.ADSINSERTRESULTSCAN)
-    var adsInsertResultClean = AdsHelper(AdsType.ADSINSERTRESULTCLEAN)
-    var adsNativeMain = AdsHelper(AdsType.ADSNATIVEMAIN)
-    var adsNativeResultScan = AdsHelper(AdsType.ADSNATIVERESULTSCAN)
-    var adsNativeResultClean = AdsHelper(AdsType.ADSNATIVERESULTCLEAN)
+    var adsFullScreen = AdsHelper(AdsItemType.ADSFULLSCREEN)
+    var adsInsertResultScan = AdsHelper(AdsItemType.ADSINSERTRESULTSCAN)
+    var adsInsertResultClean = AdsHelper(AdsItemType.ADSINSERTRESULTCLEAN)
+    var adsNativeMain = AdsHelper(AdsItemType.ADSNATIVEMAIN)
+    var adsNativeResultScan = AdsHelper(AdsItemType.ADSNATIVERESULTSCAN)
+    var adsNativeResultClean = AdsHelper(AdsItemType.ADSNATIVERESULTCLEAN)
 
     fun initAdsConfig(adsJson: String) {
         Log.e(TAG, adsJson)
         adsEntity = Gson().fromJson(adsJson, AdsEntity::class.java)
-        showMax = adsEntity?.showMax ?: 0
-        clickMax = adsEntity?.clickMax ?: 0
-        adsOpen.initializeSource(adsEntity?.adsOpen)
+        showAdsCount = adsEntity?.showMax ?: 0
+        clickAdsCount = adsEntity?.clickMax ?: 0
+        adsFullScreen.initializeSource(adsEntity?.adsOpen)
         adsInsertResultScan.initializeSource(adsEntity?.adsInsertResultScan)
         adsInsertResultClean.initializeSource(adsEntity?.adsInsertResultClean)
         adsNativeMain.initializeSource(adsEntity?.adsNativeMain)

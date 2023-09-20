@@ -1,6 +1,8 @@
 package com.tqs.filemanager.ads
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class AdsEntity(
     @SerializedName("ujn")
@@ -22,7 +24,7 @@ data class AdsEntity(
 )
 
 data class AdsItem(
-    @SerializedName("pool")
+    @SerializedName("popl")
     var adsId: String,
     @SerializedName("gbne")
     var adsPlatform: String,
@@ -33,3 +35,9 @@ data class AdsItem(
     @SerializedName("buy")
     var adsWeight: Int
 )
+
+@Parcelize
+data class AdsCount(
+    var time: Long = System.currentTimeMillis(),
+    var count: Int = 1
+):Parcelable

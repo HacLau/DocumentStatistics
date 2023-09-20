@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityImageListBinding
+import com.tqs.filemanager.ads.AdsManager
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.ui.adapter.ImageVideoListAdapter
 import com.tqs.filemanager.ui.base.BaseActivity
@@ -106,7 +107,9 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
             getImageViewShowList()
         }
         binding.vImageDelete.setOnClickListener {
-            showDeleteDialog()
+            AdsManager.adsInsertResultClean.showFullScreenAds(this@ImageListActivity) {
+                showDeleteDialog()
+            }
         }
         setImageListAdapter()
     }

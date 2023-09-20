@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivityImagePreviewBinding
+import com.tqs.filemanager.ads.AdsManager
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.ui.adapter.PreviewAdapter
 import com.tqs.filemanager.ui.base.BaseActivity
@@ -82,13 +83,19 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
 
         })
         binding.ivWarningImage.setOnClickListener {
-            setPopupWindow()
+            AdsManager.adsFullScreen.showFullScreenAds(this@PreviewActivity) {
+                setPopupWindow()
+            }
         }
         binding.ivDeleteImage.setOnClickListener {
-            setDialogConfirmAndCancel()
+            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
+                setDialogConfirmAndCancel()
+            }
         }
         binding.ivShareImage.setOnClickListener {
-            setSharedFile()
+            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
+                setSharedFile()
+            }
         }
     }
 

@@ -1,19 +1,30 @@
 package com.tqs.filemanager.ui.base
 
+import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import com.tqs.document.statistics.R
+import com.tqs.filemanager.vm.utils.Common
+import com.tqs.filemanager.vm.utils.RepositoryUtils
+import com.tqs.filemanager.vm.utils.logE
 
 
 abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActivity() {
@@ -21,8 +32,27 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
     abstract val TAG: String
-    var REQUEST_CODE_PERMISSION = 0x00099
+    private val currentNotAllowPermissions : MutableList<String> = Common.permissions.toMutableList()
+    private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
+        currentNotAllowPermissions.clear()
+        for ((key,value) in result){
+            if (!value){
+                currentNotAllowPermissions.add(key)
+            }
+        }
+        if (currentNotAllowPermissions.isEmpty()) {
+            RepositoryUtils.requestPermission = true
+            judgePermission()
+        }
+    }
 
+    private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        @RequiresApi(Build.VERSION_CODES.R)
+        if (Environment.isExternalStorageManager()) {
+            RepositoryUtils.requestCodeManager = true
+            judgePermission()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutId)
@@ -51,77 +81,21 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
         window.statusBarColor = Color.TRANSPARENT
     }
 
-    open fun requestPermission(
-        permissions: Array<String>,
-        requestCode: Int
-    ) {
-        REQUEST_CODE_PERMISSION = requestCode
-        if (checkPermissions(permissions)) {
-            permissionSuccess(REQUEST_CODE_PERMISSION)
-        } else {
-            try {
-                val needPermissions =
-                    getDeniedPermissions(permissions)
-                ActivityCompat.requestPermissions(
-                    this,
-                    needPermissions.toTypedArray(),
-                    REQUEST_CODE_PERMISSION
-                )
-            } catch (e: Exception) {
-                Log.e("BaseActivity", "Exception = $e")
-            }
+    fun judgePermission(): Boolean {
+        if (!RepositoryUtils.requestPermission) {
+            requestPermission.launch(currentNotAllowPermissions.toTypedArray())
+            return false
         }
-    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && (!Environment.isExternalStorageManager() || !RepositoryUtils.requestCodeManager)) {
+            startActivity.launch(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                data = Uri.parse("package:${packageName}")
+            })
 
-    fun checkPermissions(permissions: Array<String>): Boolean {
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
+            return false
         }
+        onPermissionSuccess()
         return true
     }
 
-    fun getDeniedPermissions(permissions: Array<String>): List<String> {
-        val needRequestPermissionList: MutableList<String> =
-            ArrayList()
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) !=
-                PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
-            ) {
-                needRequestPermissionList.add(permission)
-            }
-        }
-        return needRequestPermissionList
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSION) {
-            if (verifyPermissions(grantResults)) {
-                permissionSuccess(REQUEST_CODE_PERMISSION)
-            } else {
-                permissionFail(REQUEST_CODE_PERMISSION)
-            }
-        }
-    }
-    fun verifyPermissions(grantResults: IntArray): Boolean {
-        for (grantResult in grantResults) {
-            if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
-        }
-        return true
-    }
-
-    open fun permissionSuccess(requestCode: Int) {
-    }
-    open fun permissionFail(requestCode: Int) {
-    }
-
+    open fun onPermissionSuccess() {}
 }

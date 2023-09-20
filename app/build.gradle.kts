@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -71,4 +72,6 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-ads:22.4.0")
     implementation ("com.google.android.ump:user-messaging-platform:2.1.0")
+    implementation("com.tencent:mmkv:1.2.14")
+    implementation("com.blankj:utilcodex:1.31.0")
 }

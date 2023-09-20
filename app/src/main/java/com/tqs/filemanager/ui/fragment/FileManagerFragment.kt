@@ -19,11 +19,14 @@ import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.FragmentFileManagerBinding
 import com.tqs.filemanager.ui.activity.DocListActivity
 import com.tqs.filemanager.ui.activity.ImageListActivity
+import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.FileManagerVM
 import com.tqs.filemanager.vm.utils.Common
 import com.tqs.filemanager.vm.utils.DateUtils
+import com.tqs.filemanager.vm.utils.RepositoryUtils
 import com.tqs.filemanager.vm.utils.SharedUtils
+import com.tqs.filemanager.vm.utils.toast
 
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
     View.OnClickListener {
@@ -60,13 +63,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun getHadPermission() {
-        if (SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean
-            && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || SharedUtils.getValue(
-                requireContext(),
-                Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE,
-                false
-            ) as Boolean)
-        ) {
+        if (RepositoryUtils.requestPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || RepositoryUtils.requestCodeManager)) {
             viewModel.hadPermission.value = true
         }
     }
@@ -149,7 +146,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     override fun onClick(v: View?) {
-        if (!judgePermission()) {
+        if (!(requireActivity() as BaseActivity<*,*>).judgePermission()) {
             return
         }
         when (v?.id) {
@@ -203,51 +200,5 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
             putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
         })
-    }
-
-    override fun permissionSuccess(requestCode: Int) {
-        super.permissionSuccess(requestCode)
-        if (requestCode == REQUEST_CODE_PERMISSION) {
-            SharedUtils.putValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, true)
-            judgePermission()
-        }
-    }
-
-    override fun permissionFail(requestCode: Int) {
-        super.permissionFail(requestCode)
-        Toast.makeText(
-            requireContext(),
-            "Please allow us access to your directories and files, including photos, videos, and audio files.",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.e("FileManager", "$resultCode")
-        when (requestCode) {
-            REQUEST_CODE_MANAGE_EXTERNAL_STORAGE -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
-                    SharedUtils.putValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, true)
-                    judgePermission()
-                }
-            }
-        }
-    }
-
-    private fun judgePermission(): Boolean {
-        if (!(SharedUtils.getValue(requireContext(), Common.EXTERNAL_STORAGE_PERMISSION, false) as Boolean)) {
-            requestPermission(Common.permissions, REQUEST_CODE_PERMISSION)
-            return false
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()
-            && !(SharedUtils.getValue(requireContext(), Common.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE, false) as Boolean)
-        ) {
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            intent.data = Uri.parse("package:${requireActivity().packageName}")
-            startActivityForResult(intent, REQUEST_CODE_MANAGE_EXTERNAL_STORAGE)
-            return false
-        }
-        return true
     }
 }

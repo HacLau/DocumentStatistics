@@ -2,6 +2,7 @@ package com.tqs.filemanager.vm.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Parcelable
 
 object SharedUtils {
     private val FILE_NAME = "file_manager"

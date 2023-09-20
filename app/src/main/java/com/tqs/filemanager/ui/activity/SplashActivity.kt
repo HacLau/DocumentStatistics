@@ -2,9 +2,11 @@ package com.tqs.filemanager.ui.activity
 
 import android.content.Intent
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.ActivitySplashBinding
+import com.tqs.filemanager.ads.AdsHelper
 import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.vm.activity.SplashVM
 import com.tqs.filemanager.ads.AdsManager
@@ -29,7 +31,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
     }
 
     private fun initAdsData() {
-        AdsManager.adsOpen.preLoad(this)
+        AdsManager.adsFullScreen.preLoad(this)
         AdsManager.adsNativeMain.preLoad(this)
         AdsManager.adsInsertResultClean.preLoad(this)
         AdsManager.adsInsertResultScan.preLoad(this)
@@ -48,7 +50,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
                 override fun onFinish() {
                     secondsRemaining = 0
                     binding.splashProgressBar.progress = 100
-                    startMainActivity()
+                    AdsManager.adsFullScreen.showFullScreenAds(this@SplashActivity){
+                        Log.e(TAG,"ads onDismiss")
+                        startMainActivity()
+                    }
                 }
             }
         countDownTimer.start()

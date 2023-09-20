@@ -6,14 +6,16 @@ import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
 
 abstract class BaseAds(
-    private val adsType: AdsType,
+    private val adsType: AdsItemType,
     val adsItem: AdsItem,
     var adsLoadTime: Long = System.currentTimeMillis()
 ) {
-    abstract fun load(onAdLoaded: () -> Unit = {}, onAdLoadFailed: (msg: String?) -> Unit = {})
-    abstract fun show(activity: Activity, nativeParent: ViewGroup? = null, onAdDismissed: () -> Unit = {})
+    abstract fun load(onAdsLoaded: () -> Unit = {}, onAdsLoadFailed: (msg: String?) -> Unit = {})
+    abstract fun show(activity: Activity, nativeParent: ViewGroup? = null, onAdsDismissed: () -> Unit = {})
 
     fun onAdsPaid(adsValue:AdValue, item:AdsItem, responseInfo:ResponseInfo?){
 
     }
+
+    open fun destroyNative(){}
 }
