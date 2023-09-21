@@ -25,6 +25,7 @@
     <string name="tx_select_all">select all</string>
     <string name="tx_order">order</string>
     <string name="tx_delete">Delete</string>
+    <string name="tx_ok">OK</string>
 
     <string name="tx_warning_title">warning</string>
     <string name="tx_warning_content">are you sure?</string>
@@ -32,4 +33,7 @@
     <string name="tx_warning_cancel">cancel</string>
 
     <string name="tx_native_install">Install</string>
+    <string name="tx_scanner_native_install">install</string>
+    <string name="tx_scanner_native_title">High School Escape 2</string>
+    <string name="tx_scanner_native_des">Press the spacebar andsdfjhiwelfbjhsdbfuwefbjhb</string>
 </resources>

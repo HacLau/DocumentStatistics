@@ -19,6 +19,7 @@ import com.tqs.document.statistics.R
 import com.tqs.document.statistics.databinding.FragmentFileManagerBinding
 import com.tqs.filemanager.ui.activity.DocListActivity
 import com.tqs.filemanager.ui.activity.ImageListActivity
+import com.tqs.filemanager.ui.activity.ScannerActivity
 import com.tqs.filemanager.ui.base.BaseActivity
 import com.tqs.filemanager.ui.base.BaseFragment
 import com.tqs.filemanager.vm.fragment.FileManagerVM
@@ -151,54 +152,30 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         }
         when (v?.id) {
             R.id.cl_file_manager_image -> {
-                jumpImageListActivity()
+                jumpScannerActivity(Common.IMAGE_LIST)
             }
 
             R.id.cl_file_manager_documents -> {
-                jumpDocumentsListActivity()
+                jumpScannerActivity(Common.DOCUMENTS_LIST)
             }
 
             R.id.cl_file_manager_audio -> {
-                jumpAudioListActivity()
+                jumpScannerActivity(Common.AUDIO_LIST)
             }
 
             R.id.cl_file_manager_video -> {
-                jumpVideoListActivity()
+                jumpScannerActivity(Common.VIDEO_LIST)
             }
 
             R.id.cl_file_manager_download -> {
-                jumpDownloadListActivity()
+                jumpScannerActivity(Common.DOWNLOAD_LIST)
             }
         }
     }
 
-    private fun jumpImageListActivity() {
-        startActivityForResult.launch(Intent(requireActivity(), ImageListActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, Common.IMAGE_LIST)
-        })
-    }
-
-    private fun jumpDocumentsListActivity() {
-        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, Common.DOCUMENTS_LIST)
-        })
-    }
-
-    private fun jumpAudioListActivity() {
-        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, Common.AUDIO_LIST)
-        })
-    }
-
-    private fun jumpVideoListActivity() {
-        startActivityForResult.launch(Intent(requireActivity(), ImageListActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, Common.VIDEO_LIST)
-        })
-    }
-
-    private fun jumpDownloadListActivity() {
-        startActivityForResult.launch(Intent(requireActivity(), DocListActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, Common.DOWNLOAD_LIST)
+    private fun jumpScannerActivity(fromPage : String){
+        startActivityForResult.launch(Intent(requireActivity(), ScannerActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, fromPage)
         })
     }
 }

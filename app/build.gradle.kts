@@ -74,4 +74,5 @@ dependencies {
     implementation ("com.google.android.ump:user-messaging-platform:2.1.0")
     implementation("com.tencent:mmkv:1.2.14")
     implementation("com.blankj:utilcodex:1.31.0")
+    implementation("com.airbnb.android:lottie:3.4.4")
 }

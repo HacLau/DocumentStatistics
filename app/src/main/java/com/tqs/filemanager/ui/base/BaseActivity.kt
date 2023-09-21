@@ -22,6 +22,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import com.tqs.document.statistics.R
+import com.tqs.filemanager.ui.activity.DocListActivity
+import com.tqs.filemanager.ui.activity.ImageListActivity
+import com.tqs.filemanager.ui.activity.Not404Activity
+import com.tqs.filemanager.ui.activity.ScannerResultActivity
 import com.tqs.filemanager.vm.utils.Common
 import com.tqs.filemanager.vm.utils.RepositoryUtils
 import com.tqs.filemanager.vm.utils.logE
@@ -45,6 +49,10 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
             judgePermission()
         }
     }
+    private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        setResult(it.resultCode )
+    }
+
 
     private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         @RequiresApi(Build.VERSION_CODES.R)
@@ -98,4 +106,23 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     }
 
     open fun onPermissionSuccess() {}
+
+    fun jumpScannerResultActivity(fromPage : String){
+        startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, fromPage)
+        })
+        finish()
+    }
+    
+    fun jumpMediaListActivity(fromPage:String){
+        val intent = when(fromPage){
+            Common.IMAGE_LIST,Common.VIDEO_LIST-> Intent(this, ImageListActivity::class.java)
+            Common.DOCUMENTS_LIST,Common.DOWNLOAD_LIST,Common.AUDIO_LIST-> Intent(this, DocListActivity::class.java)
+            else-> Intent(this, Not404Activity::class.java)
+        }
+        startActivityForResult.launch(intent.apply {
+            putExtra(Common.PAGE_TYPE, fromPage)
+        })
+        finish()
+    }
 }

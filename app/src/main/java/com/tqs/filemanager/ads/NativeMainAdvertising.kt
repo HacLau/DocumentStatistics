@@ -2,13 +2,19 @@ package com.tqs.filemanager.ads
 
 import android.app.Activity
 import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.tqs.document.statistics.R
+import com.tqs.document.statistics.databinding.LayoutAdvertisingNativeBinding
 
 class NativeMainAdvertising(
     private val context: Context,
@@ -38,7 +44,16 @@ class NativeMainAdvertising(
     }
 
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdDismissed: () -> Unit) {
-
+        val binding: LayoutAdvertisingNativeBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native,nativeParent,false)
+        binding.nativeAdBg.mediaContent = nativeAd?.mediaContent
+        binding.nativeAppIcon.setImageDrawable(nativeAd?.icon?.drawable)
+        binding.nativeAppTitle.text = nativeAd?.headline
+        binding.nativeAppDes.text = nativeAd?.body
+        binding.nativeAppInstall.text = nativeAd?.callToAction
+        nativeParent?.isVisible = true
+        nativeParent?.removeAllViews()
+        nativeParent?.addView(binding.root)
+        AdsTimesManager.addShowCount()
     }
 
     override fun destroyNative() {

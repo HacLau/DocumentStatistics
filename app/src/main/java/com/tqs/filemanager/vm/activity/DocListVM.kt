@@ -10,6 +10,12 @@ import com.tqs.filemanager.vm.utils.FileUtils
 class DocListVM : BaseVM() {
     var dataList = MutableLiveData<ArrayList<FileEntity>>()
     var listSelectCount = MutableLiveData<Int>(0)
+    fun getImageList(context: Context) {
+        dataList.value = FileUtils.getImgListOrderDescByDate(context)
+    }
+    fun getVideoList(context: Context) {
+        dataList.value = FileUtils.getVideoListOrderDescByDate(context)
+    }
     fun getAudioList(context: Context) {
         dataList.value = FileUtils.getAudioList(context)
     }
