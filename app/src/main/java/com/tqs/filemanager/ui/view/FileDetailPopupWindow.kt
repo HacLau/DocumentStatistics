@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import com.tqs.document.statistics.R
+import com.tqs.document.statistics.databinding.PopupwindowFileDetailBinding
 import com.tqs.filemanager.model.FileEntity
 import com.tqs.filemanager.vm.utils.DateUtils
 import com.tqs.filemanager.vm.utils.FileUtils
@@ -21,10 +23,9 @@ class FileDetailPopupWindow(private val context: Context) : PopupWindow() {
 
     init {
         height = ViewGroup.LayoutParams.WRAP_CONTENT
-        width = ViewGroup.LayoutParams.WRAP_CONTENT
+        width = ViewGroup.LayoutParams.MATCH_PARENT
         isOutsideTouchable = true
         isFocusable = true
-        setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         contentView =
             LayoutInflater.from(context).inflate(R.layout.popupwindow_file_detail, null, false)
         fileName = contentView.findViewById<TextView>(R.id.tv_file_name)

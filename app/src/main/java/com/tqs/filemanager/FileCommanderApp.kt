@@ -3,6 +3,7 @@ package com.tqs.filemanager
 import android.app.Application
 import com.tencent.mmkv.MMKV
 import com.tqs.filemanager.ads.AdsManager
+import com.tqs.filemanager.ads.initReferrer
 import com.tqs.filemanager.vm.utils.*
 
 class FileCommanderApp : Application() {
@@ -11,5 +12,7 @@ class FileCommanderApp : Application() {
         val adsJson = getJsonFromAssets(this, "ads.json")
         AdsManager.initAdsConfig(adsJson)
         MMKV.initialize(this)
+        initReferrer(this)
+        application = this
     }
 }

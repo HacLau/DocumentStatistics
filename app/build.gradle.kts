@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+//    id("com.google.gms.google-services")
 }
 
 android {
@@ -69,10 +70,20 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
+    // admob of google
     implementation ("com.google.android.gms:play-services-ads:22.4.0")
     implementation ("com.google.android.ump:user-messaging-platform:2.1.0")
+    // mmkv of tecent
     implementation("com.tencent:mmkv:1.2.14")
     implementation("com.blankj:utilcodex:1.31.0")
+    // lottie anim
     implementation("com.airbnb.android:lottie:3.4.4")
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation ("com.google.firebase:firebase-crashlytics-ktx")
+    implementation ("com.google.firebase:firebase-analytics-ktx")
+    implementation ("com.google.firebase:firebase-config-ktx")
+    // reffer
+    implementation ("com.android.installreferrer:installreferrer:2.2")
+
 }

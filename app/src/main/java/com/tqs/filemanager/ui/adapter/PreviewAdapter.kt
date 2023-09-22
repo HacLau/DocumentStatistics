@@ -21,7 +21,7 @@ import java.io.File
 class PreviewAdapter(
     private val context: Context,
     private var data: MutableList<FileEntity>?,
-    private var playVideo: (surfaceView: SurfaceView, position: Int) -> Unit
+    private var playVideo: (position: Int) -> Unit
 ) :
     PagerAdapter(), SurfaceHolder.Callback {
     private var mMediaPlayer: MediaPlayer? = null
@@ -53,8 +53,11 @@ class PreviewAdapter(
             currentPosition = position
             setPlayMedia()
 
-            playVideo(binding.svPlayVideo, position)
+//            playVideo.invoke(binding.svPlayVideo, position)
+        }
 
+        binding.rlPreview.setOnClickListener {
+            playVideo.invoke(position)
         }
 
         container.addView(binding.root)
@@ -125,7 +128,6 @@ class PreviewAdapter(
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        Log.e("destroyItem", "destroyItem $position")
         container.removeView(`object` as View)
     }
 

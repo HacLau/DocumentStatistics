@@ -30,19 +30,16 @@ class FullScreenAdvertising(
         }
     }
 
-    override fun show(activity: Activity, nativeParent: ViewGroup?, onAdDismissed: () -> Unit) {
+    override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
         fun onAdsClose() {
-            "AdsOpen show onAdsClose".logE()
-            onAdDismissed.invoke()
+            onAdsDismissed.invoke()
         }
 
         fun onAdsShowedSuccess() {
-            "AdsOpen show onAdsShowedSuccess".logE()
-            AdsTimesManager.addShowCount()
+            AdsManager.addShowCount()
         }
 
         fun onAdsFailedToShow(msg: String?) {
-            "AdsOpen show onAdsFailedToShow".logE()
             onAdsClose()
         }
 
@@ -57,7 +54,6 @@ class FullScreenAdvertising(
         fun showAdsFullScreen() {
             when (val ads = ad) {
                 is InterstitialAd -> {
-                    "AdsOpen show showAdsFullScreen InterstitialAd".logE()
                     ads.run {
                         fullScreenContentCallback = callback
                         show(activity)
@@ -65,56 +61,47 @@ class FullScreenAdvertising(
                 }
 
                 is AppOpenAd -> {
-                    "AdsOpen show showAdsFullScreen AppOpenAd".logE()
                     ads.run {
                         fullScreenContentCallback = callback
                         show(activity)
                     }
                 }
 
-                else -> onAdDismissed.invoke()
+                else -> onAdsDismissed.invoke()
             }
         }
         showAdsFullScreen()
     }
 
     private fun loadOpenAdvertising(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
-        "AdsOpen load open advertising".logE()
         AppOpenAd.load(context, item.adsId, adsRequest, AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, object : AppOpenAd.AppOpenAdLoadCallback() {
             override fun onAdLoaded(appOpenAd: AppOpenAd) {
-                "AdsOpen load open advertising  onAdLoaded".logE()
                 ad = appOpenAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()
                 appOpenAd.setOnPaidEventListener {
-                    "AdsOpen load open advertising  onAdLoaded setOnPaidEventListener".logE()
                     onAdsPaid(it, item, appOpenAd.responseInfo)
                 }
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                "AdsOpen load open advertising  onAdFailedToLoad".logE()
                 onAdsLoadFailed.invoke(loadAdError.message)
             }
         })
     }
 
     private fun loadInterstitial(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
-        "AdsOpen load Interstitial advertising".logE()
         InterstitialAd.load(context, item.adsId, adsRequest, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                "AdsOpen load Interstitial advertising onAdLoaded".logE()
                 ad = interstitialAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()
                 interstitialAd.setOnPaidEventListener {
-                    "AdsOpen load Interstitial advertising setOnPaidEventListener".logE()
                     onAdsPaid(it, item, interstitialAd.responseInfo)
                 }
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                "AdsOpen load Interstitial advertising onAdFailedToLoad".logE()
                 onAdsLoadFailed.invoke(loadAdError.message)
             }
         })

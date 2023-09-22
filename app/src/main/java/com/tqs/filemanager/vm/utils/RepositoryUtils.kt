@@ -7,4 +7,5 @@ object RepositoryUtils:MMKVOwner(mapId = "fileCommander") {
     var requestCodeManager by mmkvBoolean(default = false)
     var showAdsData by mmkvParcelable<AdsCount>()
     var clickAdsData by mmkvParcelable<AdsCount>()
+    var installReferrer by mmkvString(default = "")
 }

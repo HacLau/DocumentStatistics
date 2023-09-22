@@ -56,7 +56,6 @@ class ImageListVM : BaseVM() {
                 count++
             }
         }
-        Log.e("", "count = $count")
         return count
     }
 

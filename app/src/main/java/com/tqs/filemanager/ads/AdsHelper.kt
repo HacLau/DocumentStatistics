@@ -43,7 +43,7 @@ class AdsHelper(private val adsType: AdsItemType) {
     fun preLoad(context: Context) {
         CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, throwable -> Log.e(TAG, "${throwable.message}") }).launch {
             if (source.isEmpty()) return@launch
-            if (AdsTimesManager.isOverLimit()) return@launch
+            if (AdsManager.isOverLimit()) return@launch
             if (isCacheNotEmpty && isCacheOverTime().not()) return@launch
             if (isAdsLoading) return@launch
             "AdsHelper preload".logE()

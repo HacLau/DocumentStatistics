@@ -52,11 +52,11 @@ object FileUtils {
                 "${format.format(number)}B"
             }
 
-            in 1024..1024 * 1024 -> {
+            in 1024..<1024 * 1024 -> {
                 "${format.format(number / 1024.0)}KB"
             }
 
-            in 1024 * 1024..1024 * 1024 * 1024 -> {
+            in 1024 * 1024..<1024 * 1024 * 1024 -> {
                 "${format.format(number / 1024.0 / 1024.0)}MB"
             }
 
@@ -257,7 +257,6 @@ object FileUtils {
         } finally {
             mCursor?.close()
         }
-        Log.e("fileUtils", "fileEntities.size = ${fileEntities.size}")
         return fileEntities as ArrayList<FileEntity>
     }
 

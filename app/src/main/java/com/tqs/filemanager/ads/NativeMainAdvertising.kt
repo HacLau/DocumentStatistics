@@ -3,7 +3,6 @@ package com.tqs.filemanager.ads
 import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -23,19 +22,19 @@ class NativeMainAdvertising(
 ) : BaseAds(adsType, item) {
     private var nativeAd: NativeAd? = null
     private val adRequest: AdRequest get() = AdRequest.Builder().build()
-    override fun load(onAdLoaded: () -> Unit, onAdLoadFailed: (msg: String?) -> Unit) {
+    override fun load(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         AdLoader.Builder(context, item.adsId).apply {
             forNativeAd {
                 nativeAd = it
                 adsLoadTime = System.currentTimeMillis()
-                onAdLoaded.invoke()
+                onAdsLoaded.invoke()
                 it.setOnPaidEventListener { value ->
                     onAdsPaid(value, item, it.responseInfo)
                 }
             }
             withAdListener(object :AdListener(){
-                override fun onAdClicked() = AdsTimesManager.addClickCount()
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) = onAdLoadFailed.invoke(loadAdError.message)
+                override fun onAdClicked() = AdsManager.addClickCount()
+                override fun onAdFailedToLoad(loadAdError: LoadAdError) = onAdsLoadFailed.invoke(loadAdError.message)
             })
             withNativeAdOptions(NativeAdOptions.Builder().apply {
                 setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
@@ -43,7 +42,7 @@ class NativeMainAdvertising(
         }.build().loadAd(adRequest)
     }
 
-    override fun show(activity: Activity, nativeParent: ViewGroup?, onAdDismissed: () -> Unit) {
+    override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
         val binding: LayoutAdvertisingNativeBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native,nativeParent,false)
         binding.nativeAdBg.mediaContent = nativeAd?.mediaContent
         binding.nativeAppIcon.setImageDrawable(nativeAd?.icon?.drawable)
@@ -53,7 +52,7 @@ class NativeMainAdvertising(
         nativeParent?.isVisible = true
         nativeParent?.removeAllViews()
         nativeParent?.addView(binding.root)
-        AdsTimesManager.addShowCount()
+        AdsManager.addShowCount()
     }
 
     override fun destroyNative() {

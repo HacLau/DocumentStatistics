@@ -103,7 +103,6 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
             file.path?.let {
                 val dir = it.substring(0, it.lastIndexOf("/"))
                 hashSet.add(dir)
-                Log.e(TAG, dir)
             }
         }
         binding.tvFileDescription.text =

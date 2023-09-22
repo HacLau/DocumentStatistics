@@ -12,10 +12,8 @@ class AdsPreloader(
 ) {
     fun startPreload() {
         if (source.isEmpty()) {
-            "AdsPreloader startPreload true".logE()
             onLoad.invoke(false)
         } else {
-            "AdsPreloader startPreload false".logE()
             preloadAdsByIndex(0)
         }
     }
@@ -23,7 +21,6 @@ class AdsPreloader(
     private fun preloadAdsByIndex(index: Int) {
         val item = source.getOrNull(index)
         if (null == item) {
-            "AdsPreloader startPreload null == item".logE()
             onLoad.invoke(false)
             return
         }
@@ -33,7 +30,6 @@ class AdsPreloader(
             else -> null
         }
         if (null == baseAds){
-            "AdsPreloader startPreload null == baseAds".logE()
             onLoad.invoke(false)
             return
         }

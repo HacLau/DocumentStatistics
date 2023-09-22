@@ -5,8 +5,10 @@ import android.content.Intent.createChooser
 import android.os.Build
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.gson.Gson
@@ -53,11 +55,13 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
             intent.getStringExtra("previewFileList"),
             object : TypeToken<ArrayList<FileEntity>>() {}.type
         ) as MutableList<FileEntity>
-        Log.e(TAG, "currentIndex = $currentIndex list = ${previewMediaList?.size}")
         mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         setTitleText()
-        mPreviewAdapter = PreviewAdapter(this, previewMediaList) { surfaceView, position ->
-
+        mPreviewAdapter = PreviewAdapter(this, previewMediaList) {position ->
+            if (binding.clMenu.isVisible)
+                binding.clMenu.visibility = View.GONE
+            else
+                binding.clMenu.visibility = View.VISIBLE
         }
         binding.vpShowMedia.adapter = mPreviewAdapter
         binding.vpShowMedia.offscreenPageLimit = 0
@@ -67,8 +71,7 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
                 position: Int,
                 positionOffset: Float,
                 positionOffsetPixels: Int
-            ) {
-            }
+            ) {}
 
             override fun onPageSelected(position: Int) {
                 currentIndex = position
@@ -76,26 +79,28 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
                     stopPlayer()
                 }
                 setTitleText()
+                binding.clMenu.visibility = View.GONE
             }
 
             override fun onPageScrollStateChanged(state: Int) {
+
             }
 
         })
         binding.ivWarningImage.setOnClickListener {
-            AdsManager.adsFullScreen.showFullScreenAds(this@PreviewActivity) {
+//            AdsManager.adsFullScreen.showFullScreenAds(this@PreviewActivity) {
                 setPopupWindow()
-            }
+//            }
         }
         binding.ivDeleteImage.setOnClickListener {
-            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
+//            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
                 setDialogConfirmAndCancel()
-            }
+//            }
         }
         binding.ivShareImage.setOnClickListener {
-            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
+//            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
                 setSharedFile()
-            }
+//            }
         }
     }
 

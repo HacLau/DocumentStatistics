@@ -1,7 +1,9 @@
 package com.tqs.filemanager.vm.utils
 
 import android.Manifest
+import com.tqs.filemanager.FileCommanderApp
 
+lateinit var application:FileCommanderApp
 object Common {
     const val EMAIL: String = ""
     const val PAGE_TYPE = "pageType"

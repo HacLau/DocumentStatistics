@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.ViewGroup
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
+import com.google.firebase.analytics.FirebaseAnalytics
 
 abstract class BaseAds(
     private val adsType: AdsItemType,
@@ -13,9 +14,23 @@ abstract class BaseAds(
     abstract fun load(onAdsLoaded: () -> Unit = {}, onAdsLoadFailed: (msg: String?) -> Unit = {})
     abstract fun show(activity: Activity, nativeParent: ViewGroup? = null, onAdsDismissed: () -> Unit = {})
 
-    fun onAdsPaid(adsValue:AdValue, item:AdsItem, responseInfo:ResponseInfo?){
+    //paid data to firebase
+    fun onAdsPaid(adsValue: AdValue, item: AdsItem, responseInfo: ResponseInfo?) {
+        // data update to firebase
+        runCatching {
+            logEvent(
+                "ad_impression_revenue",
+                mutableMapOf(
+                    FirebaseAnalytics.Param.VALUE to adsValue.valueMicros / 1000000.toDouble(),
+                    FirebaseAnalytics.Param.CURRENCY to "USD",
+                    "precisionType" to adsValue.precisionType,
+                    "adNetwork" to responseInfo?.mediationAdapterClassName
+                )
+            )
+        }
 
+        // todo data update to operate platform ad_impression
     }
 
-    open fun destroyNative(){}
+    open fun destroyNative() {}
 }
