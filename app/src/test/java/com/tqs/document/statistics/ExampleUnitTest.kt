@@ -1,4 +1,4 @@
-package com.tqs.document.statistics
+package com.tqs.filecommander
 
 import org.junit.Test
 

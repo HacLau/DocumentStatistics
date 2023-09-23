@@ -5,14 +5,23 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
 //    id("com.google.gms.google-services")
+    id("stringfog")
+}
+apply(plugin = "stringfog")
+configure<com.github.megatronking.stringfog.plugin.StringFogExtension> {
+    implementation = "com.github.megatronking.stringfog.xor.StringFogImpl"
+    enable = true
+    fogPackages = arrayOf("com.tqs.filecommander")
+    kg = com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator()
+    mode = com.github.megatronking.stringfog.plugin.StringFogMode.bytes
 }
 
 android {
-    namespace = "com.tqs.document.statistics"
+    namespace = "com.tqs.filecommander"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.tqs.document.statistics"
+        applicationId = "com.tqs.filecommander"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
@@ -23,13 +32,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
-            buildConfigField("String","AD_UNIT_ID","")
+            buildConfigField("String","AD_UNIT_ID","\"ca-app-pub-3940256099942544~3347511713\"")
         }
         debug {
             buildConfigField("String","AD_UNIT_ID","\"ca-app-pub-3940256099942544~3347511713\"")
@@ -85,5 +94,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-config-ktx")
     // reffer
     implementation ("com.android.installreferrer:installreferrer:2.2")
+    // StringFog
+    implementation("com.github.megatronking.stringfog:xor:5.0.0")
 
 }

@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="24dp"
-    tools:context="com.tqs.filemanager.ui.activity.MainActivity">
+    tools:context="com.tqs.filecommander.ui.activity.MainActivity">
 
-    <com.tqs.filemanager.ui.view.TitleBar
+    <com.tqs.filecommander.ui.view.TitleBar
         android:id="@+id/title_bar_main"
         android:layout_width="match_parent"
         android:layout_height="56dp"

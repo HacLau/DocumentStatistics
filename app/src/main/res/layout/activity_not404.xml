@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.tqs.filemanager.ui.activity.Not404Activity"
+        tools:context="com.tqs.filecommander.ui.activity.Not404Activity"
         android:background="@drawable/bg_splash">
         <ImageView
             android:id="@+id/not_back"

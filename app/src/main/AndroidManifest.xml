@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.tqs.filemanager.FileCommanderApp"
+        android:name="com.tqs.filecommander.FileCommanderApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,13 +21,13 @@
         android:theme="@style/Theme.FileManager"
         tools:targetApi="31">
         <activity
-            android:name="com.tqs.filemanager.ui.activity.Not404Activity"
+            android:name="com.tqs.filecommander.ui.activity.Not404Activity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.ScannerActivity"
+            android:name="com.tqs.filecommander.ui.activity.ScannerActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.ScannerResultActivity"
+            android:name="com.tqs.filecommander.ui.activity.ScannerResultActivity"
             android:exported="false" />
 
         <meta-data
@@ -35,16 +35,16 @@
             android:value="ca-app-pub-3940256099942544~3347511713" />
 
         <activity
-            android:name="com.tqs.filemanager.ui.activity.DocListActivity"
+            android:name="com.tqs.filecommander.ui.activity.DocListActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.PreviewActivity"
+            android:name="com.tqs.filecommander.ui.activity.PreviewActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.ImageListActivity"
+            android:name="com.tqs.filecommander.ui.activity.ImageListActivity"
             android:exported="false" />
         <activity
-            android:name="com.tqs.filemanager.ui.activity.SplashActivity"
+            android:name="com.tqs.filecommander.ui.activity.SplashActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name">
@@ -55,14 +55,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.tqs.filemanager.ui.activity.MainActivity"
+            android:name="com.tqs.filecommander.ui.activity.MainActivity"
             android:configChanges="orientation|uiMode"
             android:exported="false"
             android:launchMode="singleTask" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.tqs.document.statistics.fileprovider"
+            android:authorities="com.tqs.filecommander.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

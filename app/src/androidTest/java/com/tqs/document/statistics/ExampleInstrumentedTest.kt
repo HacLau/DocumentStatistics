@@ -1,4 +1,4 @@
-package com.tqs.document.statistics
+package com.tqs.filecommander
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.tqs.document.statistics", appContext.packageName)
+        assertEquals("com.tqs.filecommander", appContext.packageName)
     }
 }

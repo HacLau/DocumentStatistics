@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.tqs.filemanager.ui.activity.SplashActivity">
+    tools:context="com.tqs.filecommander.ui.activity.SplashActivity">
 
     <data>
 
         <variable
             name="viewModel"
-            type="com.tqs.filemanager.vm.activity.SplashVM" />
+            type="com.tqs.filecommander.vm.activity.SplashVM" />
 
     </data>
 

@@ -12,7 +12,7 @@
         android:background="@drawable/bg_splash"
         android:paddingTop="24dp">
 
-        <com.tqs.filemanager.ui.view.TitleBar
+        <com.tqs.filecommander.ui.view.TitleBar
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

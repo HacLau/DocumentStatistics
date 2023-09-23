@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_splash"
-        tools:context="com.tqs.filemanager.ui.activity.ScannerActivity">
+        tools:context="com.tqs.filecommander.ui.activity.ScannerActivity">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/scanner_anim"
