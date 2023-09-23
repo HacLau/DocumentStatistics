@@ -1,4 +1,4 @@
-package com.tqs.filecommander.vm.utils
+package com.tqs.filecommander.mmkv
 
 import android.os.Parcelable
 import androidx.lifecycle.MutableLiveData

@@ -18,7 +18,7 @@ import com.tqs.filecommander.ui.base.BaseFragment
 import com.tqs.filecommander.vm.fragment.FileManagerVM
 import com.tqs.filecommander.vm.utils.Common
 import com.tqs.filecommander.vm.utils.DateUtils
-import com.tqs.filecommander.vm.utils.RepositoryUtils
+import com.tqs.filecommander.mmkv.MMKVHelper
 
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
     View.OnClickListener {
@@ -55,7 +55,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun getHadPermission() {
-        if (RepositoryUtils.requestPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || RepositoryUtils.requestCodeManager)) {
+        if (MMKVHelper.requestPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || MMKVHelper.requestCodeManager)) {
             viewModel.hadPermission.value = true
         }
     }

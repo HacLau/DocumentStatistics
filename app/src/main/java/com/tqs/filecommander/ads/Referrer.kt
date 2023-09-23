@@ -4,7 +4,7 @@ import android.content.Context
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerClient.InstallReferrerResponse
 import com.android.installreferrer.api.InstallReferrerStateListener
-import com.tqs.filecommander.vm.utils.RepositoryUtils
+import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.vm.utils.logE
 
 val buyUserList: Array<String> = arrayOf("fb4a", "gclid", "not%20set", "youtubeads", "%7b%22", "bytedance")
@@ -29,7 +29,7 @@ fun isBuyUser(installReferrer: String): Boolean {
 }
 
 fun initReferrer(context: Context) {
-    installReferrer = RepositoryUtils.installReferrer.toString()
+    installReferrer = MMKVHelper.installReferrer.toString()
     if (installReferrer.isNotBlank()) {
         return
     }
@@ -40,8 +40,16 @@ fun initReferrer(context: Context) {
                 when (responseCode) {
                     InstallReferrerResponse.OK -> {
                         referrerClient.installReferrer?.let {
+
                             installReferrer = it.installReferrer
-                            RepositoryUtils.installReferrer = installReferrer
+                            MMKVHelper.installReferrer = installReferrer
+                            MMKVHelper.referrerClickTimestampSeconds =it.referrerClickTimestampSeconds
+                            MMKVHelper.referrerClickTimestampServerSeconds =it.referrerClickTimestampServerSeconds
+                            MMKVHelper.installBeginTimestampSeconds =it.installBeginTimestampSeconds
+                            MMKVHelper.installBeginTimestampServerSeconds =it.installBeginTimestampServerSeconds
+                            MMKVHelper.googlePlayInstantParam =it.googlePlayInstantParam
+
+                            MMKVHelper.installReferrer = it.installVersion
                         }
                     }
 

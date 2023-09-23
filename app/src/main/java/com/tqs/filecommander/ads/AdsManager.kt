@@ -3,7 +3,7 @@ package com.tqs.filecommander.ads
 import android.util.Log
 import com.blankj.utilcode.util.TimeUtils
 import com.google.gson.Gson
-import com.tqs.filecommander.vm.utils.RepositoryUtils
+import com.tqs.filecommander.mmkv.MMKVHelper
 
 
 object AdsManager {
@@ -37,44 +37,44 @@ object AdsManager {
 
     private fun showOverLimit(): Boolean {
         if (0 == AdsManager.showAdsCount) return false
-        val showData = RepositoryUtils.showAdsData ?: return false
+        val showData = MMKVHelper.showAdsData ?: return false
 
         return if (TimeUtils.isToday(showData.time)) showData.count >= AdsManager.showAdsCount else false
     }
 
     private fun clickOverLimit(): Boolean {
         if (0 == AdsManager.clickAdsCount) return false
-        val clickData = RepositoryUtils.clickAdsData ?: return false
+        val clickData = MMKVHelper.clickAdsData ?: return false
 
         return if (TimeUtils.isToday(clickData.time)) clickData.count >= AdsManager.clickAdsCount else false
     }
 
     fun addShowCount() {
         kotlin.runCatching {
-            val showData = RepositoryUtils.showAdsData
+            val showData = MMKVHelper.showAdsData
             if (null == showData){
-                RepositoryUtils.showAdsData = AdsCount()
+                MMKVHelper.showAdsData = AdsCount()
             }else{
                 if (TimeUtils.isToday(showData.time)){
                     showData.count ++
-                    RepositoryUtils.showAdsData = showData
+                    MMKVHelper.showAdsData = showData
                 }else
-                    RepositoryUtils.showAdsData = AdsCount()
+                    MMKVHelper.showAdsData = AdsCount()
             }
         }
     }
 
     fun addClickCount() {
         kotlin.runCatching {
-            val clickData = RepositoryUtils.clickAdsData
+            val clickData = MMKVHelper.clickAdsData
             if (null == clickData){
-                RepositoryUtils.clickAdsData = AdsCount()
+                MMKVHelper.clickAdsData = AdsCount()
             }else{
                 if (TimeUtils.isToday(clickData.time)){
                     clickData.count ++
-                    RepositoryUtils.clickAdsData = clickData
+                    MMKVHelper.clickAdsData = clickData
                 }else
-                    RepositoryUtils.clickAdsData = AdsCount()
+                    MMKVHelper.clickAdsData = AdsCount()
             }
         }
     }

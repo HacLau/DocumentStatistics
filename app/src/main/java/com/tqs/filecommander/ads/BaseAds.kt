@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.tqs.filecommander.tba.TBAHelper
 
 abstract class BaseAds(
     private val adsType: AdsItemType,
@@ -30,6 +31,7 @@ abstract class BaseAds(
         }
 
         // todo data update to operate platform ad_impression
+        TBAHelper.updateAdvertising(adsType = item.adsType, adsId = item.adsId, adsIndex = adsType.adsItemType, adsSDK = item.adsPlatform)
     }
 
     open fun destroyNative() {}

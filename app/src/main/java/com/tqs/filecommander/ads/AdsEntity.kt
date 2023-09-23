@@ -42,7 +42,7 @@ data class AdsCount(
     var count: Int = 1
 ):Parcelable
 
-enum class AdsItemType(val adsType: String) {
+enum class AdsItemType(val adsItemType: String) {
     ADSFULLSCREEN("fc_launch"),
     ADSINSERTRESULTSCAN("fc_scan_int"),
     ADSINSERTRESULTCLEAN("fc_result_int"),

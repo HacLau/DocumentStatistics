@@ -9,6 +9,8 @@ import androidx.navigation.Navigation
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityMainBinding
+import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.ui.view.TitleBar
 import com.tqs.filecommander.vm.activity.MainVM
@@ -40,6 +42,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         binding.rlUpgrade.setOnClickListener(this)
 
         judgePermission()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (System.currentTimeMillis() - MMKVHelper.showMainActivityTime > 30 * 1000) {
+            TBAHelper.updateSession()
+            MMKVHelper.showMainActivityTime = System.currentTimeMillis()
+        }
     }
 
 

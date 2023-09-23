@@ -21,7 +21,7 @@ import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.activity.Not404Activity
 import com.tqs.filecommander.ui.activity.ScannerResultActivity
 import com.tqs.filecommander.vm.utils.Common
-import com.tqs.filecommander.vm.utils.RepositoryUtils
+import com.tqs.filecommander.mmkv.MMKVHelper
 
 
 abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActivity() {
@@ -38,7 +38,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
             }
         }
         if (currentNotAllowPermissions.isEmpty()) {
-            RepositoryUtils.requestPermission = true
+            MMKVHelper.requestPermission = true
             judgePermission()
         }
     }
@@ -50,7 +50,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         @RequiresApi(Build.VERSION_CODES.R)
         if (Environment.isExternalStorageManager()) {
-            RepositoryUtils.requestCodeManager = true
+            MMKVHelper.requestCodeManager = true
             judgePermission()
         }
     }
@@ -83,11 +83,11 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     }
 
     fun judgePermission(): Boolean {
-        if (!RepositoryUtils.requestPermission) {
+        if (!MMKVHelper.requestPermission) {
             requestPermission.launch(currentNotAllowPermissions.toTypedArray())
             return false
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && (!Environment.isExternalStorageManager() || !RepositoryUtils.requestCodeManager)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && (!Environment.isExternalStorageManager() || !MMKVHelper.requestCodeManager)) {
             startActivity.launch(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
                 data = Uri.parse("package:${packageName}")
             })
