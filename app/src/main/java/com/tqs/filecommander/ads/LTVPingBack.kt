@@ -2,7 +2,7 @@ package com.tqs.filecommander.ads
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.tqs.filecommander.vm.utils.application
+import com.tqs.filecommander.utils.application
 
 private val mFirebaseAnalytics = FirebaseAnalytics.getInstance(application)
 //Analytics and update user's behavior

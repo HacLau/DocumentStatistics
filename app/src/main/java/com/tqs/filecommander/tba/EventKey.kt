@@ -76,3 +76,7 @@ object EventAdvertising {
 
 }
 
+object EventSecret{
+    const val encrypt = "encrypt"
+}
+

@@ -14,8 +14,8 @@ import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.ui.view.TitleBar
 import com.tqs.filecommander.vm.activity.MainVM
-import com.tqs.filecommander.vm.utils.Common
-import com.tqs.filecommander.vm.utils.logE
+import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.logE
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickListener {
 

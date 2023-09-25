@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.ViewGroup
-import com.tqs.filecommander.vm.utils.logE
+import com.tqs.filecommander.utils.logE
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

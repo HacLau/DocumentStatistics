@@ -1,4 +1,4 @@
-package com.tqs.filecommander.ui.adapter
+package com.tqs.filecommander.adapter
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -12,8 +12,8 @@ import androidx.viewpager.widget.PagerAdapter
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.MediaPreviewBinding
 import com.tqs.filecommander.model.FileEntity
-import com.tqs.filecommander.vm.utils.FileUtils
-import com.tqs.filecommander.vm.utils.VideoUtils
+import com.tqs.filecommander.utils.FileUtils
+import com.tqs.filecommander.utils.VideoUtils
 import java.io.File
 
 class PreviewAdapter(

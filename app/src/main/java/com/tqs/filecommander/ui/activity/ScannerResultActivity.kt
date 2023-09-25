@@ -10,7 +10,7 @@ import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.vm.activity.DocListVM
-import com.tqs.filecommander.vm.utils.Common
+import com.tqs.filecommander.utils.Common
 
 class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocListVM>() {
     override val layoutId: Int

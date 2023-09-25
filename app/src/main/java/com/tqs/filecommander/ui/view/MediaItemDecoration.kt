@@ -4,7 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.tqs.filecommander.vm.utils.PixesUtils
+import com.tqs.filecommander.utils.PixesUtils
 
 class MediaItemDecoration(private val itemSpace: Int) : ItemDecoration() {
     override fun getItemOffsets(

@@ -7,8 +7,8 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import com.tqs.filecommander.R
 import com.tqs.filecommander.model.FileEntity
-import com.tqs.filecommander.vm.utils.DateUtils
-import com.tqs.filecommander.vm.utils.FileUtils
+import com.tqs.filecommander.utils.DateUtils
+import com.tqs.filecommander.utils.FileUtils
 
 class FileDetailPopupWindow(private val context: Context) : PopupWindow() {
     private var fileName: TextView

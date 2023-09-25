@@ -20,7 +20,7 @@ import com.tqs.filecommander.ui.activity.DocListActivity
 import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.activity.Not404Activity
 import com.tqs.filecommander.ui.activity.ScannerResultActivity
-import com.tqs.filecommander.vm.utils.Common
+import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.mmkv.MMKVHelper
 
 
@@ -109,8 +109,8 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
     
     fun jumpMediaListActivity(fromPage:String){
         val intent = when(fromPage){
-            Common.IMAGE_LIST,Common.VIDEO_LIST-> Intent(this, ImageListActivity::class.java)
-            Common.DOCUMENTS_LIST,Common.DOWNLOAD_LIST,Common.AUDIO_LIST-> Intent(this, DocListActivity::class.java)
+            Common.IMAGE_LIST, Common.VIDEO_LIST-> Intent(this, ImageListActivity::class.java)
+            Common.DOCUMENTS_LIST, Common.DOWNLOAD_LIST, Common.AUDIO_LIST-> Intent(this, DocListActivity::class.java)
             else-> Intent(this, Not404Activity::class.java)
         }
         startActivityForResult.launch(intent.apply {

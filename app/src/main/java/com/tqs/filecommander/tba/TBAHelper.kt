@@ -1,7 +1,7 @@
 package com.tqs.filecommander.tba
 
 import com.tqs.filecommander.net.*
-import com.tqs.filecommander.vm.utils.logE
+import com.tqs.filecommander.utils.logE
 
 object TBAHelper {
     fun updateSession() {

@@ -1,4 +1,4 @@
-package com.tqs.filecommander.vm.utils
+package com.tqs.filecommander.utils
 
 import android.content.Context
 import android.widget.Toast

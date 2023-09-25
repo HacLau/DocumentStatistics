@@ -8,7 +8,7 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityScannerBinding
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.vm.activity.ScannerVM
-import com.tqs.filecommander.vm.utils.Common
+import com.tqs.filecommander.utils.Common
 
 class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
     override val layoutId: Int

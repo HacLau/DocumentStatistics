@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.vm.base.BaseVM
-import com.tqs.filecommander.vm.utils.FileUtils
+import com.tqs.filecommander.utils.FileUtils
 
 class DocListVM : BaseVM() {
     var dataList = MutableLiveData<ArrayList<FileEntity>>()

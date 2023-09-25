@@ -19,7 +19,6 @@ object AdsManager {
     var adsNativeResultClean = AdsHelper(AdsItemType.ADSNATIVERESULTCLEAN)
 
     fun initAdsConfig(adsJson: String) {
-        Log.e(TAG, adsJson)
         adsEntity = Gson().fromJson(adsJson, AdsEntity::class.java)
         showAdsCount = adsEntity?.showMax ?: 0
         clickAdsCount = adsEntity?.clickMax ?: 0

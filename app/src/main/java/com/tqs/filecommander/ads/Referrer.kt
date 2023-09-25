@@ -5,7 +5,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerClient.InstallReferrerResponse
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.tqs.filecommander.mmkv.MMKVHelper
-import com.tqs.filecommander.vm.utils.logE
+import com.tqs.filecommander.utils.logE
 
 val buyUserList: Array<String> = arrayOf("fb4a", "gclid", "not%20set", "youtubeads", "%7b%22", "bytedance")
 val fbUserList: Array<String> = arrayOf("fb4a")

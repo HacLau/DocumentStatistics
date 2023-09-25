@@ -1,4 +1,4 @@
-package com.tqs.filecommander.vm.utils
+package com.tqs.filecommander.utils
 
 import android.Manifest
 import com.tqs.filecommander.FileCommanderApp

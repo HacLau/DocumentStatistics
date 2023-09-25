@@ -16,8 +16,8 @@ import com.tqs.filecommander.ui.activity.ScannerActivity
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.ui.base.BaseFragment
 import com.tqs.filecommander.vm.fragment.FileManagerVM
-import com.tqs.filecommander.vm.utils.Common
-import com.tqs.filecommander.vm.utils.DateUtils
+import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.DateUtils
 import com.tqs.filecommander.mmkv.MMKVHelper
 
 class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),

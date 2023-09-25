@@ -24,8 +24,8 @@ abstract class BaseAds(
                 mutableMapOf(
                     FirebaseAnalytics.Param.VALUE to adsValue.valueMicros / 1000000.toDouble(),
                     FirebaseAnalytics.Param.CURRENCY to "USD",
-                    "precisionType" to adsValue.precisionType,
-                    "adNetwork" to responseInfo?.mediationAdapterClassName
+//                    "precisionType" to adsValue.precisionType,
+//                    "adNetwork" to responseInfo?.mediationAdapterClassName
                 )
             )
         }

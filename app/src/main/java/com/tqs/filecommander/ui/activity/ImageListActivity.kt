@@ -11,13 +11,13 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityImageListBinding
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.model.FileEntity
-import com.tqs.filecommander.ui.adapter.ImageVideoListAdapter
+import com.tqs.filecommander.adapter.ImageVideoListAdapter
 import com.tqs.filecommander.ui.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.MediaItemDecoration
 import com.tqs.filecommander.vm.activity.ImageListVM
-import com.tqs.filecommander.vm.utils.Common
-import com.tqs.filecommander.vm.utils.FileUtils
+import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.FileUtils
 
 class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() {
     override val layoutId: Int

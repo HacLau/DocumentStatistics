@@ -1,4 +1,4 @@
-package com.tqs.filecommander.ui.adapter
+package com.tqs.filecommander.adapter
 
 import android.content.Context
 import android.view.View
@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.tqs.filecommander.R
 import com.tqs.filecommander.model.DocumentEntity
-import com.tqs.filecommander.vm.utils.FileUtils
+import com.tqs.filecommander.utils.FileUtils
 
 class DocAdapter(
     private val context: Context,
