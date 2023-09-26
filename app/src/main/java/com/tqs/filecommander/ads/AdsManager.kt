@@ -1,6 +1,5 @@
 package com.tqs.filecommander.ads
 
-import android.util.Log
 import com.blankj.utilcode.util.TimeUtils
 import com.google.gson.Gson
 import com.tqs.filecommander.mmkv.MMKVHelper

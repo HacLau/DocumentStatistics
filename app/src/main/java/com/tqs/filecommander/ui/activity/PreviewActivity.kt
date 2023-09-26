@@ -16,7 +16,7 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityImagePreviewBinding
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.PreviewAdapter
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.FileDetailPopupWindow
 import com.tqs.filecommander.vm.activity.PreviewVM

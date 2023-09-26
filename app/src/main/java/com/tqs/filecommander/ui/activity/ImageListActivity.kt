@@ -12,7 +12,7 @@ import com.tqs.filecommander.databinding.ActivityImageListBinding
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.ImageVideoListAdapter
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.MediaItemDecoration
 import com.tqs.filecommander.vm.activity.ImageListVM

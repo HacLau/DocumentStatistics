@@ -6,9 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityScannerResultBinding
 import com.tqs.filecommander.ads.AdsManager
+import com.tqs.filecommander.ads.BaseAds
 import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.vm.activity.DocListVM
 import com.tqs.filecommander.utils.Common
 
@@ -20,6 +21,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
     private var mDataList: ArrayList<DocumentEntity> = arrayListOf()
 
     private var mPageType: String = ""
+    private var baseAds:BaseAds? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
@@ -35,8 +37,10 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
             }
         }
         getDocDataList()
+        baseAds?.destroyNative()
         AdsManager.adsNativeMain.showNativeAds(this,binding.nativeParentCard){
-            Log.e(TAG,"native ads onDismiss")
+            baseAds = it
+            Log.e(TAG,"native is show")
         }
         binding.vFileOk.setOnClickListener {
             jumpMediaListActivity(mPageType)
@@ -107,6 +111,11 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
         }
         binding.tvFileDescription.text =
             Html.fromHtml("<font color='#000000'><big><big>${hashSet.size}</big></big></font>  folders and <font color='#000000'><big><big>${fileEntities.size}</big></big></font> files")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        baseAds?.destroyNative()
     }
 
 }

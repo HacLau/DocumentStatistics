@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.FragmentFileManagerBinding
 import com.tqs.filecommander.ui.activity.ScannerActivity
-import com.tqs.filecommander.ui.base.BaseActivity
-import com.tqs.filecommander.ui.base.BaseFragment
+import com.tqs.filecommander.base.BaseActivity
+import com.tqs.filecommander.base.BaseFragment
 import com.tqs.filecommander.vm.fragment.FileManagerVM
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.DateUtils
@@ -25,12 +25,6 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     override val layoutId: Int
         get() = R.layout.fragment_file_manager
 
-    private var REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 0x00098
-    private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            getMediaInfo()
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -116,7 +110,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         }
     }
 
-    private fun getMediaInfo() {
+    override fun getMediaInfo() {
         viewModel.getMemoryInfo()
         viewModel.getImgListOrderDescByDate(requireContext())
         viewModel.getAudioList(requireContext())
@@ -138,7 +132,7 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     override fun onClick(v: View?) {
-        if (!(requireActivity() as BaseActivity<*,*>).judgePermission()) {
+        if (!(requireActivity() as BaseActivity<*, *>).judgePermission()) {
             return
         }
         when (v?.id) {
@@ -164,9 +158,4 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         }
     }
 
-    private fun jumpScannerActivity(fromPage : String){
-        startActivityForResult.launch(Intent(requireActivity(), ScannerActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, fromPage)
-        })
-    }
 }

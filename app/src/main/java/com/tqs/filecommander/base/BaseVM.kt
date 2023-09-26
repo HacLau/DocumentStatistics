@@ -1,4 +1,4 @@
-package com.tqs.filecommander.vm.base
+package com.tqs.filecommander.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

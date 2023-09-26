@@ -2,7 +2,7 @@ package com.tqs.filecommander.ui.activity
 
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityNot404Binding
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.vm.activity.Not404VM
 
 class Not404Activity(

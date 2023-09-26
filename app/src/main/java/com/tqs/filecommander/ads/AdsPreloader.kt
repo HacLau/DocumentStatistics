@@ -28,11 +28,11 @@ class AdsPreloader(
             ADSType.ADS_TYPE_NAT -> NativeMainAdvertising(context, adsType, item)
             else -> null
         }
-        if (null == baseAds){
+        if (null == baseAds) {
             onLoad.invoke(false)
             return
         }
-        baseAds.load (onAdsLoaded = {
+        baseAds.load(onAdsLoaded = {
             cache.add(baseAds)
             cache.sortByDescending { it.adsItem.adsWeight }
             onLoad.invoke(true)

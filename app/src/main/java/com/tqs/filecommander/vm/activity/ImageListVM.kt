@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filecommander.model.FileEntity
-import com.tqs.filecommander.vm.base.BaseVM
+import com.tqs.filecommander.base.BaseVM
 import com.tqs.filecommander.utils.DateUtils
 import com.tqs.filecommander.utils.FileUtils
 

@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivitySplashBinding
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.vm.activity.SplashVM
 import com.tqs.filecommander.ads.AdsManager
 import java.util.concurrent.TimeUnit

@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import org.json.JSONObject
 
 var referrerControl = 1
+
 class RemoteHelper {
     private val remoteConfig by lazy {
         Firebase.remoteConfig.apply {
@@ -16,13 +17,13 @@ class RemoteHelper {
         }
     }
 
-    private fun getUserType(){
+    private fun getUserType() {
         kotlin.runCatching {
-            val json:String = remoteConfig.get("fcpop").asString()
+            val json: String = remoteConfig.get("fcpop").asString()
             if (json.isBlank())
                 return
             val jsonObject = JSONObject(json)
-            referrerControl = jsonObject.optInt("fc_reffer",2)
+            referrerControl = jsonObject.optInt("fc_reffer", 2)
         }
     }
 }

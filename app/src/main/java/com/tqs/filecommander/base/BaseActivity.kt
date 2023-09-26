@@ -1,4 +1,4 @@
-package com.tqs.filecommander.ui.base
+package com.tqs.filecommander.base
 
 import android.app.Activity
 import android.content.Intent
@@ -16,24 +16,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import com.tqs.filecommander.BuildConfig
+import com.tqs.filecommander.ads.ReferrerHelper
+import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.ui.activity.DocListActivity
 import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.activity.Not404Activity
 import com.tqs.filecommander.ui.activity.ScannerResultActivity
 import com.tqs.filecommander.utils.Common
-import com.tqs.filecommander.mmkv.MMKVHelper
 
 
-abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActivity() {
+abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
     protected lateinit var binding: VB
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
     abstract val TAG: String
-    private val currentNotAllowPermissions : MutableList<String> = Common.permissions.toMutableList()
+    private val currentNotAllowPermissions: MutableList<String> = Common.permissions.toMutableList()
     private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
         currentNotAllowPermissions.clear()
-        for ((key,value) in result){
-            if (!value){
+        for ((key, value) in result) {
+            if (!value) {
                 currentNotAllowPermissions.add(key)
             }
         }
@@ -43,7 +45,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
         }
     }
     private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        setResult(it.resultCode )
+        setResult(it.resultCode)
     }
 
 
@@ -54,6 +56,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
             judgePermission()
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutId)
@@ -62,7 +65,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
 
     abstract fun initData()
 
-    open fun setStatusBarLightMode(activity: Activity,isLightMode: Boolean) {
+    open fun setStatusBarLightMode(activity: Activity, isLightMode: Boolean) {
         val window = activity.window
         var option = window.decorView.systemUiVisibility
         option = if (isLightMode) {
@@ -72,6 +75,7 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
         }
         window.decorView.systemUiVisibility = option
     }
+
     open fun setStatusBarTransparent(activity: Activity) {
         val window = activity.window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -100,18 +104,22 @@ abstract class BaseActivity<VB: ViewDataBinding, VM: ViewModel> : AppCompatActiv
 
     open fun onPermissionSuccess() {}
 
-    fun jumpScannerResultActivity(fromPage : String){
-        startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, fromPage)
-        })
-        finish()
+    fun jumpScannerResultActivity(fromPage: String) {
+        if (BuildConfig.DEBUG.not() && ReferrerHelper.isAdvertisingShouldShow().not()) {
+            jumpMediaListActivity(fromPage)
+        } else {
+            startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
+                putExtra(Common.PAGE_TYPE, fromPage)
+                finish()
+            })
+        }
     }
-    
-    fun jumpMediaListActivity(fromPage:String){
-        val intent = when(fromPage){
-            Common.IMAGE_LIST, Common.VIDEO_LIST-> Intent(this, ImageListActivity::class.java)
-            Common.DOCUMENTS_LIST, Common.DOWNLOAD_LIST, Common.AUDIO_LIST-> Intent(this, DocListActivity::class.java)
-            else-> Intent(this, Not404Activity::class.java)
+
+    fun jumpMediaListActivity(fromPage: String) {
+        val intent = when (fromPage) {
+            Common.IMAGE_LIST, Common.VIDEO_LIST -> Intent(this, ImageListActivity::class.java)
+            Common.DOCUMENTS_LIST, Common.DOWNLOAD_LIST, Common.AUDIO_LIST -> Intent(this, DocListActivity::class.java)
+            else -> Intent(this, Not404Activity::class.java)
         }
         startActivityForResult.launch(intent.apply {
             putExtra(Common.PAGE_TYPE, fromPage)

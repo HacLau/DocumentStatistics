@@ -11,7 +11,7 @@ import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.DocAdapter
-import com.tqs.filecommander.ui.base.BaseActivity
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.vm.activity.DocListVM
 import com.tqs.filecommander.utils.Common

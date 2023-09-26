@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.FragmentPrivacyPolicyBinding
-import com.tqs.filecommander.ui.base.BaseFragment
+import com.tqs.filecommander.base.BaseFragment
 import com.tqs.filecommander.vm.fragment.PrivacyPolicyVM
 
 class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding, PrivacyPolicyVM>() {
@@ -30,6 +30,10 @@ class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding, Privacy
         viewModel =
             ViewModelProvider(this).get(PrivacyPolicyVM::class.java)
         binding.wv.loadUrl("https://sites.google.com/view/file-commander-privacy-policy/home")
+
+    }
+
+    override fun getMediaInfo() {
 
     }
 

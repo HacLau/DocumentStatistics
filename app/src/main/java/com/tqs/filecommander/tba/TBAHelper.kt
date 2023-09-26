@@ -10,10 +10,12 @@ object TBAHelper {
             getRequestJson(
                 EventCommon.session,
                 getEventSession()
-            )
-        ) {
-            "updateSession $it".logE()
-        }
+            ), {
+                "updateSession $it".logE()
+            }, { code, message ->
+
+            }
+        )
     }
 
     fun updateInstall() {
@@ -22,10 +24,12 @@ object TBAHelper {
             getRequestJson(
                 EventCommon.install,
                 getEventInstall()
-            )
-        ) {
-            "updateInstall $it".logE()
-        }
+            ),
+            {
+                "updateInstall $it".logE()
+            }, { code, message ->
+
+            })
     }
 
     fun updateAdvertising(
@@ -40,9 +44,11 @@ object TBAHelper {
             getRequestJson(
                 EventCommon.advertising,
                 getEventAdvertising(adsType, adsId, adsPlat, adsSDK, adsIndex)
-            )
-        ) {
-            "updateAdvertising $it".logE()
-        }
+            ),
+            {
+                "updateAdvertising $it".logE()
+            }, { code, message ->
+
+            })
     }
 }

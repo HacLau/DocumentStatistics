@@ -32,7 +32,7 @@ class NativeMainAdvertising(
                     onAdsPaid(value, item, it.responseInfo)
                 }
             }
-            withAdListener(object :AdListener(){
+            withAdListener(object : AdListener() {
                 override fun onAdClicked() = AdsManager.addClickCount()
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) = onAdsLoadFailed.invoke(loadAdError.message)
             })
@@ -43,7 +43,8 @@ class NativeMainAdvertising(
     }
 
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
-        val binding: LayoutAdvertisingNativeBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native,nativeParent,false)
+        val binding: LayoutAdvertisingNativeBinding =
+            DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native, nativeParent, false)
         binding.nativeAdBg.mediaContent = nativeAd?.mediaContent
         binding.nativeAppIcon.setImageDrawable(nativeAd?.icon?.drawable)
         binding.nativeAppTitle.text = nativeAd?.headline

@@ -36,9 +36,11 @@ class FullScreenAdvertising(
                 override fun onAdDismissedFullScreenContent() {
                     onAdsDismissed.invoke()
                 }
+
                 override fun onAdShowedFullScreenContent() {
                     AdsManager.addShowCount()
                 }
+
                 override fun onAdFailedToShowFullScreenContent(e: AdError) {
                     onAdsDismissed.invoke()
                 }

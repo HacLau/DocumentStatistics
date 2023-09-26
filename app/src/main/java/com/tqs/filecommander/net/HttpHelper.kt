@@ -42,22 +42,25 @@ object HttpHelper {
     private val builder: Request.Builder = Request.Builder().url(BuildConfig.TBAUrl)
     private val postType = MediaType.parse("application/json")
 
-    fun sendRequest(jsonObject: JSONObject, result: (String) -> Unit) {
+    fun sendRequest(jsonObject: JSONObject, resultSuccess: (String) -> Unit, resultFailed: (Int, String) -> Unit) {
         "requestFromJson = $jsonObject".logE()
 
         thread {
             kotlin.runCatching {
-                val requestString = JSONObject().apply {
-                    this.put(EventSecret.encrypt, "${EventSecret.encrypt}=${SecretHelper.encryptJson(jsonObject)}")
-                }.toString()
+                val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()
                 builder.post(RequestBody.create(postType, requestString)).build()
                 okHttpClient.newCall(
                     builder.build()
                 ).execute().let {
-                    it.body().string().let { response ->
-                        "response = $response".logE()
-                        result.invoke(response)
+                    it.toString().logE()
+                    "code = ${it.code()}".logE()
+                    if (it.isSuccessful) {
+                        it.body().string().let { response ->
+                            resultSuccess.invoke(response)
+                        }
+                    } else {
+                        resultFailed.invoke(it.code(), it.message())
                     }
                 }
 
