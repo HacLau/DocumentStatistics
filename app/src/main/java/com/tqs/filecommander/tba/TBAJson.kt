@@ -39,7 +39,7 @@ private fun getQuixotic(): JSONObject = JSONObject().apply {
     )
 //        this.put(EventQuixotic.nepotism, "")
 //        this.put(EventQuixotic.alasdair, "")
-    this.put(EventQuixotic.sofia, UUID.randomUUID())
+    this.put(EventQuixotic.sofia, Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID))
     this.put(EventQuixotic.fusty, URLEncoder.encode(System.currentTimeMillis().toString(), "UTF-8"))
     this.put(EventQuixotic.weight, Locale.getDefault().language)
 //        this.put(EventQuixotic.stab, "")

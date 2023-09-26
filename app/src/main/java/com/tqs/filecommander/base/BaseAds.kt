@@ -1,10 +1,13 @@
-package com.tqs.filecommander.ads
+package com.tqs.filecommander.base
 
 import android.app.Activity
 import android.view.ViewGroup
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.tqs.filecommander.ads.AdsItem
+import com.tqs.filecommander.ads.AdsItemType
+import com.tqs.filecommander.net.logEvent
 import com.tqs.filecommander.tba.TBAHelper
 
 abstract class BaseAds(

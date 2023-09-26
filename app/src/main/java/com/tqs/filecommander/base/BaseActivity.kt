@@ -16,8 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
-import com.tqs.filecommander.BuildConfig
-import com.tqs.filecommander.ads.ReferrerHelper
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.ui.activity.DocListActivity
 import com.tqs.filecommander.ui.activity.ImageListActivity
@@ -105,14 +103,10 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     open fun onPermissionSuccess() {}
 
     fun jumpScannerResultActivity(fromPage: String) {
-        if (BuildConfig.DEBUG.not() && ReferrerHelper.isAdvertisingShouldShow().not()) {
-            jumpMediaListActivity(fromPage)
-        } else {
-            startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
-                putExtra(Common.PAGE_TYPE, fromPage)
-                finish()
-            })
-        }
+        startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, fromPage)
+            finish()
+        })
     }
 
     fun jumpMediaListActivity(fromPage: String) {

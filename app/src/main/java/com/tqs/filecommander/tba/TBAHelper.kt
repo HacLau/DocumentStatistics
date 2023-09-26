@@ -6,13 +6,13 @@ import com.tqs.filecommander.utils.logE
 object TBAHelper {
     fun updateSession() {
         "updateSession".logE()
-        HttpHelper.sendRequest(
-            getRequestJson(
+        HttpHelper.sendRequestPost(
+            jsonObject = getRequestJson(
                 EventCommon.session,
                 getEventSession()
-            ), {
+            ), resultSuccess = {
                 "updateSession $it".logE()
-            }, { code, message ->
+            }, resultFailed = { code, message ->
 
             }
         )
@@ -20,14 +20,14 @@ object TBAHelper {
 
     fun updateInstall() {
         "updateInstall".logE()
-        HttpHelper.sendRequest(
-            getRequestJson(
+        HttpHelper.sendRequestPost(
+            jsonObject = getRequestJson(
                 EventCommon.install,
                 getEventInstall()
             ),
-            {
+            resultSuccess = {
                 "updateInstall $it".logE()
-            }, { code, message ->
+            }, resultFailed = { code, message ->
 
             })
     }
@@ -40,14 +40,14 @@ object TBAHelper {
         adsIndex: String
     ) {
         "updateAdvertising".logE()
-        HttpHelper.sendRequest(
-            getRequestJson(
+        HttpHelper.sendRequestPost(
+            jsonObject = getRequestJson(
                 EventCommon.advertising,
                 getEventAdvertising(adsType, adsId, adsPlat, adsSDK, adsIndex)
             ),
-            {
+            resultSuccess = {
                 "updateAdvertising $it".logE()
-            }, { code, message ->
+            }, resultFailed = { code, message ->
 
             })
     }

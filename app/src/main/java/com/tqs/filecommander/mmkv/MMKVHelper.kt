@@ -23,4 +23,6 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
 
     // first launch app
     var firstLaunchApp by mmkvBoolean(default = true)
+    // cloak state
+    var cloakState by mmkvString(default = "")
 }

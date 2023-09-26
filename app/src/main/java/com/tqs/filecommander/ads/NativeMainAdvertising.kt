@@ -13,6 +13,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.tqs.filecommander.R
+import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.databinding.LayoutAdvertisingNativeBinding
 
 class NativeMainAdvertising(

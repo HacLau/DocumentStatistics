@@ -39,19 +39,24 @@ object HttpHelper {
         .writeTimeout(DEFAULT_WRITE_TIME, TimeUnit.SECONDS)
         .readTimeout(DEFAULT_READ_TIME, TimeUnit.SECONDS)
         .build()
-    private val builder: Request.Builder = Request.Builder().url(BuildConfig.TBAUrl)
+    private var builder: Request.Builder? = null
     private val postType = MediaType.parse("application/json")
 
-    fun sendRequest(jsonObject: JSONObject, resultSuccess: (String) -> Unit, resultFailed: (Int, String) -> Unit) {
+    fun sendRequestPost(
+        baseUrl: String = BuildConfig.TBAUrl,
+        jsonObject: JSONObject,
+        resultSuccess: (String) -> Unit,
+        resultFailed: (Int, String) -> Unit
+    ) {
         "requestFromJson = $jsonObject".logE()
 
         thread {
             kotlin.runCatching {
                 val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()
-                builder.post(RequestBody.create(postType, requestString)).build()
+                builder = Request.Builder().url(baseUrl)
                 okHttpClient.newCall(
-                    builder.build()
+                    builder?.post(RequestBody.create(postType, requestString))?.build()
                 ).execute().let {
                     it.toString().logE()
                     "code = ${it.code()}".logE()
@@ -64,6 +69,32 @@ object HttpHelper {
                     }
                 }
 
+            }
+        }
+    }
+
+    fun sendRequestGet(
+        baseUrl: String = BuildConfig.CloakUrl,
+        jsonObject: JSONObject,
+        resultSuccess: (String) -> Unit,
+        resultFailed: (Int, String) -> Unit
+    ) {
+        thread {
+            kotlin.runCatching {
+                val requestString = jsonObject.toString()
+                "requestString = $requestString".logE()
+                builder = Request.Builder().url(baseUrl)
+                okHttpClient.newCall(builder?.get()?.build()).execute().let {
+                    it.toString().logE()
+                    "code = ${it.code()}".logE()
+                    if (it.isSuccessful) {
+                        it.body().string().let { response ->
+                            resultSuccess.invoke(response)
+                        }
+                    } else {
+                        resultFailed.invoke(it.code(), it.message())
+                    }
+                }
             }
         }
     }

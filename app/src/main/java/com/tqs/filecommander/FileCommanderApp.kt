@@ -3,7 +3,7 @@ package com.tqs.filecommander
 import android.app.Application
 import com.tencent.mmkv.MMKV
 import com.tqs.filecommander.ads.AdsManager
-import com.tqs.filecommander.ads.ReferrerHelper
+import com.tqs.filecommander.referrer.ReferrerHelper
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.getJsonFromAssets
 

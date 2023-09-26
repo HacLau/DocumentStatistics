@@ -1,6 +1,7 @@
 package com.tqs.filecommander.ads
 
 import android.content.Context
+import com.tqs.filecommander.base.BaseAds
 
 class AdsPreloader(
     private val context: Context,

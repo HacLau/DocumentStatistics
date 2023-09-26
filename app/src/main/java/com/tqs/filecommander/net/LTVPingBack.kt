@@ -1,4 +1,4 @@
-package com.tqs.filecommander.ads
+package com.tqs.filecommander.net
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics

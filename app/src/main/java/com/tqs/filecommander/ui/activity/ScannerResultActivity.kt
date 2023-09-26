@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityScannerResultBinding
 import com.tqs.filecommander.ads.AdsManager
-import com.tqs.filecommander.ads.BaseAds
+import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseActivity
@@ -21,7 +21,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
     private var mDataList: ArrayList<DocumentEntity> = arrayListOf()
 
     private var mPageType: String = ""
-    private var baseAds:BaseAds? = null
+    private var baseAds: BaseAds? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)

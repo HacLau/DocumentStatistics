@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.ViewGroup
-import com.tqs.filecommander.BuildConfig
+import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.utils.logE
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -67,19 +67,21 @@ class AdsHelper(private val adsType: AdsItemType) {
 
 
     fun showFullScreenAds(activity: Activity, onAdsDismissed: () -> Unit) {
-        if (BuildConfig.DEBUG.not() && ReferrerHelper.isAdvertisingShouldShow().not() || cache.isEmpty() || null == getAdsCache()) {
+        if (cache.isEmpty()) {
             onAdsDismissed.invoke()
             return
         }
-        getAdsCache()!!.show(activity = activity,onAdsDismissed = onAdsDismissed)
+        val baseAd = getAdsCache()
+        if (null == baseAd){
+            onAdsDismissed.invoke()
+            return
+        }
+        baseAd.show(activity = activity,onAdsDismissed = onAdsDismissed)
         onAdsLoad = {}
         preLoad(activity)
     }
 
     fun showNativeAds(activity: Activity, parent: ViewGroup?, onBaseAds: (BaseAds) -> Unit) {
-        if (BuildConfig.DEBUG.not() && ReferrerHelper.isAdvertisingShouldShow().not() || cache.isEmpty()) {
-            return
-        }
         val baseAd = getAdsCache() ?: return
         baseAd.show(activity = activity,nativeParent = parent)
         onBaseAds.invoke(baseAd)
