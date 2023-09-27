@@ -23,7 +23,8 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
         viewModel = ViewModelProvider(this)[ScannerVM::class.java]
         binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
-                createTimer(3000L)
+                // loop
+                createTimer(3600 * 1000L)
             }
 
             override fun onAnimationEnd(animation: Animator) {

@@ -51,7 +51,7 @@ object HttpHelper {
         "requestFromJson = $jsonObject".logE()
 
         thread {
-            kotlin.runCatching {
+            runCatching {
                 val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()
                 builder = Request.Builder().url(baseUrl)
@@ -80,7 +80,7 @@ object HttpHelper {
         resultFailed: (Int, String) -> Unit
     ) {
         thread {
-            kotlin.runCatching {
+            runCatching {
                 val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()
                 builder = Request.Builder().url(baseUrl)

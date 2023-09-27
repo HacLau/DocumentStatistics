@@ -1,9 +1,15 @@
 package com.tqs.filecommander
 
 import android.app.Application
+import android.content.Intent
+import android.os.Build
 import com.tencent.mmkv.MMKV
 import com.tqs.filecommander.ads.AdsManager
+import com.tqs.filecommander.broadcast.registerBattery
+import com.tqs.filecommander.broadcast.registerUninstall
+import com.tqs.filecommander.broadcast.registerUnlock
 import com.tqs.filecommander.referrer.ReferrerHelper
+import com.tqs.filecommander.service.ForeService
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.getJsonFromAssets
 
@@ -15,6 +21,26 @@ class FileCommanderApp : Application() {
         MMKV.initialize(this)
         ReferrerHelper.initReferrer(this)
         application = this
+//        startService()
+        registerBroadcast()
+    }
+
+    private fun registerBroadcast() {
+        registerBattery(this)
+        registerUnlock(this)
+        registerUninstall(this)
+    }
+
+    private fun startService(){
+        Intent(this, ForeService::class.java).apply {
+//            putExtra("","")
+        }.let {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                startForegroundService(it)
+            }else{
+                startService(it)
+            }
+        }
 
     }
 }

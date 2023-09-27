@@ -78,7 +78,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     }
 
     private fun jumpToUpdate() {
-        kotlin.runCatching {
+        runCatching {
             startActivity(Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("market://details?id=${BuildConfig.APPLICATION_ID}")
                 setPackage("com.android.vending")
@@ -88,7 +88,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     }
 
     private fun jumpToShareApp() {
-        kotlin.runCatching {
+        runCatching {
             startActivity(Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}")
@@ -97,7 +97,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     }
 
     private fun jumpToContactUs() {
-        kotlin.runCatching {
+        runCatching {
             startActivity(Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:${Common.EMAIL}")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

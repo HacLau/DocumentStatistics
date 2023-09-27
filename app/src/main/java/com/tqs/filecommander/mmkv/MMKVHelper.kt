@@ -1,6 +1,7 @@
 package com.tqs.filecommander.mmkv
 
 import com.tqs.filecommander.ads.AdsCount
+import com.tqs.filecommander.notification.NotificationShowed
 
 object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     // is request read/write and storage permissions
@@ -25,4 +26,12 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     var firstLaunchApp by mmkvBoolean(default = true)
     // cloak state
     var cloakState by mmkvString(default = "")
+    // notification
+    var normalNotification by mmkvParcelable<NotificationShowed>(default = NotificationShowed())
+    var uninstallNotification by mmkvParcelable<NotificationShowed>(default = NotificationShowed())
+    var batteryNotification by mmkvParcelable<NotificationShowed>(default = NotificationShowed())
+    var unlockNotification by mmkvParcelable<NotificationShowed>(default = NotificationShowed())
+    // adsCost
+    var currentUserCost by mmkvDouble(default = 0.0)
+    var currentUserCostTime by mmkvLong(default = System.currentTimeMillis())
 }

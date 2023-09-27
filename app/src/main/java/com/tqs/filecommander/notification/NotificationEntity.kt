@@ -1,6 +1,8 @@
 package com.tqs.filecommander.notification
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class NotificationEntity(
     @SerializedName("fcpop_switch")
@@ -12,9 +14,9 @@ data class NotificationEntity(
     @SerializedName("fc_unl")
     var unclock: NotificationItem,
     @SerializedName("fc_char")
-    var charge: NotificationItem,
+    var battery: NotificationItem,
     @SerializedName("fc_uni")
-    var unload: NotificationItem,
+    var uninstall: NotificationItem,
 )
 
 data class NotificationItem(
@@ -25,12 +27,19 @@ data class NotificationItem(
     @SerializedName("limit")
     var dayShowLimit: Int = 1,
     @SerializedName("interval")
-    var intervalPopupTime: Int = 10,
+    var intervalPopupTime: Int = 10
 )
+
+@Parcelize
+data class NotificationShowed(
+    var lastShowTime: Long = System.currentTimeMillis(),
+    var showTimes: Int = 0
+):Parcelable
+
 
 object NotificationKey {
     const val TIMING = "fc_t"
     const val UNCLOCK = "fc_unl"
-    const val CHARGE = "fc_char"
-    const val UNLOAD = "fc_uni"
+    const val BATTERY = "fc_char"
+    const val UNINSTALL = "fc_uni"
 }

@@ -1,6 +1,8 @@
 package com.tqs.filecommander.utils
 
 import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.tqs.filecommander.FileCommanderApp
 
 lateinit var application:FileCommanderApp
@@ -16,7 +18,8 @@ object Common {
     val permissions = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.INTERNET
+        Manifest.permission.INTERNET,
+        Manifest.permission.ACCESS_NOTIFICATION_POLICY
     )
 
 }

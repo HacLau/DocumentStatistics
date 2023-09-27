@@ -5,9 +5,12 @@ import com.google.firebase.remoteconfig.ktx.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.gson.Gson
+import com.tqs.filecommander.ads.AdsEntity
+import com.tqs.filecommander.ads.AdsManager
+import com.tqs.filecommander.ads.AdsUserCost
 import com.tqs.filecommander.cloak.CloakHelper
+import com.tqs.filecommander.notification.NotificationController
 import com.tqs.filecommander.notification.NotificationEntity
-import com.tqs.filecommander.notification.NotificationHelper
 import com.tqs.filecommander.referrer.ReferrerHelper
 
 
@@ -34,21 +37,28 @@ class RemoteHelper {
     }
 
     private fun getReferrerAndNotificationConfig() {
-        kotlin.runCatching {
-            val json: String = remoteConfig.get("fcpop").asString()
-            if (json.isBlank())
-                return
+        runCatching {
+            val json: String = remoteConfig["fcpop"].asString()
+            if (json.isBlank()) return
             val notificationEntity = Gson().fromJson(json, NotificationEntity::class.java)
             ReferrerHelper.setReferrerControl(notificationEntity.referrerSwitch)
-            NotificationHelper.setNotification(notificationEntity)
+            NotificationController.setNotification(notificationEntity)
         }
     }
 
     private fun getAdvertisingConfig() {
-        kotlin.runCatching {
-            val json: String = remoteConfig.get("fc_ad_config").asString()
-            if (json.isBlank())
-                return
+        runCatching {
+            val json: String = remoteConfig["fc_ad_config"].asString()
+            if (json.isBlank()) return
+            AdsManager.adsEntity = Gson().fromJson(json,AdsEntity::class.java)
+        }
+    }
+
+    private fun getGoogleConfig(){
+        runCatching {
+            val json:String = remoteConfig["FileCommander_toppercent"].asString()
+            if (json.isBlank()) return
+            adsUserCost = Gson().fromJson(json,AdsUserCost::class.java)
         }
     }
 

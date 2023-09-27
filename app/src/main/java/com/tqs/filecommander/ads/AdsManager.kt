@@ -9,7 +9,7 @@ object AdsManager {
     const val TAG = "AdsManager"
     var showAdsCount = 0
     var clickAdsCount = 0
-    private var adsEntity: AdsEntity? = null
+    var adsEntity: AdsEntity? = null
     var adsFullScreen = AdsHelper(AdsItemType.ADSFULLSCREEN)
     var adsInsertResultScan = AdsHelper(AdsItemType.ADSINSERTRESULTSCAN)
     var adsInsertResultClean = AdsHelper(AdsItemType.ADSINSERTRESULTCLEAN)
@@ -48,7 +48,7 @@ object AdsManager {
     }
 
     fun addShowCount() {
-        kotlin.runCatching {
+        runCatching {
             val showData = MMKVHelper.showAdsData
             if (null == showData){
                 MMKVHelper.showAdsData = AdsCount()
@@ -63,7 +63,7 @@ object AdsManager {
     }
 
     fun addClickCount() {
-        kotlin.runCatching {
+        runCatching {
             val clickData = MMKVHelper.clickAdsData
             if (null == clickData){
                 MMKVHelper.clickAdsData = AdsCount()

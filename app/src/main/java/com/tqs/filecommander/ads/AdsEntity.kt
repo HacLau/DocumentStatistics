@@ -36,6 +36,19 @@ data class AdsItem(
     var adsWeight: Int
 )
 
+data class AdsUserCost(
+    @SerializedName("adltv_top10")
+    var top10:Double = 1.0,
+    @SerializedName("adltv_top20")
+    var top20:Double = 0.8,
+    @SerializedName("adltv_top30")
+    var top30:Double = 0.6,
+    @SerializedName("adltv_top40")
+    var top40:Double = 0.5,
+    @SerializedName("adltv_top50")
+    var top50:Double = 0.1,
+)
+
 @Parcelize
 data class AdsCount(
     var time: Long = System.currentTimeMillis(),

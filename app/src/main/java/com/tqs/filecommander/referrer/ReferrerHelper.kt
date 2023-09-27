@@ -39,11 +39,11 @@ object ReferrerHelper {
         if (installReferrer.isNotBlank()) {
             return
         }
-        kotlin.runCatching {
+        runCatching {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
                 override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                    kotlin.runCatching {
+                    runCatching {
                         when (responseCode) {
                             InstallReferrerResponse.OK -> {
                                 referrerClient.installReferrer?.let {

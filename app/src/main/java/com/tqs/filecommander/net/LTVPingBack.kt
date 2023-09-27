@@ -2,9 +2,11 @@ package com.tqs.filecommander.net
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.tqs.filecommander.ads.AdsUserCost
 import com.tqs.filecommander.utils.application
 
 private val mFirebaseAnalytics = FirebaseAnalytics.getInstance(application)
+var adsUserCost: AdsUserCost? = null
 
 //Analytics and update user's behavior
 fun logEvent(eventName: String) {

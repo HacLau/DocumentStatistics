@@ -12,7 +12,7 @@ import com.tqs.filecommander.utils.FileUtils
 class FileManagerVM : BaseVM() {
     override val title: LiveData<String>
         get() = MutableLiveData<String>().apply {
-            value = "This is File Manager Fragment"
+            value = "This is File Commander Fragment"
         }
     var totalSpace = MutableLiveData<String>()
     var availSpace = MutableLiveData<String>()
