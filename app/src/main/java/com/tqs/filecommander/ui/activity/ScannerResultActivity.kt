@@ -3,33 +3,25 @@ package com.tqs.filecommander.ui.activity
 import android.text.Html
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityScannerResultBinding
 import com.tqs.filecommander.ads.AdsManager
-import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseActivity
-import com.tqs.filecommander.vm.activity.DocListVM
 import com.tqs.filecommander.utils.Common
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.tqs.filecommander.vm.MainVM
 
-class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocListVM>() {
+class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_scanner_result
     override val TAG: String
         get() = this.packageName
-    private var mDataList: ArrayList<DocumentEntity> = arrayListOf()
-
-    private var mPageType: String = ""
-    private var baseAds: BaseAds? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
-        viewModel = ViewModelProvider(this)[DocListVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
+        viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         binding.titleBar.setLeftClickListener {
             finish()
         }
@@ -41,7 +33,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
         }
         getDocDataList()
         binding.vFileOk.setOnClickListener {
-            jumpMediaListActivity(mPageType)
+            jumpMediaListActivity(viewModel.mPageType)
         }
     }
 
@@ -49,10 +41,10 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
         super.onResume()
         AdsManager.adsNativeMain.withLoad(this) {
             if (AdsManager.adsNativeMain.isCacheNotEmpty) {
-                baseAds?.destroyNative()
+                viewModel.baseAds?.destroyNative()
                 kotlin.runCatching {
                     AdsManager.adsNativeMain.showNativeAds(this@ScannerResultActivity, binding.nativeFrame) {
-                        baseAds = it
+                        viewModel.baseAds = it
                         Log.e(TAG, "native is show")
                     }
                 }
@@ -113,7 +105,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
                 hashMap.put(suffix, document)
             }
         }
-        mDataList = ArrayList<DocumentEntity>(hashMap.values)
+        viewModel.mDataList = ArrayList<DocumentEntity>(hashMap.values)
     }
 
     private fun statisticsListDirectory(fileEntities: ArrayList<FileEntity>) {
@@ -130,7 +122,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
 
     override fun onDestroy() {
         super.onDestroy()
-        baseAds?.destroyNative()
+        viewModel.baseAds?.destroyNative()
     }
 
 }

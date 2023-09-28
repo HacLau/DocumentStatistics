@@ -13,22 +13,19 @@ import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.DocAdapter
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
-import com.tqs.filecommander.vm.activity.DocListVM
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.FileUtils
+import com.tqs.filecommander.vm.MainVM
 
-class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
+class DocListActivity : BaseActivity<ActivityDocListBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_doc_list
     override val TAG: String
         get() = this.packageName
-    private lateinit var mDocAdapter: DocAdapter
-    private var mDataList: ArrayList<DocumentEntity> = arrayListOf()
-    private var mDeleteDialog: ConfirmAndCancelDialog? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        viewModel = ViewModelProvider(this)[DocListVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         binding.titleBar.setLeftClickListener {
             finish()
         }
@@ -50,25 +47,25 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
                 }
             }
         }
-        mDocAdapter = DocAdapter(this, mDataList)
-        binding.lvFileList.adapter = mDocAdapter
+        viewModel.mDocAdapter = DocAdapter(this, viewModel.mDataList)
+        binding.lvFileList.adapter = viewModel.mDocAdapter
         binding.lvFileList.onItemLongClickListener = OnItemLongClickListener { _, _, position, _ ->
-            mDocAdapter.setSelected(true)
-            mDataList[position].selected = true
-            mDocAdapter.setData(mDataList)
+            viewModel.mDocAdapter.setSelected(true)
+            viewModel.mDataList[position].selected = true
+            viewModel.mDocAdapter.setData(viewModel.mDataList)
             viewModel.listSelectCount.value = viewModel.listSelectCount.value?.plus(1)
             true
         }
 
         binding.lvFileList.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-            if (mDocAdapter.getSelected()) {
-                if (mDataList[position].selected) {
+            if (viewModel.mDocAdapter.getSelected()) {
+                if (viewModel.mDataList[position].selected) {
                     viewModel.listSelectCount.value = viewModel.listSelectCount.value?.minus(1)
                 } else {
                     viewModel.listSelectCount.value = viewModel.listSelectCount.value?.plus(1)
                 }
-                mDataList[position].selected = !mDataList[position].selected
-                mDocAdapter.setData(mDataList)
+                viewModel.mDataList[position].selected = !viewModel.mDataList[position].selected
+                viewModel.mDocAdapter.setData(viewModel.mDataList)
             }
         }
         binding.vFileDelete.setOnClickListener {
@@ -101,20 +98,20 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
     }
 
     private fun showDeleteDialog() {
-        if (mDeleteDialog == null) {
-            mDeleteDialog = ConfirmAndCancelDialog(this, {
-                mDeleteDialog?.dismiss()
+        if (viewModel.mDeleteDialog == null) {
+            viewModel.mDeleteDialog = ConfirmAndCancelDialog(this, {
+                viewModel.mDeleteDialog?.dismiss()
             }, {
-                mDeleteDialog?.dismiss()
+                viewModel.mDeleteDialog?.dismiss()
                 deleteSelectedDoc()
                 getDocDataList()
             })
         }
-        mDeleteDialog?.show()
+        viewModel.mDeleteDialog?.show()
     }
 
     private fun deleteSelectedDoc() {
-        for (doc in mDataList) {
+        for (doc in viewModel.mDataList) {
             if (doc.selected) {
                 for (file in viewModel.dataList.value!!) {
                     if (file.path?.endsWith(doc.suffix) == true) {
@@ -123,7 +120,7 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
                 }
             }
         }
-        mDocAdapter.setSelected(false)
+        viewModel.mDocAdapter.setSelected(false)
         viewModel.listSelectCount.value = 0
         setResult(RESULT_OK)
     }
@@ -144,8 +141,8 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
                 hashMap.put(suffix, document)
             }
         }
-        mDataList = ArrayList<DocumentEntity>(hashMap.values)
-        mDocAdapter.setData(mDataList)
+        viewModel.mDataList = ArrayList<DocumentEntity>(hashMap.values)
+        viewModel.mDocAdapter.setData(viewModel.mDataList)
     }
 
     private fun statisticsListDirectory(fileEntities: ArrayList<FileEntity>) {
@@ -162,12 +159,12 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, DocListVM>() {
     }
 
     override fun onBackPressed() {
-        if (viewModel.listSelectCount.value!! > 0 || mDocAdapter.getSelected()) {
-            for (doc in mDataList) {
+        if (viewModel.listSelectCount.value!! > 0 || viewModel.mDocAdapter.getSelected()) {
+            for (doc in viewModel.mDataList) {
                 doc.selected = false
             }
-            mDocAdapter.setSelected(false)
-            mDocAdapter.setData(mDataList)
+            viewModel.mDocAdapter.setSelected(false)
+            viewModel.mDocAdapter.setData(viewModel.mDataList)
             viewModel.listSelectCount.value = 0
         } else {
             super.onBackPressed()

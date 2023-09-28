@@ -6,10 +6,6 @@
 
     <data>
 
-        <variable
-            name="viewModel"
-            type="com.tqs.filecommander.vm.activity.SplashVM" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

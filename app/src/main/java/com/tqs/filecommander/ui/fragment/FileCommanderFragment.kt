@@ -14,7 +14,7 @@ import com.tqs.filecommander.databinding.FragmentFileCommanderBinding
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.DateUtils
-import com.tqs.filecommander.vm.fragment.FileCommanderVM
+import com.tqs.filecommander.vm.FileCommanderVM
 
 class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCommanderVM>(),
     View.OnClickListener {

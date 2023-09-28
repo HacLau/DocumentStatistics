@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.tqs.filecommander.BuildConfig
@@ -15,7 +16,7 @@ import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.view.TitleBar
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.logE
-import com.tqs.filecommander.vm.activity.MainVM
+import com.tqs.filecommander.vm.MainVM
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickListener {
 
@@ -28,6 +29,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         setContentView(binding.root)
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)?.let {
             navController = Navigation.findNavController(this, it.id)
         }
@@ -47,7 +49,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     override fun onResume() {
         super.onResume()
         if (System.currentTimeMillis() - MMKVHelper.showMainActivityTime > 30 * 1000) {
-            TBAHelper.updateSession()
+            Thread{
+                TBAHelper.updateSession()
+            }
             MMKVHelper.showMainActivityTime = System.currentTimeMillis()
         }
     }

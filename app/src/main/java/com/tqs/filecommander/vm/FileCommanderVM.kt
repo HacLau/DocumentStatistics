@@ -1,4 +1,4 @@
-package com.tqs.filecommander.vm.fragment
+package com.tqs.filecommander.vm
 
 import android.content.Context
 import android.os.Environment
@@ -10,8 +10,7 @@ import com.tqs.filecommander.base.BaseVM
 import com.tqs.filecommander.utils.FileUtils
 
 class FileCommanderVM : BaseVM() {
-    override val title: LiveData<String>
-        get() = MutableLiveData<String>().apply {
+    override var title: LiveData<String> = MutableLiveData<String>().apply {
             value = "This is File Commander Fragment"
         }
     var totalSpace = MutableLiveData<String>()

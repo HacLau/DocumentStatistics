@@ -10,36 +10,24 @@ import com.google.gson.Gson
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityImageListBinding
 import com.tqs.filecommander.ads.AdsManager
-import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.ImageVideoListAdapter
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.MediaItemDecoration
-import com.tqs.filecommander.vm.activity.ImageListVM
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.FileUtils
+import com.tqs.filecommander.vm.MainVM
 
-class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() {
+class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_image_list
     override val TAG: String
         get() = this.packageName
-    private var showImageList: ArrayList<FileEntity> = arrayListOf()
-    private lateinit var mImageAdapter: ImageVideoListAdapter
-    private val DESC: String = "DESC"
-    private val ASC: String = "ASC"
 
-    private var currentOrder = DESC
-
-    private val ALL: String = "ALL"
-    private val NONE: String = "NONE"
-    private var currentSelect = NONE
-    private var mPageType: String = Common.IMAGE_LIST
-    private var deletedFile: Boolean? = false
     private var registerForActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
-            deletedFile = it.data?.getBooleanExtra("deleteResult", false)
-            if (deletedFile == true) {
+            viewModel.deletedFile = it.data?.getBooleanExtra("deleteResult", false) == true
+            if (viewModel.deletedFile) {
                 orderShowImageList()
             }
             setResult()
@@ -47,7 +35,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
     }
 
     private fun setResult() {
-        if (deletedFile == true) {
+        if (viewModel.deletedFile) {
             setResult(RESULT_OK, Intent().apply {
                 putExtra("deleteResult", true)
             })
@@ -62,16 +50,16 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        viewModel = ViewModelProvider(this)[ImageListVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         binding.titleBar.setLeftClickListener {
             setResult()
             finish()
         }
         binding.titleBar.setOrderVisible(true)
         binding.titleBar.setOrderClickListener {
-            currentOrder = when (currentOrder) {
-                DESC -> ASC
-                ASC -> DESC
+            viewModel.currentOrder.value = when (viewModel.currentOrder.value) {
+                viewModel.DESC -> viewModel.ASC
+                viewModel.ASC -> viewModel.DESC
                 else -> {
                     ""
                 }
@@ -80,21 +68,21 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         }
         binding.vImageDelete.visibility = View.GONE
         binding.titleBar.setSelectClickListener {
-            when (currentSelect) {
-                NONE -> {
+            when (viewModel.currentSelect.value) {
+                viewModel.NONE -> {
                     selectAllShowImageList()
-                    currentSelect = ALL
+                    viewModel.currentSelect.value = viewModel.ALL
                     binding.titleBar.setSelectText("unselect")
                 }
 
-                ALL -> {
+                viewModel.ALL -> {
                     unselectAllShowImageList()
-                    currentSelect = NONE
+                    viewModel.currentSelect.value = viewModel.NONE
                     binding.titleBar.setSelectText("select all")
                 }
             }
         }
-        mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
+        viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         orderShowImageList()
         viewModel.listSelectCount.observe(this) {
             if (it > 0) {
@@ -103,7 +91,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
                 binding.vImageDelete.setBackgroundResource(R.drawable.bg_delete_normal)
             }
         }
-        viewModel.imageList.observe(this) {
+        viewModel.dataList.observe(this) {
             getImageViewShowList()
         }
         binding.vImageDelete.setOnClickListener {
@@ -129,12 +117,12 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
     }
 
     private fun deleteSelectedImage() {
-        for (file in showImageList) {
+        for (file in viewModel.showDataList) {
             if (file.selected) {
                 file.path?.let { FileUtils.deleteFile(it) }
             }
         }
-        mImageAdapter.touchState = mImageAdapter.CLICKSTATE
+        viewModel.mImageAdapter.touchState = viewModel.mImageAdapter.CLICKSTATE
         viewModel.listSelectCount.value = 0
         binding.titleBar.setOrderVisible(true)
         binding.vImageDelete.visibility = View.GONE
@@ -143,30 +131,30 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
 
     private fun unselectAllShowImageList() {
         viewModel.listSelectCount.value = 0
-        for (file in showImageList) {
+        for (file in viewModel.showDataList) {
             file.selected = false
         }
-        mImageAdapter.setData(showImageList)
-        mImageAdapter.notifyDataSetChanged()
+        viewModel.mImageAdapter.setData(viewModel.showDataList)
+        viewModel.mImageAdapter.notifyDataSetChanged()
     }
 
     private fun selectAllShowImageList() {
         viewModel.listSelectCount.value = 0
-        for (file in showImageList) {
+        for (file in viewModel.showDataList) {
             if (!file.isTitle) {
                 file.selected = true
                 viewModel.listSelectCount.value = viewModel.listSelectCount.value!! + 1
             }
         }
-        mImageAdapter.setData(showImageList)
-        mImageAdapter.notifyDataSetChanged()
+        viewModel.mImageAdapter.setData(viewModel.showDataList)
+        viewModel.mImageAdapter.notifyDataSetChanged()
     }
 
     private fun orderShowImageList() {
-        viewModel.imageList.value = null
-        when (currentOrder) {
-            DESC -> {
-                when (mPageType) {
+        viewModel.dataList.value = null
+        when (viewModel.currentOrder.value) {
+            viewModel.DESC -> {
+                when (viewModel.mPageType) {
                     Common.IMAGE_LIST -> {
                         viewModel.getImageListOrderDescByDate(this)
                         binding.titleBar.setTitleText("Image")
@@ -179,8 +167,8 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
                 }
             }
 
-            ASC -> {
-                when (mPageType) {
+            viewModel.ASC -> {
+                when (viewModel.mPageType) {
                     Common.IMAGE_LIST -> {
                         viewModel.getImageListOrderAscByDate(this)
                         binding.titleBar.setTitleText("Image")
@@ -196,9 +184,9 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
     }
 
     private fun getImageViewShowList() {
-        showImageList = viewModel.changeShowImageList(viewModel.imageList.value)
-        mImageAdapter.setData(showImageList)
-        mImageAdapter.notifyDataSetChanged()
+        viewModel.showDataList = viewModel.changeShowImageList(viewModel.dataList.value)
+        viewModel.mImageAdapter.setData(viewModel.showDataList)
+        viewModel.mImageAdapter.notifyDataSetChanged()
     }
 
     private fun setImageListAdapter() {
@@ -206,7 +194,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         val manager = GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false)
         manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (showImageList[position].isTitle) {
+                return if (viewModel.showDataList[position].isTitle) {
                     3
                 } else {
                     1
@@ -215,61 +203,61 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, ImageListVM>() 
         }
         binding.rvImageList.layoutManager = manager
         binding.rvImageList.addItemDecoration(MediaItemDecoration(6))
-        mImageAdapter = ImageVideoListAdapter(this, showImageList, { position, touchView ->
-            if (mImageAdapter.touchState == mImageAdapter.LONGSTATE
-                && touchView != mImageAdapter.TOUCHTITLEVIEW
+        viewModel.mImageAdapter = ImageVideoListAdapter(this, viewModel.showDataList, { position, touchView ->
+            if (viewModel.mImageAdapter.touchState == viewModel.mImageAdapter.LONGSTATE
+                && touchView != viewModel.mImageAdapter.TOUCHTITLEVIEW
             ) {
-                if (showImageList[position].selected) {
+                if (viewModel.showDataList[position].selected) {
                     viewModel.listSelectCount.value = viewModel.listSelectCount.value?.minus(1)
-                    currentSelect = NONE
+                    viewModel.currentSelect.value = viewModel.NONE
                     binding.titleBar.setSelectText("select all")
                 } else {
                     viewModel.listSelectCount.value = viewModel.listSelectCount.value?.plus(1)
-                    if (viewModel.listSelectCount.value == viewModel.imageList.value?.size) {
-                        currentSelect = ALL
+                    if (viewModel.listSelectCount.value == viewModel.dataList.value?.size) {
+                        viewModel.currentSelect.value = viewModel.ALL
                         binding.titleBar.setSelectText("unselect")
                     }
                 }
-                showImageList[position].selected = !showImageList[position].selected
-                mImageAdapter.setData(showImageList)
-                mImageAdapter.notifyItemChanged(position)
+                viewModel.showDataList[position].selected = !viewModel.showDataList[position].selected
+                viewModel.mImageAdapter.setData(viewModel.showDataList)
+                viewModel.mImageAdapter.notifyItemChanged(position)
             } else {
                 when (touchView) {
-                    mImageAdapter.TOUCHIMAGEVIEW -> {
+                    viewModel.mImageAdapter.TOUCHIMAGEVIEW -> {
                         toPreviewImage(position)
                     }
 
-                    mImageAdapter.TOUCHPLAYVIEW -> {
+                    viewModel.mImageAdapter.TOUCHPLAYVIEW -> {
                         toPreviewImage(position)
                     }
                 }
             }
         }, { position ->
-            if (!showImageList[position].selected && mImageAdapter.touchState != mImageAdapter.LONGSTATE) {
-                mImageAdapter.touchState = mImageAdapter.LONGSTATE
-                showImageList[position].selected = !showImageList[position].selected
-                mImageAdapter.setData(showImageList)
+            if (!viewModel.showDataList[position].selected && viewModel.mImageAdapter.touchState != viewModel.mImageAdapter.LONGSTATE) {
+                viewModel.mImageAdapter.touchState = viewModel.mImageAdapter.LONGSTATE
+                viewModel.showDataList[position].selected = !viewModel.showDataList[position].selected
+                viewModel.mImageAdapter.setData(viewModel.showDataList)
                 binding.vImageDelete.visibility = View.VISIBLE
                 viewModel.listSelectCount.value = 1
                 binding.titleBar.setSelectVisible(true)
-                mImageAdapter.notifyDataSetChanged()
+                viewModel.mImageAdapter.notifyDataSetChanged()
             }
         })
-        binding.rvImageList.adapter = mImageAdapter
+        binding.rvImageList.adapter = viewModel.mImageAdapter
 
     }
 
     private fun toPreviewImage(position: Int) {
         registerForActivityResult.launch(Intent(this, PreviewActivity::class.java).apply {
-            putExtra("selectImageIndex", position - viewModel.getEmptyData(position, showImageList))
-            putExtra("previewFileList", Gson().toJson(viewModel.imageList.value))
-            putExtra(Common.PAGE_TYPE, mPageType)
+            putExtra("selectImageIndex", position - viewModel.getEmptyData(position, viewModel.showDataList))
+            putExtra("previewFileList", Gson().toJson(viewModel.dataList.value))
+            putExtra(Common.PAGE_TYPE, viewModel.mPageType)
         })
     }
 
     override fun onBackPressed() {
-        if (viewModel.listSelectCount.value!! > 0 || mImageAdapter.touchState == mImageAdapter.LONGSTATE) {
-            mImageAdapter.touchState = mImageAdapter.CLICKSTATE
+        if (viewModel.listSelectCount.value!! > 0 || viewModel.mImageAdapter.touchState == viewModel.mImageAdapter.LONGSTATE) {
+            viewModel.mImageAdapter.touchState = viewModel.mImageAdapter.CLICKSTATE
             unselectAllShowImageList()
             binding.titleBar.setOrderVisible(true)
             binding.vImageDelete.visibility = View.GONE

@@ -7,25 +7,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivitySplashBinding
 import com.tqs.filecommander.base.BaseActivity
-import com.tqs.filecommander.vm.activity.SplashVM
 import com.tqs.filecommander.ads.AdsManager
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
+import com.tqs.filecommander.vm.MainVM
 
-private const val COUNTER_TIME_MILLISECONDS = 5000L
-
-class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
+class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_splash
     override val TAG: String
         get() = this.packageName
-    private val isMobileAdsInitializeCalled = AtomicBoolean(false)
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        viewModel = ViewModelProvider(this).get(SplashVM::class.java)
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         initAdsData()
-        createTimer(COUNTER_TIME_MILLISECONDS)
+        createTimer(viewModel.countDownTime)
     }
 
     private fun initAdsData() {
@@ -41,7 +36,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
         val countDownTimer: CountDownTimer =
             object : CountDownTimer(time, 33) {
                 override fun onTick(millisUntilFinished: Long) {
-                    binding.splashProgressBar.progress = 100 - (millisUntilFinished / 50).toInt()
+                    binding.splashProgressBar.progress = 100 - (millisUntilFinished / 80).toInt()
                 }
 
                 override fun onFinish() {

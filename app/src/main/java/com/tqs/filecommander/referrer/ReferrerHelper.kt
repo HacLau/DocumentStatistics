@@ -67,6 +67,7 @@ object ReferrerHelper {
 
                             InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
                                 //Local Code: Missing google_app_id. Firebase Analytics disabled. See https://goo.gl/NAOOOI
+//                                referrerClient.startConnection(this)
                             }
 
                             InstallReferrerResponse.SERVICE_UNAVAILABLE -> {

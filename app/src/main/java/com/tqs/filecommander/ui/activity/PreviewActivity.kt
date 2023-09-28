@@ -20,51 +20,43 @@ import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.FileDetailPopupWindow
-import com.tqs.filecommander.vm.activity.PreviewVM
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.FileUtils
+import com.tqs.filecommander.vm.MainVM
 import java.io.File
 
-class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
+class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_image_preview
     override val TAG: String
         get() = this.packageName
-    private var previewMediaList: MutableList<FileEntity>? = null
-    private var currentIndex = 0
-
-    private var mDialog: ConfirmAndCancelDialog? = null
-    private var mPopupWindow: FileDetailPopupWindow? = null
-    private var mPreviewAdapter: PreviewAdapter? = null
-    private var mPageType: String = Common.IMAGE_LIST
-    private var deletedFile: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        viewModel = ViewModelProvider(this)[PreviewVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         binding.titleBar.setLeftClickListener {
             setResult()
             finish()
         }
-        currentIndex = intent.getIntExtra("selectImageIndex", 0)
+        viewModel.currentIndex = intent.getIntExtra("selectImageIndex", 0)
         object : TypeToken<ArrayList<String>>() {}.type
-        previewMediaList = Gson().fromJson(
+        viewModel.previewMediaList = Gson().fromJson(
             intent.getStringExtra("previewFileList"),
             object : TypeToken<ArrayList<FileEntity>>() {}.type
         ) as MutableList<FileEntity>
-        mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
+        viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         setTitleText()
-        mPreviewAdapter = PreviewAdapter(this, previewMediaList) {position ->
+        viewModel.mPreviewAdapter = PreviewAdapter(this, viewModel.previewMediaList) {position ->
             if (binding.clMenu.isVisible)
                 binding.clMenu.visibility = View.GONE
             else
                 binding.clMenu.visibility = View.VISIBLE
         }
-        binding.vpShowMedia.adapter = mPreviewAdapter
+        binding.vpShowMedia.adapter = viewModel.mPreviewAdapter
         binding.vpShowMedia.offscreenPageLimit = 0
-        binding.vpShowMedia.currentItem = currentIndex
+        binding.vpShowMedia.currentItem = viewModel.currentIndex
         binding.vpShowMedia.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
@@ -73,8 +65,8 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
             ) {}
 
             override fun onPageSelected(position: Int) {
-                currentIndex = position
-                if (Common.VIDEO_LIST == mPageType) {
+                viewModel.currentIndex = position
+                if (Common.VIDEO_LIST == viewModel.mPageType) {
                     stopPlayer()
                 }
                 setTitleText()
@@ -104,8 +96,8 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
     }
 
     private fun setSharedFile() {
-        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", File(previewMediaList?.get(currentIndex)?.path ?: ""))
-        val type = previewMediaList?.get(currentIndex)?.mimeType
+        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", File(viewModel.previewMediaList?.get(viewModel.currentIndex)?.path ?: ""))
+        val type = viewModel.previewMediaList?.get(viewModel.currentIndex)?.mimeType
 
         startActivity(createChooser(Intent().apply {
             action = Intent.ACTION_SEND
@@ -115,41 +107,41 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
     }
 
     private fun stopPlayer() {
-        mPreviewAdapter?.stopPlayer()
+        viewModel.mPreviewAdapter.stopPlayer()
     }
 
 
     private fun setDialogConfirmAndCancel() {
-        if (mDialog == null) {
-            mDialog = ConfirmAndCancelDialog(this, {
-                mDialog?.dismiss()
+        if (viewModel.mDeleteDialog == null) {
+            viewModel.mDeleteDialog = ConfirmAndCancelDialog(this, {
+                viewModel.mDeleteDialog?.dismiss()
             }, {
-                mDialog?.dismiss()
-                if (FileUtils.deleteFile(previewMediaList!![currentIndex].path!!)) {
-                    deletedFile = true
-                    previewMediaList!!.remove(previewMediaList?.get(currentIndex))
-                    mPreviewAdapter?.setData(previewMediaList!!)
-                    mPreviewAdapter?.destroyItem(binding.vpShowMedia, -1, binding.vpShowMedia.rootView)
-                    mPreviewAdapter?.notifyDataSetChanged()
+                viewModel.mDeleteDialog?.dismiss()
+                if (FileUtils.deleteFile(viewModel.previewMediaList!![viewModel.currentIndex].path!!)) {
+                    viewModel.deletedFile = true
+                    viewModel.previewMediaList!!.remove(viewModel.previewMediaList?.get(viewModel.currentIndex))
+                    viewModel.mPreviewAdapter.setData(viewModel.previewMediaList!!)
+                    viewModel.mPreviewAdapter.destroyItem(binding.vpShowMedia, -1, binding.vpShowMedia.rootView)
+                    viewModel.mPreviewAdapter.notifyDataSetChanged()
                     setTitleText()
                     setResult()
                 }
             })
 
         }
-        mDialog?.show()
+        viewModel.mDeleteDialog?.show()
     }
 
     private fun setPopupWindow() {
-        if (mPopupWindow == null) {
-            mPopupWindow = FileDetailPopupWindow(this)
-            previewMediaList?.let { mPopupWindow?.setFileInfo(it[currentIndex]) }
+        if (viewModel.mPopupWindow == null) {
+            viewModel.mPopupWindow = FileDetailPopupWindow(this)
+            viewModel.previewMediaList?.let { viewModel.mPopupWindow?.setFileInfo(it[viewModel.currentIndex]) }
         }
-        mPopupWindow?.showAsDropDown(binding.titleBar, 0, 0, Gravity.CENTER)
+        viewModel.mPopupWindow?.showAsDropDown(binding.titleBar, 0, 0, Gravity.CENTER)
     }
 
     private fun setTitleText() {
-        binding.titleBar.setTitleText("${currentIndex + 1} / ${previewMediaList!!.size}")
+        binding.titleBar.setTitleText("${viewModel.currentIndex + 1} / ${viewModel.previewMediaList!!.size}")
     }
 
     override fun onBackPressed() {
@@ -158,9 +150,9 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
     }
 
     private fun setResult() {
-        if (deletedFile) {
+        if (viewModel.deletedFile) {
             setResult(RESULT_OK, Intent().apply {
-                putExtra("currentIndex", currentIndex)
+                putExtra("currentIndex", viewModel.currentIndex)
                 putExtra("deleteResult", true)
             })
         } else {

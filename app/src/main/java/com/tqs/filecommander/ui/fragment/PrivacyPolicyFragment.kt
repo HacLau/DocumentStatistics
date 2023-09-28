@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.FragmentPrivacyPolicyBinding
 import com.tqs.filecommander.base.BaseFragment
-import com.tqs.filecommander.vm.fragment.PrivacyPolicyVM
+import com.tqs.filecommander.vm.PrivacyPolicyVM
 
 class PrivacyPolicyFragment : BaseFragment<FragmentPrivacyPolicyBinding, PrivacyPolicyVM>() {
     override val layoutId: Int

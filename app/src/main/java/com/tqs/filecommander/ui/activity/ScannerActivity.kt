@@ -5,37 +5,33 @@ import android.animation.Animator.AnimatorListener
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
-import com.tqs.filecommander.ads.AdsHelper
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.databinding.ActivityScannerBinding
 import com.tqs.filecommander.base.BaseActivity
-import com.tqs.filecommander.vm.activity.ScannerVM
 import com.tqs.filecommander.utils.Common
-import com.tqs.filecommander.utils.logE
+import com.tqs.filecommander.vm.MainVM
 
-class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
+class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
     override val layoutId: Int
         get() = R.layout.activity_scanner
     override val TAG: String
         get() = "ScannerActivity"
-    private var mPageType: String = ""
-    private val countDownTime = 8 * 1000L
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
-        mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
-        viewModel = ViewModelProvider(this)[ScannerVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
+        viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 // loop a day
-                createTimer(countDownTime)
+                createTimer(viewModel.countDownTime)
             }
 
             override fun onAnimationEnd(animation: Animator) {
             }
 
             override fun onAnimationCancel(animation: Animator) {
-                jumpScannerResultActivity(mPageType)
+                jumpScannerResultActivity(viewModel.mPageType)
 
             }
 
