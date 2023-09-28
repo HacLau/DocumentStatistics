@@ -5,10 +5,13 @@ import android.animation.Animator.AnimatorListener
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
+import com.tqs.filecommander.ads.AdsHelper
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.databinding.ActivityScannerBinding
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.vm.activity.ScannerVM
 import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.logE
 
 class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
     override val layoutId: Int
@@ -16,6 +19,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
     override val TAG: String
         get() = "ScannerActivity"
     private var mPageType: String = ""
+    private val countDownTime = 8 * 1000L
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
@@ -23,8 +27,8 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
         viewModel = ViewModelProvider(this)[ScannerVM::class.java]
         binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
-                // loop
-                createTimer(3600 * 1000L)
+                // loop a day
+                createTimer(countDownTime)
             }
 
             override fun onAnimationEnd(animation: Animator) {
@@ -55,6 +59,10 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, ScannerVM>() {
                         }
                     }"
                     count++
+                    if(millisUntilFinished < 3000L && AdsManager.adsNativeMain.isCacheNotEmpty){
+                        this.cancel()
+                        this.onFinish()
+                    }
                 }
 
                 override fun onFinish() {

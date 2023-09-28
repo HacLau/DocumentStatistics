@@ -7,34 +7,37 @@ import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.net.HttpHelper
 import com.tqs.filecommander.utils.application
+import com.tqs.filecommander.utils.encode
+import com.tqs.filecommander.utils.getAndroidId
 import org.json.JSONObject
 import java.net.URLEncoder
 
 object CloakHelper {
     private var cloakState = ""
+    private var reloadTimes = 0
     fun getCloakConfig() {
         HttpHelper.sendRequestGet(jsonObject = getCloakJsonConfig(), resultSuccess = {
             cloakState = it
             MMKVHelper.cloakState = it
         }, resultFailed = { code, message ->
-
+            if (reloadTimes < 20)
+                getCloakConfig()
         })
     }
 
-    @SuppressLint("HardwareIds")
     private fun getCloakJsonConfig(): JSONObject {
         return JSONObject().apply {
-            put(CloakKey.sofia, URLEncoder.encode(Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID), "UTF-8"))
-            put(CloakKey.fusty, URLEncoder.encode(System.currentTimeMillis().toString(), "UTF-8"))
-            put(CloakKey.stubby, URLEncoder.encode(Build.MODEL, "UTF-8"))
-            put(CloakKey.noodle, URLEncoder.encode(BuildConfig.APPLICATION_ID, "UTF-8"))
-            put(CloakKey.ohio, URLEncoder.encode(Build.VERSION.RELEASE, "UTF-8"))
+            put(CloakKey.sofia, getAndroidId().encode())
+            put(CloakKey.fusty, System.currentTimeMillis().toString().encode())
+            put(CloakKey.stubby, Build.MODEL.encode())
+            put(CloakKey.noodle, BuildConfig.APPLICATION_ID.encode())
+            put(CloakKey.ohio, Build.VERSION.RELEASE.encode())
 //            put(CloakKey.previous,"")
-            put(CloakKey.tabletop, URLEncoder.encode("", "UTF-8"))
-            put(CloakKey.abbey, URLEncoder.encode(Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID), "UTF-8"))
-            put(CloakKey.animist, URLEncoder.encode("twigging", "UTF-8"))
+            put(CloakKey.tabletop, "")
+            put(CloakKey.abbey, getAndroidId().encode())
+            put(CloakKey.animist, "twigging".encode())
             put(CloakKey.bell, "")
-            put(CloakKey.rib, URLEncoder.encode(BuildConfig.VERSION_NAME, "UTF-8"))
+            put(CloakKey.rib, BuildConfig.VERSION_NAME.encode())
 //            put(CloakKey.crib,"")
 //            put(CloakKey.stab,"")
 //            put(CloakKey.gondola,"")

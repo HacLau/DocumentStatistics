@@ -38,7 +38,7 @@ class NativeMainAdvertising(
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) = onAdsLoadFailed.invoke(loadAdError.message)
             })
             withNativeAdOptions(NativeAdOptions.Builder().apply {
-                setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
+                setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_LEFT)
             }.build())
         }.build().loadAd(adRequest)
     }
@@ -46,14 +46,28 @@ class NativeMainAdvertising(
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
         val binding: LayoutAdvertisingNativeBinding =
             DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native, nativeParent, false)
-        binding.nativeAdBg.mediaContent = nativeAd?.mediaContent
-        binding.nativeAppIcon.setImageDrawable(nativeAd?.icon?.drawable)
+        binding.nativeAdView.mediaView = binding.nativeMediaView
+        binding.nativeAdView.headlineView = binding.nativeAppTitle
+        binding.nativeAdView.bodyView = binding.nativeAppDes
+        binding.nativeAdView.iconView = binding.nativeAppIcon
+        binding.nativeAdView.callToActionView = binding.nativeAppInstall
+
+        nativeAd?.mediaContent?.let {
+            binding.nativeMediaView.mediaContent = it
+        }
+        nativeAd?.icon?.drawable?.let {
+            binding.nativeAppIcon.setImageDrawable(it)
+        }
+
         binding.nativeAppTitle.text = nativeAd?.headline
         binding.nativeAppDes.text = nativeAd?.body
         binding.nativeAppInstall.text = nativeAd?.callToAction
+
+        nativeAd?.let { binding.nativeAdView.setNativeAd(it) }
+
         nativeParent?.isVisible = true
         nativeParent?.removeAllViews()
-        nativeParent?.addView(binding.root)
+        nativeParent?.addView(binding.nativeMediaView)
         AdsManager.addShowCount()
     }
 

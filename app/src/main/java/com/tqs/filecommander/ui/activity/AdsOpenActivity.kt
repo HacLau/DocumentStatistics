@@ -11,6 +11,7 @@ import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.databinding.ActivityAdsOpenBinding
 import com.tqs.filecommander.notification.NotificationHelper
+import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.vm.activity.AdsOpenVM
 
 class AdsOpenActivity : BaseActivity<ActivityAdsOpenBinding,AdsOpenVM>() {
@@ -30,8 +31,7 @@ class AdsOpenActivity : BaseActivity<ActivityAdsOpenBinding,AdsOpenVM>() {
             }
         }
         AdsManager.adsFullScreen.showFullScreenAds(this){
-            startActivity(Intent(this,ScannerActivity::class.java))
-            finish()
+            jumpScannerActivity(Common.pageArray[(0..4).random()])
         }
     }
 }

@@ -16,6 +16,7 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityImagePreviewBinding
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.adapter.PreviewAdapter
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.FileDetailPopupWindow
@@ -86,19 +87,19 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, PreviewVM>() {
 
         })
         binding.ivWarningImage.setOnClickListener {
-//            AdsManager.adsFullScreen.showFullScreenAds(this@PreviewActivity) {
+            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity) {
                 setPopupWindow()
-//            }
+            }
         }
         binding.ivDeleteImage.setOnClickListener {
-//            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
+            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
                 setDialogConfirmAndCancel()
-//            }
+            }
         }
         binding.ivShareImage.setOnClickListener {
-//            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
+            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
                 setSharedFile()
-//            }
+            }
         }
     }
 

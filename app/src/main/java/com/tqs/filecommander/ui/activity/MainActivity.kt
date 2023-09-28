@@ -8,14 +8,14 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.R
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.databinding.ActivityMainBinding
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.tba.TBAHelper
-import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ui.view.TitleBar
-import com.tqs.filecommander.vm.activity.MainVM
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.logE
+import com.tqs.filecommander.vm.activity.MainVM
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickListener {
 
@@ -35,7 +35,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         binding.appBarMain.findViewById<TitleBar>(R.id.title_bar_main).setLeftClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
-        binding.clFileManager.setOnClickListener(this)
+        binding.clFileCommander.setOnClickListener(this)
         binding.rlContactUs.setOnClickListener(this)
         binding.rlPrivacyPolicy.setOnClickListener(this)
         binding.rlShare.setOnClickListener(this)
@@ -55,8 +55,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.cl_file_manager -> {
-                selectedMenu(R.id.nav_file_manager, false)
+            R.id.cl_file_commander -> {
+                selectedMenu(R.id.nav_file_commander, false)
             }
 
             R.id.rl_contact_us -> {
@@ -124,7 +124,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
 
     override fun onPermissionSuccess() {
         "onPermissionSuccess".logE()
-        selectedMenu(R.id.nav_file_manager, true)
+        selectedMenu(R.id.nav_file_commander, true)
     }
 
 }

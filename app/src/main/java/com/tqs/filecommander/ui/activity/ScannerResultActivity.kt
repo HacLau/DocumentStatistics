@@ -38,12 +38,16 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
         }
         getDocDataList()
         baseAds?.destroyNative()
+        binding.vFileOk.setOnClickListener {
+            jumpMediaListActivity(mPageType)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         AdsManager.adsNativeMain.showNativeAds(this,binding.nativeParentCard){
             baseAds = it
             Log.e(TAG,"native is show")
-        }
-        binding.vFileOk.setOnClickListener {
-            jumpMediaListActivity(mPageType)
         }
     }
 

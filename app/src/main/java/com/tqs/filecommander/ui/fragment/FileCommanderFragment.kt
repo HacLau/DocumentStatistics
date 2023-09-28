@@ -1,29 +1,25 @@
 package com.tqs.filecommander.ui.fragment
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
-import com.tqs.filecommander.databinding.FragmentFileManagerBinding
-import com.tqs.filecommander.ui.activity.ScannerActivity
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.base.BaseFragment
-import com.tqs.filecommander.vm.fragment.FileManagerVM
+import com.tqs.filecommander.databinding.FragmentFileCommanderBinding
+import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.DateUtils
-import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.vm.fragment.FileCommanderVM
 
-class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManagerVM>(),
+class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCommanderVM>(),
     View.OnClickListener {
     override val layoutId: Int
-        get() = R.layout.fragment_file_manager
+        get() = R.layout.fragment_file_commander
 
 
     override fun onCreateView(
@@ -31,14 +27,14 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFileManagerBinding.inflate(inflater, container, false)
+        binding = FragmentFileCommanderBinding.inflate(inflater, container, false)
         val root: View = binding.root
         initData()
         return root
     }
 
     override fun initData() {
-        viewModel = ViewModelProvider(this)[FileManagerVM::class.java]
+        viewModel = ViewModelProvider(this)[FileCommanderVM::class.java]
         setClickListener()
         viewModel.hadPermission.observe(requireActivity()) {
             if (it)
@@ -120,11 +116,11 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
     }
 
     private fun setClickListener() {
-        binding.clFileManagerAudio.setOnClickListener(this)
-        binding.clFileManagerDocuments.setOnClickListener(this)
-        binding.clFileManagerDownload.setOnClickListener(this)
-        binding.clFileManagerImage.setOnClickListener(this)
-        binding.clFileManagerVideo.setOnClickListener(this)
+        binding.clFileCommanderAudio.setOnClickListener(this)
+        binding.clFileCommanderDocuments.setOnClickListener(this)
+        binding.clFileCommanderDownload.setOnClickListener(this)
+        binding.clFileCommanderImage.setOnClickListener(this)
+        binding.clFileCommanderVideo.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -136,23 +132,23 @@ class FileManagerFragment : BaseFragment<FragmentFileManagerBinding, FileManager
             return
         }
         when (v?.id) {
-            R.id.cl_file_manager_image -> {
+            R.id.cl_file_commander_image -> {
                 jumpScannerActivity(Common.IMAGE_LIST)
             }
 
-            R.id.cl_file_manager_documents -> {
+            R.id.cl_file_commander_documents -> {
                 jumpScannerActivity(Common.DOCUMENTS_LIST)
             }
 
-            R.id.cl_file_manager_audio -> {
+            R.id.cl_file_commander_audio -> {
                 jumpScannerActivity(Common.AUDIO_LIST)
             }
 
-            R.id.cl_file_manager_video -> {
+            R.id.cl_file_commander_video -> {
                 jumpScannerActivity(Common.VIDEO_LIST)
             }
 
-            R.id.cl_file_manager_download -> {
+            R.id.cl_file_commander_download -> {
                 jumpScannerActivity(Common.DOWNLOAD_LIST)
             }
         }

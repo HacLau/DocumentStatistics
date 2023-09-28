@@ -44,51 +44,50 @@ abstract class BaseAds(
                 } else {
                     adsValue.valueMicros / 1000000.toDouble()
                 }
-            when {
-                adsUserCost?.top50!! in MMKVHelper.currentUserCost..currentCost -> {
-                    logEvent(
-                        ADLTV.AdLTV_Top50Percent, mutableMapOf(
-                            FirebaseAnalytics.Param.VALUE to adsUserCost?.top50,
-                            FirebaseAnalytics.Param.CURRENCY to "USD",
-                        )
-                    )
-                }
 
-                adsUserCost?.top40!! in MMKVHelper.currentUserCost..currentCost -> {
-                    logEvent(
-                        ADLTV.AdLTV_Top40Percent, mutableMapOf(
-                            FirebaseAnalytics.Param.VALUE to adsUserCost?.top40,
-                            FirebaseAnalytics.Param.CURRENCY to "USD",
-                        )
+            if (adsUserCost?.top50!! in MMKVHelper.currentUserCost..<currentCost) {
+                logEvent(
+                    ADLTV.AdLTV_Top50Percent, mutableMapOf(
+                        FirebaseAnalytics.Param.VALUE to adsUserCost?.top50,
+                        FirebaseAnalytics.Param.CURRENCY to "USD",
                     )
-                }
+                )
+            }
 
-                adsUserCost?.top30!! in MMKVHelper.currentUserCost..currentCost -> {
-                    logEvent(
-                        ADLTV.AdLTV_Top30Percent, mutableMapOf(
-                            FirebaseAnalytics.Param.VALUE to adsUserCost?.top30,
-                            FirebaseAnalytics.Param.CURRENCY to "USD",
-                        )
+            if (adsUserCost?.top40!! in MMKVHelper.currentUserCost..<currentCost) {
+                logEvent(
+                    ADLTV.AdLTV_Top40Percent, mutableMapOf(
+                        FirebaseAnalytics.Param.VALUE to adsUserCost?.top40,
+                        FirebaseAnalytics.Param.CURRENCY to "USD",
                     )
-                }
+                )
+            }
 
-                adsUserCost?.top20!! in MMKVHelper.currentUserCost..currentCost -> {
-                    logEvent(
-                        ADLTV.AdLTV_Top20Percent, mutableMapOf(
-                            FirebaseAnalytics.Param.VALUE to adsUserCost?.top20,
-                            FirebaseAnalytics.Param.CURRENCY to "USD",
-                        )
+            if (adsUserCost?.top30!! in MMKVHelper.currentUserCost..<currentCost) {
+                logEvent(
+                    ADLTV.AdLTV_Top30Percent, mutableMapOf(
+                        FirebaseAnalytics.Param.VALUE to adsUserCost?.top30,
+                        FirebaseAnalytics.Param.CURRENCY to "USD",
                     )
-                }
+                )
+            }
 
-                adsUserCost?.top10!! in MMKVHelper.currentUserCost..currentCost -> {
-                    logEvent(
-                        ADLTV.AdLTV_Top10Percent, mutableMapOf(
-                            FirebaseAnalytics.Param.VALUE to adsUserCost?.top10,
-                            FirebaseAnalytics.Param.CURRENCY to "USD",
-                        )
+            if (adsUserCost?.top20!! in MMKVHelper.currentUserCost..<currentCost) {
+                logEvent(
+                    ADLTV.AdLTV_Top20Percent, mutableMapOf(
+                        FirebaseAnalytics.Param.VALUE to adsUserCost?.top20,
+                        FirebaseAnalytics.Param.CURRENCY to "USD",
                     )
-                }
+                )
+            }
+
+            if (adsUserCost?.top10!! in MMKVHelper.currentUserCost..<currentCost) {
+                logEvent(
+                    ADLTV.AdLTV_Top10Percent, mutableMapOf(
+                        FirebaseAnalytics.Param.VALUE to adsUserCost?.top10,
+                        FirebaseAnalytics.Param.CURRENCY to "USD",
+                    )
+                )
             }
 
             MMKVHelper.currentUserCost = currentCost

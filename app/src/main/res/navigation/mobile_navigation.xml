@@ -3,19 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/nav_file_manager">
+    app:startDestination="@id/nav_file_commander">
 
     <fragment
-        android:id="@+id/nav_file_manager"
-        android:name="com.tqs.filecommander.ui.fragment.FileManagerFragment"
-        android:label="@string/menu_file_manager"
-        tools:layout="@layout/fragment_file_manager"/>
-
-    <fragment
-        android:id="@+id/nav_contact_us"
-        android:name="com.tqs.filecommander.ui.fragment.ContactUsFragment"
-        android:label="@string/menu_contact_us"
-        tools:layout="@layout/fragment_contact_us" />
+        android:id="@+id/nav_file_commander"
+        android:name="com.tqs.filecommander.ui.fragment.FileCommanderFragment"
+        android:label="@string/menu_file_commander"
+        tools:layout="@layout/fragment_file_commander"/>
 
     <fragment
         android:id="@+id/nav_privacy_policy"
@@ -23,15 +17,4 @@
         android:label="@string/menu_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
 
-    <fragment
-        android:id="@+id/nav_share"
-        android:name="com.tqs.filecommander.ui.fragment.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
-
-    <fragment
-        android:id="@+id/nav_upgrade"
-        android:name="com.tqs.filecommander.ui.fragment.UpgradeFragment"
-        android:label="@string/menu_upgrade"
-        tools:layout="@layout/fragment_upgrade" />
 </navigation>

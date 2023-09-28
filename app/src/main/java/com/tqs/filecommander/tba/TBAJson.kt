@@ -5,9 +5,11 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.webkit.WebSettings
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.utils.application
+import com.tqs.filecommander.utils.getAndroidId
 import org.json.JSONObject
 import java.net.URLEncoder
 import java.util.Locale
@@ -26,21 +28,18 @@ private fun getCelsius(): JSONObject = JSONObject().apply {
     this.put(EventCelsius.ontogeny, Locale.getDefault().language)
     this.put(EventCelsius.animist, "twigging")
     this.put(EventCelsius.rib, BuildConfig.VERSION_NAME)
-//        this.put(EventCelsius.crib, URLEncoder.encode("", "UTF-8"))
+//        this.put(EventCelsius.crib, "")
     this.put(EventCelsius.noodle, BuildConfig.APPLICATION_ID)
 //        this.put(EventCelsius.previous, "")
 }
 
 @SuppressLint("HardwareIds")
 private fun getQuixotic(): JSONObject = JSONObject().apply {
-    this.put(
-        EventQuixotic.abbey,
-        URLEncoder.encode(Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID), "UTF-8")
-    )
+    this.put(EventQuixotic.abbey, getAndroidId())
 //        this.put(EventQuixotic.nepotism, "")
 //        this.put(EventQuixotic.alasdair, "")
-    this.put(EventQuixotic.sofia, Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID))
-    this.put(EventQuixotic.fusty, URLEncoder.encode(System.currentTimeMillis().toString(), "UTF-8"))
+    this.put(EventQuixotic.sofia, getAndroidId())
+    this.put(EventQuixotic.fusty, System.currentTimeMillis().toString())
     this.put(EventQuixotic.weight, Locale.getDefault().language)
 //        this.put(EventQuixotic.stab, "")
     this.put(EventQuixotic.fairfax, (application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simOperator)
@@ -50,12 +49,12 @@ private fun getQuixotic(): JSONObject = JSONObject().apply {
 
 private fun getFiligree(): JSONObject = JSONObject().apply {
     this.put(EventFiligree.invent, application.resources.displayMetrics.let { "${it.widthPixels}*${it.heightPixels}" })
-    this.put(EventFiligree.nulls, URLEncoder.encode("", "UTF-8"))
+    this.put(EventFiligree.nulls, "")
 //        this.put(EventFiligree.bell, "")
-//        this.put(EventFiligree.forbear, URLEncoder.encode("","UTF-8"))
+//        this.put(EventFiligree.forbear, "","UTF-8"))
     this.put(EventFiligree.tabletop, "")
     this.put(EventFiligree.leaf, Build.MANUFACTURER)
-    this.put(EventFiligree.benefit, UUID.randomUUID())
+    this.put(EventFiligree.benefit, UUID.randomUUID().toString())
     this.put(EventFiligree.stubby, Build.MODEL)
 }
 
@@ -63,7 +62,7 @@ fun getEventInstall(): JSONObject = JSONObject().apply {
     this.put(EventInstall.squawk, Build.ID)
     this.put(EventInstall.omnibus, MMKVHelper.installReferrer)
     this.put(EventInstall.booty, MMKVHelper.installReferrerVersion)
-    this.put(EventInstall.surname, "")
+    this.put(EventInstall.surname, WebSettings.getDefaultUserAgent(application))
     this.put(EventInstall.hades, "")
     this.put(EventInstall.cacao, MMKVHelper.referrerClickTimestampSeconds)
     this.put(EventInstall.dough, MMKVHelper.installBeginTimestampSeconds)

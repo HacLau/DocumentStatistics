@@ -18,7 +18,7 @@
         android:background="@drawable/bg_splash">
 
         <ImageView
-            android:id="@+id/ic_file_manager"
+            android:id="@+id/ic_file_commander"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/menu_privacy_policy"

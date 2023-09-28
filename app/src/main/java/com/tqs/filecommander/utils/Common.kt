@@ -1,11 +1,14 @@
 package com.tqs.filecommander.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.FileCommanderApp
 
-lateinit var application:FileCommanderApp
+lateinit var application: FileCommanderApp
+
 object Common {
     const val EMAIL: String = ""
     const val PAGE_TYPE = "pageType"
@@ -21,5 +24,14 @@ object Common {
         Manifest.permission.INTERNET,
         Manifest.permission.ACCESS_NOTIFICATION_POLICY
     )
+    val pageArray = arrayOf(IMAGE_LIST,
+        AUDIO_LIST,
+        DOCUMENTS_LIST, 
+        VIDEO_LIST, 
+        DOWNLOAD_LIST)
+}
 
+@SuppressLint("HardwareIds")
+fun getAndroidId():String{
+    return Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
 }

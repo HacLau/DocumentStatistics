@@ -20,7 +20,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
     override val TAG: String
         get() = this.packageName
     private val isMobileAdsInitializeCalled = AtomicBoolean(false)
-    private var secondsRemaining: Long = 0L
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
@@ -42,12 +41,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashVM>() {
         val countDownTimer: CountDownTimer =
             object : CountDownTimer(time, 33) {
                 override fun onTick(millisUntilFinished: Long) {
-                    secondsRemaining = TimeUnit.MILLISECONDS.toMillis(millisUntilFinished) + 1
-                    binding.splashProgressBar.progress = 100 - (secondsRemaining / 50).toInt()
+                    binding.splashProgressBar.progress = 100 - (millisUntilFinished / 50).toInt()
                 }
 
                 override fun onFinish() {
-                    secondsRemaining = 0
                     binding.splashProgressBar.progress = 100
                     AdsManager.adsFullScreen.showFullScreenAds(this@SplashActivity){
                         Log.e(TAG,"ads onDismiss")

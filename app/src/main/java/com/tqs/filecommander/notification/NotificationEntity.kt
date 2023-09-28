@@ -25,21 +25,39 @@ data class NotificationItem(
     @SerializedName("f")
     var delayPopupTime: Int = 5,
     @SerializedName("limit")
-    var dayShowLimit: Int = 1,
+    var dayShowLimit: Int = 100,
     @SerializedName("interval")
     var intervalPopupTime: Int = 10
 )
 
+data class NotificationConfig(
+    var scenes: MutableList<ConfigItem> = mutableListOf()
+)
+
+data class ConfigItem(
+    var name: String = "",
+    var notification: String = ""
+)
+
+
 @Parcelize
 data class NotificationShowed(
     var lastShowTime: Long = System.currentTimeMillis(),
-    var showTimes: Int = 0
-):Parcelable
+    var showTimes: Int = 0,
+    var title: String = "",
+    var content: String = ""
+) : Parcelable
 
 
 object NotificationKey {
-    const val TIMING = "fc_t"
+    // from notification config json
+    const val SCHEDULED = "fc_t"
     const val UNCLOCK = "fc_unl"
-    const val BATTERY = "fc_char"
+    const val CHARGE = "fc_char"
     const val UNINSTALL = "fc_uni"
+    // from showed notification config
+    const val Scheduled = "Scheduled"
+    const val Unlock = "Unlock"
+    const val Charge = "Charge"
+    const val Uninstall = "Uninstall"
 }

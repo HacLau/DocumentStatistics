@@ -11,12 +11,12 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/main_file_manager"
+            android:id="@+id/main_file_commander"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="19dp"
             android:layout_marginTop="11dp"
-            android:src="@mipmap/ic_file_manager"
+            android:src="@mipmap/ic_file_commander"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,9 +29,9 @@
             android:layout_marginRight="20dp"
             android:max="100"
             android:progress="0"
-            app:layout_constraintBottom_toBottomOf="@id/main_file_manager"
+            app:layout_constraintBottom_toBottomOf="@id/main_file_commander"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/main_file_manager" />
+            app:layout_constraintTop_toTopOf="@id/main_file_commander" />
 
         <TextView
             android:id="@+id/tv_available_storage"
@@ -41,26 +41,26 @@
             android:textSize="@dimen/text_size_20"
             app:layout_constraintBottom_toBottomOf="@id/main_progressBar"
             app:layout_constraintLeft_toLeftOf="@id/main_progressBar"
-            app:layout_constraintLeft_toRightOf="@id/main_file_manager"
-            app:layout_constraintTop_toTopOf="@id/main_file_manager" />
+            app:layout_constraintLeft_toRightOf="@id/main_file_commander"
+            app:layout_constraintTop_toTopOf="@id/main_file_commander" />
 
         <TextView
             android:id="@+id/tv_space_proportion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_12"
-            app:layout_constraintBottom_toBottomOf="@id/main_file_manager"
+            app:layout_constraintBottom_toBottomOf="@id/main_file_commander"
             app:layout_constraintLeft_toLeftOf="@id/main_progressBar"
-            app:layout_constraintLeft_toRightOf="@id/main_file_manager"
+            app:layout_constraintLeft_toRightOf="@id/main_file_commander"
             app:layout_constraintTop_toBottomOf="@id/main_progressBar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_file_manager_image"
+            android:id="@+id/cl_file_commander_image"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:layout_marginBottom="-30dp"
             android:background="@mipmap/bg_image"
-            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_documents"
+            app:layout_constraintBottom_toTopOf="@id/cl_file_commander_documents"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -117,12 +117,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_file_manager_documents"
+            android:id="@+id/cl_file_commander_documents"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:layout_marginBottom="-30dp"
             android:background="@mipmap/bg_documents"
-            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_audio"
+            app:layout_constraintBottom_toTopOf="@id/cl_file_commander_audio"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
@@ -180,12 +180,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_file_manager_audio"
+            android:id="@+id/cl_file_commander_audio"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:layout_marginBottom="-30dp"
             android:background="@mipmap/bg_audio"
-            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_video"
+            app:layout_constraintBottom_toTopOf="@id/cl_file_commander_video"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -242,12 +242,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_file_manager_video"
+            android:id="@+id/cl_file_commander_video"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:layout_marginBottom="-30dp"
             android:background="@mipmap/bg_video"
-            app:layout_constraintBottom_toTopOf="@id/cl_file_manager_download"
+            app:layout_constraintBottom_toTopOf="@id/cl_file_commander_download"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -304,7 +304,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_file_manager_download"
+            android:id="@+id/cl_file_commander_download"
             android:layout_width="match_parent"
             android:layout_height="142dp"
             android:background="@mipmap/bg_download"

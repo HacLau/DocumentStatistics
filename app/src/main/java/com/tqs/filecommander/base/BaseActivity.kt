@@ -16,10 +16,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.ui.activity.DocListActivity
 import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.activity.Not404Activity
+import com.tqs.filecommander.ui.activity.ScannerActivity
 import com.tqs.filecommander.ui.activity.ScannerResultActivity
 import com.tqs.filecommander.utils.Common
 
@@ -103,10 +105,14 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     open fun onPermissionSuccess() {}
 
     fun jumpScannerResultActivity(fromPage: String) {
-        startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
-            putExtra(Common.PAGE_TYPE, fromPage)
-            finish()
-        })
+        if (AdsManager.adsNativeMain.isCacheNotEmpty) {
+            startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
+                putExtra(Common.PAGE_TYPE, fromPage)
+                finish()
+            })
+        }else{
+            jumpMediaListActivity(fromPage)
+        }
     }
 
     fun jumpMediaListActivity(fromPage: String) {
@@ -119,5 +125,11 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
             putExtra(Common.PAGE_TYPE, fromPage)
         })
         finish()
+    }
+
+    open fun jumpScannerActivity(fromPage : String){
+        startActivityForResult.launch(Intent(this, ScannerActivity::class.java).apply {
+            putExtra(Common.PAGE_TYPE, fromPage)
+        })
     }
 }

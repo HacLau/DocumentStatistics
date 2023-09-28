@@ -12,6 +12,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.R
 import com.tqs.filecommander.ui.activity.AdsOpenActivity
+import com.tqs.filecommander.utils.application
+import com.tqs.filecommander.utils.logE
 
 object NotificationHelper {
     val requestUninstallCode = 1011
@@ -19,13 +21,14 @@ object NotificationHelper {
     val requestBatteryCode = 1013
     val requestUnlockCode = 1015
 
-    var notificationManager: NotificationManager? = null
+    private val notificationManager by lazy { application.getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannel(context: Context, channelId: String, channelName: String, important: Int) {
         NotificationChannel(channelId, channelName, important).let {
             it.canBypassDnd()
             it.lockscreenVisibility = Notification.VISIBILITY_SECRET
+            it.group = "FileCommander"
             it.canShowBadge()
             it.setBypassDnd(true)
             notificationManager?.createNotificationChannel(it)
@@ -33,15 +36,19 @@ object NotificationHelper {
 
     }
 
-
-    fun createNotificationService(context: Context): Notification? {
+    fun createNotificationScheduled(context: Context): Notification? {
         if (NotificationController.notificationControl != 1) {
             return null
         }
-        getManager(context)
+        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) {
+            return null
+        }
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) {
+            return null
+        }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(context, "channel_id_service", "channel_service", NotificationManager.IMPORTANCE_HIGH)
-            Notification.Builder(context, "channel_id_service")
+            createNotificationChannel(context, "channel_id_scheduled", "channel_scheduled", NotificationManager.IMPORTANCE_HIGH)
+            Notification.Builder(context, "channel_id_scheduled")
         } else {
             Notification.Builder(context)
         }.apply {
@@ -52,8 +59,8 @@ object NotificationHelper {
             setSmallIcon(R.mipmap.ic_launcher_foreground)
             setWhen(System.currentTimeMillis())
             setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-            setContentTitle("Service")
-            setContentText("a service")
+            setContentTitle(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
+            setContentText(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
         }.build()
     }
 
@@ -64,11 +71,10 @@ object NotificationHelper {
         if (NotificationController.isLimit(NotificationKey.UNINSTALL)) {
             return
         }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()){
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) {
             return
         }
-        getManager(context)
-        notificationManager?.notify(
+        notificationManager.notify(
             requestUninstallCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel(context, "channel_id_uninstall", "channel_uninstall", NotificationManager.IMPORTANCE_HIGH)
@@ -81,25 +87,27 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle("Uninstall")
-                setContentText("a uninstall")
+                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNINSTALL))
+                setContentText(NotificationController.getNotificationName(NotificationKey.UNINSTALL))
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.UNINSTALL)
     }
 
-    fun createNotificationBroadcastBattery(context: Context) {
+    fun createNotificationBroadcastCharge(context: Context) {
         if (NotificationController.notificationControl != 1) {
+            "notification charge != 1".logE()
             return
         }
-        if (NotificationController.isLimit(NotificationKey.BATTERY)) {
+        if (NotificationController.isLimit(NotificationKey.CHARGE)) {
+            "notification charge limit".logE()
             return
         }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.BATTERY).not()){
+        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not()) {
+            "notification charge interval time".logE()
             return
         }
-        getManager(context)
-        notificationManager?.notify(
+        notificationManager.notify(
             requestBatteryCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel(context, "channel_id_battery", "channel_battery", NotificationManager.IMPORTANCE_HIGH)
@@ -112,11 +120,11 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle("Battery")
-                setContentText("a battery")
+                setContentTitle(NotificationController.getNotificationName(NotificationKey.CHARGE))
+                setContentText(NotificationController.getNotificationName(NotificationKey.CHARGE))
             }.build()
         )
-        NotificationController.updateShowTimes(NotificationKey.BATTERY)
+        NotificationController.updateShowTimes(NotificationKey.CHARGE)
     }
 
     fun createNotificationBroadcastUnlock(context: Context) {
@@ -126,11 +134,10 @@ object NotificationHelper {
         if (NotificationController.isLimit(NotificationKey.UNCLOCK)) {
             return
         }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNCLOCK).not()){
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNCLOCK).not()) {
             return
         }
-        getManager(context)
-        notificationManager?.notify(
+        notificationManager.notify(
             requestUnlockCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel(context, "channel_id_unlock", "channel_unlock", NotificationManager.IMPORTANCE_HIGH)
@@ -143,22 +150,15 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle("Unlock")
-                setContentText("a unlock")
+                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNCLOCK))
+                setContentText(NotificationController.getNotificationContent(NotificationKey.UNCLOCK))
             }.build()
         )
 
         NotificationController.updateShowTimes(NotificationKey.UNCLOCK)
     }
 
-    private fun getManager(context: Context) {
-        if (notificationManager == null)
-            notificationManager = context.getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
-    }
-
     private fun getIntent(context: Context): Intent {
-        return Intent(context, AdsOpenActivity::class.java).apply {
-//            putExtra("flag","")
-        }
+        return Intent(context, AdsOpenActivity::class.java)
     }
 }

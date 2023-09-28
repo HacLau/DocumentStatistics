@@ -9,7 +9,7 @@ import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseVM
 import com.tqs.filecommander.utils.FileUtils
 
-class FileManagerVM : BaseVM() {
+class FileCommanderVM : BaseVM() {
     override val title: LiveData<String>
         get() = MutableLiveData<String>().apply {
             value = "This is File Commander Fragment"

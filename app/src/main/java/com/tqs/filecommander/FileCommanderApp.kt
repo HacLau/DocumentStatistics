@@ -8,10 +8,12 @@ import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.broadcast.registerBattery
 import com.tqs.filecommander.broadcast.registerUninstall
 import com.tqs.filecommander.broadcast.registerUnlock
+import com.tqs.filecommander.notification.NotificationController
 import com.tqs.filecommander.referrer.ReferrerHelper
 import com.tqs.filecommander.service.ForeService
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.getJsonFromAssets
+import com.tqs.filecommander.utils.logE
 
 class FileCommanderApp : Application() {
     override fun onCreate() {
@@ -19,6 +21,7 @@ class FileCommanderApp : Application() {
         val adsJson = getJsonFromAssets(this, "ads.json")
         AdsManager.initAdsConfig(adsJson)
         MMKV.initialize(this)
+        NotificationController.initNotificationConfig(this)
         ReferrerHelper.initReferrer(this)
         application = this
 //        startService()
