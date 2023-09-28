@@ -5,7 +5,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.tqs.filecommander.ads.AdsUserCost
 import com.tqs.filecommander.utils.application
 
-private val mFirebaseAnalytics = FirebaseAnalytics.getInstance(application)
+private val mFirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(application) }
 var adsUserCost: AdsUserCost? = null
 
 //Analytics and update user's behavior

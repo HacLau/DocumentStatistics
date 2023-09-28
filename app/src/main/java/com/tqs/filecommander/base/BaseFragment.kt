@@ -13,7 +13,7 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
     protected lateinit var binding: VB
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
-    public var REQUEST_CODE_PERMISSION = 0x00099
+    var REQUEST_CODE_PERMISSION = 0x00099
     private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             getMediaInfo()

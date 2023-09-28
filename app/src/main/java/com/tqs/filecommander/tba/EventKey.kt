@@ -56,9 +56,6 @@ object EventInstall {
     const val smallish: String = "smallish"
 }
 
-object EventSession {
-    const val disjunct: String = "disjunct"
-}
 
 object EventAdvertising {
     const val blink: String = "blink"

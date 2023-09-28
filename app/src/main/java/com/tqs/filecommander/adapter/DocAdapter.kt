@@ -86,9 +86,9 @@ class DocAdapter(
     }
 
     inner class ViewHolder(view: View) {
-        var icon = view.findViewById<ImageView>(R.id.item_file_icon)
-        var title = view.findViewById<TextView>(R.id.item_file_title)
-        var date = view.findViewById<TextView>(R.id.item_file_date)
-        var select = view.findViewById<CheckBox>(R.id.item_file_select)
+        var icon: ImageView = view.findViewById<ImageView>(R.id.item_file_icon)
+        var title: TextView = view.findViewById<TextView>(R.id.item_file_title)
+        var date: TextView = view.findViewById<TextView>(R.id.item_file_date)
+        var select: CheckBox = view.findViewById<CheckBox>(R.id.item_file_select)
     }
 }

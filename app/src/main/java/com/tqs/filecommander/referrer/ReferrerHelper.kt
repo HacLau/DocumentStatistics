@@ -17,7 +17,7 @@ object ReferrerHelper {
         this.referrerControl = control
     }
 
-    fun isAdvertisingShouldShow(): Boolean {
+    fun isReferrerUser(): Boolean {
         return when (referrerControl) {
             0 -> true
             1 -> false

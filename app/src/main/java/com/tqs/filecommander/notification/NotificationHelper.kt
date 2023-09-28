@@ -11,15 +11,15 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.R
+import com.tqs.filecommander.referrer.ReferrerHelper
 import com.tqs.filecommander.ui.activity.AdsOpenActivity
 import com.tqs.filecommander.utils.application
-import com.tqs.filecommander.utils.logE
 
 object NotificationHelper {
-    val requestUninstallCode = 1011
-    val requestServiceCode = 1012
-    val requestBatteryCode = 1013
-    val requestUnlockCode = 1015
+    const val requestUninstallCode = 1011
+    const val requestServiceCode = 1012
+    const val requestBatteryCode = 1013
+    const val requestUnlockCode = 1015
 
     private val notificationManager by lazy { application.getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager }
 
@@ -31,21 +31,16 @@ object NotificationHelper {
             it.group = "FileCommander"
             it.canShowBadge()
             it.setBypassDnd(true)
-            notificationManager?.createNotificationChannel(it)
+            notificationManager.createNotificationChannel(it)
         }
 
     }
 
     fun createNotificationScheduled(context: Context): Notification? {
-        if (NotificationController.notificationControl != 1) {
-            return null
-        }
-        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) {
-            return null
-        }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) {
-            return null
-        }
+        if (ReferrerHelper.isReferrerUser().not()) return null
+        if (NotificationController.notificationControl != 1) return null
+        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) return null
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) return null
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(context, "channel_id_scheduled", "channel_scheduled", NotificationManager.IMPORTANCE_HIGH)
             Notification.Builder(context, "channel_id_scheduled")
@@ -65,15 +60,10 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastUninstall(context: Context) {
-        if (NotificationController.notificationControl != 1) {
-            return
-        }
-        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) {
-            return
-        }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) {
-            return
-        }
+        if (ReferrerHelper.isReferrerUser().not()) return
+        if (NotificationController.notificationControl != 1) return
+        if (NotificationController.isLimit(NotificationKey.UNINSTALL))return
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) return
         notificationManager.notify(
             requestUninstallCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -95,18 +85,10 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastCharge(context: Context) {
-        if (NotificationController.notificationControl != 1) {
-            "notification charge != 1".logE()
-            return
-        }
-        if (NotificationController.isLimit(NotificationKey.CHARGE)) {
-            "notification charge limit".logE()
-            return
-        }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not()) {
-            "notification charge interval time".logE()
-            return
-        }
+        if (ReferrerHelper.isReferrerUser().not()) return
+        if (NotificationController.notificationControl != 1) return
+        if (NotificationController.isLimit(NotificationKey.CHARGE)) return
+        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not())return
         notificationManager.notify(
             requestBatteryCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -128,15 +110,10 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastUnlock(context: Context) {
-        if (NotificationController.notificationControl != 1) {
-            return
-        }
-        if (NotificationController.isLimit(NotificationKey.UNCLOCK)) {
-            return
-        }
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNCLOCK).not()) {
-            return
-        }
+        if (ReferrerHelper.isReferrerUser().not()) return
+        if (NotificationController.notificationControl != 1) return
+        if (NotificationController.isLimit(NotificationKey.UNCLOCK)) return
+        if (NotificationController.isMoreIntervalTime(NotificationKey.UNCLOCK).not()) return
         notificationManager.notify(
             requestUnlockCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
