@@ -6,6 +6,7 @@ import android.provider.Settings
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.net.HttpHelper
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.encode
 import com.tqs.filecommander.utils.getAndroidId
@@ -33,10 +34,10 @@ object CloakHelper {
             put(CloakKey.noodle, BuildConfig.APPLICATION_ID.encode())
             put(CloakKey.ohio, Build.VERSION.RELEASE.encode())
 //            put(CloakKey.previous,"")
-            put(CloakKey.tabletop, "")
+            put(CloakKey.tabletop, TBAHelper.getGAId())
             put(CloakKey.abbey, getAndroidId().encode())
             put(CloakKey.animist, "twigging".encode())
-            put(CloakKey.bell, "")
+//            put(CloakKey.bell, "")
             put(CloakKey.rib, BuildConfig.VERSION_NAME.encode())
 //            put(CloakKey.crib,"")
 //            put(CloakKey.stab,"")

@@ -115,4 +115,5 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:3.2.0")
     // retrofit RxJava
     implementation("com.squareup.retrofit2:adapter-rxjava:2.0.0")
+    implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
 }

@@ -15,7 +15,6 @@ import java.net.URLEncoder
 import java.util.Locale
 import java.util.UUID
 
-
 fun getRequestJson(key: String, jsonObject: JSONObject): JSONObject = JSONObject().apply {
     this.put(EventCommon.celsius, getCelsius())
     this.put(EventCommon.quixotic, getQuixotic())
@@ -52,24 +51,24 @@ private fun getFiligree(): JSONObject = JSONObject().apply {
     this.put(EventFiligree.nulls, "")
 //        this.put(EventFiligree.bell, "")
 //        this.put(EventFiligree.forbear, "","UTF-8"))
-    this.put(EventFiligree.tabletop, "")
+    this.put(EventFiligree.tabletop, TBAHelper.getGAId())
     this.put(EventFiligree.leaf, Build.MANUFACTURER)
     this.put(EventFiligree.benefit, UUID.randomUUID().toString())
     this.put(EventFiligree.stubby, Build.MODEL)
 }
 
 fun getEventInstall(): JSONObject = JSONObject().apply {
-    this.put(EventInstall.squawk, Build.ID)
+    this.put(EventInstall.squawk, "build/${Build.ID}")
     this.put(EventInstall.omnibus, MMKVHelper.installReferrer)
     this.put(EventInstall.booty, MMKVHelper.installReferrerVersion)
     this.put(EventInstall.surname, WebSettings.getDefaultUserAgent(application))
-    this.put(EventInstall.hades, "")
+    this.put(EventInstall.hades, if(TBAHelper.getGAIdLimit()) "enough" else "shrub")
     this.put(EventInstall.cacao, MMKVHelper.referrerClickTimestampSeconds)
     this.put(EventInstall.dough, MMKVHelper.installBeginTimestampSeconds)
     this.put(EventInstall.chunky, MMKVHelper.referrerClickTimestampServerSeconds)
     this.put(EventInstall.Is, MMKVHelper.installBeginTimestampServerSeconds)
-    this.put(EventInstall.hoy, application.packageManager.getPackageInfo(application.packageName, 0).firstInstallTime)
-    this.put(EventInstall.fury, application.packageManager.getPackageInfo(application.packageName, 0).lastUpdateTime)
+    this.put(EventInstall.hoy, TBAHelper.firstInstall)
+    this.put(EventInstall.fury, TBAHelper.lastUpdate)
     this.put(EventInstall.smallish, MMKVHelper.googlePlayInstantParam)
 }
 

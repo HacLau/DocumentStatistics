@@ -34,4 +34,5 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     // adsCost
     var currentUserCost by mmkvDouble(default = 0.0)
     var currentUserCostTime by mmkvLong(default = System.currentTimeMillis())
+    var androidId by mmkvString(default = "")
 }

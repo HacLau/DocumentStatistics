@@ -1,9 +1,22 @@
 package com.tqs.filecommander.tba
 
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.tqs.filecommander.net.*
+import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.logE
 
 object TBAHelper {
+    val firstInstall by lazy { application.packageManager.getPackageInfo(application.packageName, 0).firstInstallTime }
+    val lastUpdate by lazy { application.packageManager.getPackageInfo(application.packageName, 0).lastUpdateTime }
+    val advertisingInfo by lazy { AdvertisingIdClient.getAdvertisingIdInfo(application) }
+    fun getGAId(): String {
+        return advertisingInfo.id ?: ""
+    }
+
+    fun getGAIdLimit(): Boolean {
+        return advertisingInfo.isLimitAdTrackingEnabled
+    }
+
     fun updateSession() {
         "updateSession".logE()
         HttpHelper.sendRequestPost(
