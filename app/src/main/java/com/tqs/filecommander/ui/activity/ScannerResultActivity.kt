@@ -3,6 +3,7 @@ package com.tqs.filecommander.ui.activity
 import android.text.Html
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivityScannerResultBinding
 import com.tqs.filecommander.ads.AdsManager
@@ -12,6 +13,8 @@ import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.vm.activity.DocListVM
 import com.tqs.filecommander.utils.Common
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocListVM>() {
     override val layoutId: Int
@@ -37,7 +40,6 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
             }
         }
         getDocDataList()
-        baseAds?.destroyNative()
         binding.vFileOk.setOnClickListener {
             jumpMediaListActivity(mPageType)
         }
@@ -45,10 +47,19 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, DocList
 
     override fun onResume() {
         super.onResume()
-        AdsManager.adsNativeMain.showNativeAds(this,binding.nativeParentCard){
-            baseAds = it
-            Log.e(TAG,"native is show")
+        AdsManager.adsNativeMain.withLoad(this) {
+            if (AdsManager.adsNativeMain.isCacheNotEmpty) {
+                baseAds?.destroyNative()
+                kotlin.runCatching {
+                    AdsManager.adsNativeMain.showNativeAds(this@ScannerResultActivity, binding.nativeFrame) {
+                        baseAds = it
+                        Log.e(TAG, "native is show")
+                    }
+                }
+            }
         }
+
+
     }
 
     private fun getDocDataList() {

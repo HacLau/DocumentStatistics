@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.AdListener
@@ -44,9 +45,11 @@ class NativeMainAdvertising(
     }
 
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
+        if (null == nativeAd) return
         val binding: LayoutAdvertisingNativeBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_advertising_native, nativeParent, false)
+            DataBindingUtil.inflate(LayoutInflater.from(activity), R.layout.layout_advertising_native, nativeParent, false)
         binding.nativeAdView.mediaView = binding.nativeMediaView
+        binding.nativeAdView.mediaView?.setImageScaleType(ImageView.ScaleType.CENTER_CROP)
         binding.nativeAdView.headlineView = binding.nativeAppTitle
         binding.nativeAdView.bodyView = binding.nativeAppDes
         binding.nativeAdView.iconView = binding.nativeAppIcon
@@ -67,7 +70,7 @@ class NativeMainAdvertising(
 
         nativeParent?.isVisible = true
         nativeParent?.removeAllViews()
-        nativeParent?.addView(binding.nativeMediaView)
+        nativeParent?.addView(binding.nativeAdView)
         AdsManager.addShowCount()
     }
 
