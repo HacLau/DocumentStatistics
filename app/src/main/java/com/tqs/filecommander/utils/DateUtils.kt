@@ -115,4 +115,10 @@ object DateUtils {
             }
         }
     }
+
+    fun getMillisDay(millis: Long):Int {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = millis
+        return calendar.get(Calendar.DAY_OF_YEAR)
+    }
 }

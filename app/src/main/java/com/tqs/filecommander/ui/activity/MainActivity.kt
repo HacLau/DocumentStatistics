@@ -12,6 +12,7 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.databinding.ActivityMainBinding
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.view.TitleBar
 import com.tqs.filecommander.utils.Common
@@ -43,6 +44,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         binding.rlShare.setOnClickListener(this)
         binding.rlUpgrade.setOnClickListener(this)
 
+        TBAHelper.updatePoints(EventPoints.filec_home_show)
         judgePermission()
     }
 

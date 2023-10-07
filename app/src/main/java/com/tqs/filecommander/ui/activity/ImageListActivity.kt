@@ -25,34 +25,23 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
     private var registerForActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             viewModel.deletedFile = it.data?.getBooleanExtra("deleteResult", false) == true
+            viewModel.setResult(this)
             if (viewModel.deletedFile) {
                 viewModel.orderShowImageList(this) { title ->
                     binding.titleBar.setTitleText(title)
                 }
+                viewModel.deletedFile = false
             }
-            setResult()
         }
     }
 
-    private fun setResult() {
-        if (viewModel.deletedFile) {
-            setResult(RESULT_OK, Intent().apply {
-                putExtra("deleteResult", true)
-            })
-        } else {
-            setResult(RESULT_CANCELED, Intent().apply {
-            })
-        }
-
-    }
 
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         binding.titleBar.setLeftClickListener {
-            setResult()
-            finish()
+            onBackPressed()
         }
         binding.titleBar.setOrderVisible(true)
         binding.titleBar.setOrderClickListener {
@@ -69,7 +58,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
         }
         binding.vImageDelete.visibility = View.GONE
         binding.titleBar.setSelectClickListener {
-            viewModel.setSelectText{
+            viewModel.setSelectText {
                 binding.titleBar.setSelectText(it)
             }
         }
@@ -90,12 +79,19 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
         binding.vImageDelete.setOnClickListener {
             AdsManager.adsInsertResultClean.showFullScreenAds(this@ImageListActivity) {
                 viewModel.showDeleteDialog(this, {
-                    binding.titleBar.setTitleText(it)
-                }, {
-                    binding.titleBar.setOrderVisible(true)
-                    binding.vImageDelete.visibility = View.GONE
-                    setResult(RESULT_OK)
-                })
+
+                }) {
+                    viewModel.deleteSelectedImage {
+                        binding.titleBar.setOrderVisible(true)
+                        binding.vImageDelete.visibility = View.GONE
+                        setResult(RESULT_OK)
+                    }
+                    viewModel.orderShowImageList(this) {
+                        binding.titleBar.setTitleText(it)
+                    }
+
+                }
+
             }
         }
         setImageListAdapter()
@@ -116,13 +112,13 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
         binding.rvImageList.layoutManager = manager
         binding.rvImageList.addItemDecoration(MediaItemDecoration(6))
         viewModel.mImageAdapter = ImageVideoListAdapter(this, viewModel.showDataList, { position, touchView ->
-            viewModel.onImageAdapterItemClick(touchView,position,{
+            viewModel.onImageAdapterItemClick(touchView, position, {
                 binding.titleBar.setSelectText(it)
-            },{
+            }, {
                 toPreviewImage(it)
             })
         }, { position ->
-            viewModel.onImageAdapterItemLongClick(position){
+            viewModel.onImageAdapterItemLongClick(position) {
                 binding.vImageDelete.visibility = View.VISIBLE
                 binding.titleBar.setSelectVisible(true)
             }
@@ -141,14 +137,13 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
     }
 
     override fun onBackPressed() {
-        if (viewModel.listSelectCount.value!! > 0 || viewModel.mImageAdapter.touchState == viewModel.mImageAdapter.LONGSTATE) {
-            viewModel.mImageAdapter.touchState = viewModel.mImageAdapter.CLICKSTATE
-            viewModel.unselectAllShowImageList()
+        viewModel.onBackPressed(this@ImageListActivity, {
+            super.onBackPressed()
+            viewModel.setResult(this)
+        }, {
             binding.titleBar.setOrderVisible(true)
             binding.vImageDelete.visibility = View.GONE
-        } else {
-            super.onBackPressed()
-            setResult()
-        }
+        })
+
     }
 }

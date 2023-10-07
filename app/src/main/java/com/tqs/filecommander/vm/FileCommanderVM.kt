@@ -1,5 +1,8 @@
 package com.tqs.filecommander.vm
 
+import android.app.Activity
+import android.app.ActivityManager
+import android.app.ActivityManager.MemoryInfo
 import android.content.Context
 import android.os.Environment
 import android.os.StatFs
@@ -8,6 +11,8 @@ import androidx.lifecycle.MutableLiveData
 import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseVM
 import com.tqs.filecommander.utils.FileUtils
+import com.tqs.filecommander.utils.application
+import com.tqs.filecommander.utils.logE
 
 class FileCommanderVM : BaseVM() {
     override var title: LiveData<String> = MutableLiveData<String>().apply {
@@ -33,14 +38,13 @@ class FileCommanderVM : BaseVM() {
     fun getMemoryInfo() {
         val state = Environment.getExternalStorageState()
         if (Environment.MEDIA_MOUNTED == state) {
-            val sdcardDir = Environment.getExternalStorageDirectory()
-            val sf = StatFs(sdcardDir.path)
+            val sf = StatFs(Environment.getExternalStorageDirectory().path)
             val blockSize = sf.blockSizeLong
             val blockCount = sf.blockCountLong
             val availCount = sf.availableBlocksLong
             totalSpace.value = FileUtils.getTwoDigitsSpace(blockSize * blockCount)
-            availSpace.value = FileUtils.getTwoDigitsSpace(availCount * blockSize)
-            progressValue.value = (availCount * 1.0 / blockCount * 100).toInt()
+            availSpace.value = FileUtils.getTwoDigitsSpace((blockCount - availCount) * blockSize)
+            progressValue.value = ((blockCount - availCount) * 1.0 / blockCount * 100).toInt()
         }
     }
 

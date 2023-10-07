@@ -4,11 +4,13 @@ import android.text.Html
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
-import com.tqs.filecommander.databinding.ActivityScannerResultBinding
+import com.tqs.filecommander.adapter.DocAdapter
 import com.tqs.filecommander.ads.AdsManager
-import com.tqs.filecommander.model.DocumentEntity
-import com.tqs.filecommander.model.FileEntity
 import com.tqs.filecommander.base.BaseActivity
+import com.tqs.filecommander.databinding.ActivityScannerResultBinding
+import com.tqs.filecommander.notification.NotificationKey
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.vm.MainVM
 
@@ -17,22 +19,48 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>
         get() = R.layout.activity_scanner_result
     override val TAG: String
         get() = this.packageName
+
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
+        val notifyType = intent.getStringExtra("notifyType")
+
+        when (notifyType) {
+            NotificationKey.SCHEDULED -> "t"
+            NotificationKey.CHARGE -> "char"
+            NotificationKey.UNCLOCK -> "unl"
+            NotificationKey.UNINSTALL -> "uni"
+            else -> {
+                null
+            }
+        }?.let {
+            TBAHelper.updatePoints(
+                EventPoints.filecpop_all_result, mutableMapOf(
+                    EventPoints.source to it
+                )
+            )
+        }
+        TBAHelper.updatePoints(EventPoints.filec_scan_result_show)
         binding.titleBar.setLeftClickListener {
             finish()
         }
+
         viewModel.dataList.observe(this) {
-            statisticsListDirectory(it)
+            viewModel.statisticsListDirectory(it) { folders ->
+                binding.tvFileDescription.text =
+                    Html.fromHtml("<font color='#000000'><big><big>${folders}</big></big></font>  folders and <font color='#000000'><big><big>${it.size}</big></big></font> files")
+
+            }
             if (it.size > 0) {
-                statisticsFileType(it)
+                viewModel.statisticsFileType(it)
             }
         }
         getDocDataList()
+        viewModel.mDocAdapter = DocAdapter(this, viewModel.docDataList)
         binding.vFileOk.setOnClickListener {
+            TBAHelper.updatePoints(EventPoints.filec_scan_result_ok)
             jumpMediaListActivity(viewModel.mPageType)
         }
     }
@@ -86,38 +114,6 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>
                 binding.tvFileTitle.text = "Download"
             }
         }
-    }
-
-
-    private fun statisticsFileType(fileEntities: ArrayList<FileEntity>) {
-        val hashMap = HashMap<String, DocumentEntity>()
-        for (file in fileEntities) {
-            file.path?.let {
-                val suffix = it.substring(it.lastIndexOf(".", it.length))
-                var document = hashMap[suffix]
-                if (document == null) {
-                    document = DocumentEntity(suffix = suffix, number = 1)
-                } else {
-                    document.number = document.number + 1
-                }
-                document.typeFile = file.fileType
-                document.path = file.path!!
-                hashMap.put(suffix, document)
-            }
-        }
-        viewModel.mDataList = ArrayList<DocumentEntity>(hashMap.values)
-    }
-
-    private fun statisticsListDirectory(fileEntities: ArrayList<FileEntity>) {
-        val hashSet = HashSet<String>()
-        for (file in fileEntities) {
-            file.path?.let {
-                val dir = it.substring(0, it.lastIndexOf("/"))
-                hashSet.add(dir)
-            }
-        }
-        binding.tvFileDescription.text =
-            Html.fromHtml("<font color='#000000'><big><big>${hashSet.size}</big></big></font>  folders and <font color='#000000'><big><big>${fileEntities.size}</big></big></font> files")
     }
 
     override fun onDestroy() {

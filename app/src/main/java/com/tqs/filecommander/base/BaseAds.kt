@@ -12,6 +12,7 @@ import com.tqs.filecommander.ads.AdsItemType
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.net.adsUserCost
 import com.tqs.filecommander.net.logEvent
+import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 
 abstract class BaseAds(
@@ -35,6 +36,8 @@ abstract class BaseAds(
 //                    "adNetwork" to responseInfo?.mediationAdapterClassName
                 )
             )
+
+            TBAHelper.updatePoints(EventPoints.filec_ad_impression, mutableMapOf(EventPoints.ad_pos_id to adsItem.adsId))
         }
         // google 2.5
         runCatching {

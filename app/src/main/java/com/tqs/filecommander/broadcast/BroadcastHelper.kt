@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import com.tqs.filecommander.notification.NotificationHelper
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.logE
 import com.tqs.filecommander.utils.toast

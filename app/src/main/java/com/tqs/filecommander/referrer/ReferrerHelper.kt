@@ -5,6 +5,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerClient.InstallReferrerResponse
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.logE
 
@@ -39,6 +40,8 @@ object ReferrerHelper {
         if (installReferrer.isNotBlank()) {
             return
         }
+
+        TBAHelper.updatePoints(EventPoints.filec_reffer_start_get)
         runCatching {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
@@ -62,12 +65,24 @@ object ReferrerHelper {
                                         MMKVHelper.firstLaunchApp = false
                                         TBAHelper.updateInstall()
                                     }
+
+                                    TBAHelper.updatePoints(
+                                        EventPoints.filec_reffer_succ_get, mutableMapOf(
+                                            EventPoints.source to if (installReferrer in buyUserList) {
+                                                installReferrer
+                                            } else {
+                                                "organic"
+                                            }
+                                        )
+                                    )
                                 }
                             }
 
                             InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
                                 //Local Code: Missing google_app_id. Firebase Analytics disabled. See https://goo.gl/NAOOOI
 //                                referrerClient.startConnection(this)
+
+                                TBAHelper.updatePoints(EventPoints.filec_reffer_get_null)
                             }
 
                             InstallReferrerResponse.SERVICE_UNAVAILABLE -> {

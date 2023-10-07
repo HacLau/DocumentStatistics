@@ -4,23 +4,42 @@ import android.os.Build
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.net.HttpHelper
+import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.encode
 import com.tqs.filecommander.utils.getAndroidId
 import org.json.JSONObject
 
 object CloakHelper {
-    private var cloakState = ""
+    private var cloakState = "normal"
     private var reloadTimes = 0
     fun getCloakConfig() {
+        TBAHelper.updatePoints(EventPoints.filec_cloak_start)
+        val startSecond = System.currentTimeMillis() / 1000
         HttpHelper.sendRequestGet(jsonObject = getCloakJsonConfig(), resultSuccess = {
             cloakState = it
             MMKVHelper.cloakState = it
             reloadTimes = 0
+            TBAHelper.updatePoints(
+                EventPoints.filec_cloak_get, mutableMapOf(
+                    EventPoints.Time to System.currentTimeMillis() / 1000 - startSecond,
+                    EventPoints.getsuccess to true,
+                    EventPoints.source to cloakState
+                )
+            )
+
         }, resultFailed = { code, message ->
             if (reloadTimes < 20)
                 getCloakConfig()
+            TBAHelper.updatePoints(
+                EventPoints.filec_cloak_get, mutableMapOf(
+                    EventPoints.Time to System.currentTimeMillis() / 1000 - startSecond,
+                    EventPoints.getsuccess to false,
+                    EventPoints.source to cloakState
+                )
+            )
         })
+
     }
 
     private fun getCloakJsonConfig(): JSONObject {

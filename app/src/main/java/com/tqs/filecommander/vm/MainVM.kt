@@ -1,20 +1,34 @@
 package com.tqs.filecommander.vm
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.text.Html
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.tqs.filecommander.adapter.DocAdapter
 import com.tqs.filecommander.adapter.ImageVideoListAdapter
 import com.tqs.filecommander.adapter.PreviewAdapter
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.base.BaseVM
 import com.tqs.filecommander.model.DocumentEntity
 import com.tqs.filecommander.model.FileEntity
+import com.tqs.filecommander.ui.activity.DocListActivity
+import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.view.ConfirmAndCancelDialog
 import com.tqs.filecommander.ui.view.FileDetailPopupWindow
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.DateUtils
 import com.tqs.filecommander.utils.FileUtils
+import java.io.File
 
 class MainVM : BaseVM() {
 
@@ -110,6 +124,7 @@ class MainVM : BaseVM() {
         return count
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun unselectAllShowImageList() {
         listSelectCount.value = 0
         for (file in showDataList) {
@@ -119,12 +134,14 @@ class MainVM : BaseVM() {
         mImageAdapter.notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun getImageViewShowList() {
         showDataList = changeShowImageList(dataList.value)
         mImageAdapter.setData(showDataList)
         mImageAdapter.notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun selectAllShowImageList() {
         listSelectCount.value = 0
         for (file in showDataList) {
@@ -170,21 +187,47 @@ class MainVM : BaseVM() {
         }
     }
 
-    fun showDeleteDialog(context: Context, title: (String) -> Unit, function: () -> Unit) {
+    fun showDeleteDialog(context: Context, cancel: () -> Unit, confirm: () -> Unit) {
         if (mDeleteDialog == null) {
             mDeleteDialog = ConfirmAndCancelDialog(context, {
                 mDeleteDialog?.dismiss()
+                cancel.invoke()
             }, {
                 mDeleteDialog?.dismiss()
-                deleteSelectedImage(function)
-                orderShowImageList(context, title)
+                confirm.invoke()
             })
 
         }
         mDeleteDialog?.show()
     }
 
-    private fun deleteSelectedImage(function: () -> Unit) {
+    fun deleteSelectPreview(viewGroup: ViewGroup,setTitleText: () -> Unit){
+        if (FileUtils.deleteFile(previewMediaList!![currentIndex].path!!)) {
+            deletedFile = true
+            previewMediaList!!.remove(previewMediaList?.get(currentIndex))
+            mPreviewAdapter.setData(previewMediaList!!)
+            mPreviewAdapter.destroyItem(viewGroup, -1, viewGroup.rootView)
+            mPreviewAdapter.notifyDataSetChanged()
+            setTitleText()
+        }
+    }
+
+    fun deleteSelectedDoc(function: (Int) -> Unit) {
+        for (doc in docDataList) {
+            if (doc.selected) {
+                for (file in dataList.value!!) {
+                    if (file.path?.endsWith(doc.suffix) == true) {
+                        FileUtils.deleteFile(file.path!!)
+                    }
+                }
+            }
+        }
+        mDocAdapter.setSelected(false)
+        listSelectCount.value = 0
+        function.invoke(AppCompatActivity.RESULT_OK)
+    }
+
+    fun deleteSelectedImage(function: () -> Unit) {
         for (file in showDataList) {
             if (file.selected) {
                 file.path?.let { FileUtils.deleteFile(it) }
@@ -226,7 +269,8 @@ class MainVM : BaseVM() {
         }
     }
 
-    fun onImageAdapterItemLongClick(position:Int,viewFun: () -> Unit) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun onImageAdapterItemLongClick(position: Int, viewFun: () -> Unit) {
         if (!showDataList[position].selected && mImageAdapter.touchState != mImageAdapter.LONGSTATE) {
             mImageAdapter.touchState = mImageAdapter.LONGSTATE
             showDataList[position].selected = !showDataList[position].selected
@@ -249,6 +293,100 @@ class MainVM : BaseVM() {
                 unselectAllShowImageList()
                 currentSelect.value = NONE
                 function.invoke("select all")
+            }
+        }
+    }
+
+
+    fun statisticsFileType(fileEntities: ArrayList<FileEntity>) {
+        val hashMap = HashMap<String, DocumentEntity>()
+        for (file in fileEntities) {
+            file.path?.let {
+                val suffix = it.substring(it.lastIndexOf(".", it.length))
+                var document = hashMap[suffix]
+                if (document == null) {
+                    document = DocumentEntity(suffix = suffix, number = 1)
+                } else {
+                    document.number = document.number + 1
+                }
+                document.typeFile = file.fileType
+                document.path = file.path!!
+                hashMap.put(suffix, document)
+            }
+        }
+        docDataList = ArrayList<DocumentEntity>(hashMap.values)
+        mDocAdapter?.setData(docDataList)
+    }
+
+    fun statisticsListDirectory(fileEntities: ArrayList<FileEntity>, function: (Int) -> Unit) {
+        val hashSet = HashSet<String>()
+        for (file in fileEntities) {
+            file.path?.let {
+                val dir = it.substring(0, it.lastIndexOf("/"))
+                hashSet.add(dir)
+            }
+        }
+        function.invoke(hashSet.size)
+    }
+
+
+    public fun setSharedFile(activity: Activity) {
+        val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.fileprovider", File(previewMediaList?.get(currentIndex)?.path ?: ""))
+        val type = previewMediaList?.get(currentIndex)?.mimeType
+
+        activity.startActivity(Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            setType(type)
+        }, "shared  file to:"))
+    }
+
+    public fun stopPlayer() {
+        mPreviewAdapter.stopPlayer()
+    }
+
+    public fun setPopupWindow(context: Context,view: View) {
+        if (mPopupWindow == null) {
+            mPopupWindow = FileDetailPopupWindow(context)
+            previewMediaList?.let { mPopupWindow?.setFileInfo(it[currentIndex]) }
+        }
+        mPopupWindow?.showAsDropDown(view, 0, 0, Gravity.CENTER)
+    }
+
+    fun setResult(activity: Activity) {
+        if (deletedFile) {
+            activity.setResult(AppCompatActivity.RESULT_OK, Intent().apply {
+                putExtra("currentIndex", currentIndex)
+                putExtra("deleteResult", true)
+            })
+        } else {
+            activity.setResult(AppCompatActivity.RESULT_CANCELED, Intent().apply {
+            })
+        }
+
+    }
+
+    fun onBackPressed(activity: Activity,function: () -> Unit,viewFun: () -> Unit){
+        when(activity){
+            is ImageListActivity -> {
+                if (listSelectCount.value!! > 0 || mImageAdapter.touchState == mImageAdapter.LONGSTATE) {
+                    mImageAdapter.touchState = mImageAdapter.CLICKSTATE
+                    unselectAllShowImageList()
+                }else{
+                    function.invoke()
+                }
+            }
+            is DocListActivity ->{
+                if (listSelectCount.value!! > 0 || mDocAdapter.getSelected()) {
+                    for (doc in docDataList) {
+                        doc.selected = false
+                    }
+                    mDocAdapter.setSelected(false)
+                    mDocAdapter.setData(docDataList)
+                    listSelectCount.value = 0
+                } else {
+                    function.invoke()
+                }
             }
         }
     }

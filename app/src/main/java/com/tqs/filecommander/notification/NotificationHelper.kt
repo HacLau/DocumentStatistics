@@ -12,12 +12,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.R
 import com.tqs.filecommander.referrer.ReferrerHelper
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.activity.AdsOpenActivity
 import com.tqs.filecommander.utils.application
 
 object NotificationHelper {
     const val requestUninstallCode = 1011
-    const val requestServiceCode = 1012
+    const val requestScheduledCode = 1012
     const val requestBatteryCode = 1013
     const val requestUnlockCode = 1015
 
@@ -36,33 +38,40 @@ object NotificationHelper {
 
     }
 
-    fun createNotificationScheduled(context: Context): Notification? {
-        if (ReferrerHelper.isReferrerUser().not()) return null
-        if (NotificationController.notificationControl != 1) return null
-        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) return null
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) return null
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(context, "channel_id_scheduled", "channel_scheduled", NotificationManager.IMPORTANCE_HIGH)
-            Notification.Builder(context, "channel_id_scheduled")
-        } else {
-            Notification.Builder(context)
-        }.apply {
-            PendingIntent.getActivity(context, requestServiceCode, getIntent(context), PendingIntent.FLAG_IMMUTABLE).let {
-                setContentIntent(it)
-            }
-            setAutoCancel(true)
-            setSmallIcon(R.mipmap.ic_launcher_foreground)
-            setWhen(System.currentTimeMillis())
-            setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-            setContentTitle(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
-            setContentText(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
-        }.build()
+    fun createNotificationScheduled(context: Context) {
+        if (ReferrerHelper.isReferrerUser().not()) return
+        if (NotificationController.notificationControl != 1) return
+        if (NotificationController.isLimit(NotificationKey.SCHEDULED)) return
+        if (NotificationController.isMoreIntervalTime(NotificationKey.SCHEDULED).not()) return
+        notificationManager.notify(
+            requestScheduledCode,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                createNotificationChannel(context, "channel_id_scheduled", "channel_scheduled", NotificationManager.IMPORTANCE_HIGH)
+                Notification.Builder(context, "channel_id_scheduled")
+            } else {
+                Notification.Builder(context)
+            }.apply {
+                PendingIntent.getActivity(context, requestScheduledCode, getIntent(context, NotificationKey.SCHEDULED), PendingIntent.FLAG_IMMUTABLE)
+                    .let {
+                        setContentIntent(it)
+                    }
+                setAutoCancel(true)
+                setSmallIcon(R.mipmap.ic_launcher_foreground)
+                setWhen(System.currentTimeMillis())
+                setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
+                setContentTitle(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
+                setContentText(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
+            }.build()
+        )
+        NotificationController.updateShowTimes(NotificationKey.SCHEDULED)
+        TBAHelper.updatePoints(EventPoints.filecpop_t_tri)
+        TBAHelper.updatePoints(EventPoints.filecpop_all_tri)
     }
 
     fun createNotificationBroadcastUninstall(context: Context) {
         if (ReferrerHelper.isReferrerUser().not()) return
         if (NotificationController.notificationControl != 1) return
-        if (NotificationController.isLimit(NotificationKey.UNINSTALL))return
+        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) return
         if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) return
         notificationManager.notify(
             requestUninstallCode,
@@ -72,7 +81,14 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(PendingIntent.getActivity(context, requestUninstallCode, getIntent(context), PendingIntent.FLAG_IMMUTABLE))
+                setContentIntent(
+                    PendingIntent.getActivity(
+                        context,
+                        requestUninstallCode,
+                        getIntent(context, NotificationKey.UNINSTALL),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -82,13 +98,15 @@ object NotificationHelper {
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.UNINSTALL)
+        TBAHelper.updatePoints(EventPoints.filecpop_uninstall_tri)
+        TBAHelper.updatePoints(EventPoints.filecpop_all_tri)
     }
 
     fun createNotificationBroadcastCharge(context: Context) {
         if (ReferrerHelper.isReferrerUser().not()) return
         if (NotificationController.notificationControl != 1) return
         if (NotificationController.isLimit(NotificationKey.CHARGE)) return
-        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not())return
+        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not()) return
         notificationManager.notify(
             requestBatteryCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -97,7 +115,14 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(PendingIntent.getActivity(context, requestBatteryCode, getIntent(context), PendingIntent.FLAG_IMMUTABLE))
+                setContentIntent(
+                    PendingIntent.getActivity(
+                        context,
+                        requestBatteryCode,
+                        getIntent(context, NotificationKey.CHARGE),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -107,6 +132,9 @@ object NotificationHelper {
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.CHARGE)
+
+        TBAHelper.updatePoints(EventPoints.filecpop_char_tri)
+        TBAHelper.updatePoints(EventPoints.filecpop_all_tri)
     }
 
     fun createNotificationBroadcastUnlock(context: Context) {
@@ -122,7 +150,14 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(PendingIntent.getActivity(context, requestUnlockCode, getIntent(context), PendingIntent.FLAG_IMMUTABLE))
+                setContentIntent(
+                    PendingIntent.getActivity(
+                        context,
+                        requestUnlockCode,
+                        getIntent(context, NotificationKey.UNCLOCK),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -133,9 +168,14 @@ object NotificationHelper {
         )
 
         NotificationController.updateShowTimes(NotificationKey.UNCLOCK)
+
+        TBAHelper.updatePoints(EventPoints.filecpop_unl_tri)
+        TBAHelper.updatePoints(EventPoints.filecpop_all_tri)
     }
 
-    private fun getIntent(context: Context): Intent {
-        return Intent(context, AdsOpenActivity::class.java)
+    private fun getIntent(context: Context, notifyType: String): Intent {
+        return Intent(context, AdsOpenActivity::class.java).apply {
+            putExtra("notifyType", notifyType)
+        }
     }
 }

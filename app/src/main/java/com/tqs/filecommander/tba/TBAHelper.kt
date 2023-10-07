@@ -11,6 +11,7 @@ object TBAHelper {
     private val advertisingInfo by lazy {
         AdvertisingIdClient.getAdvertisingIdInfo(application)
     }
+
     fun getGAId(): String {
         return advertisingInfo.id ?: ""
     }
@@ -22,10 +23,11 @@ object TBAHelper {
     fun updateSession() {
         "updateSession".logE()
         HttpHelper.sendRequestPost(
-            jsonObject = getRequestJson(
-                EventCommon.session,
-                getEventSession()
-            ), resultSuccess = {
+            jsonObject = getRequestJson {
+                mutableMapOf<String, Any>().apply {
+                    put(EventCommon.session, getEventSession())
+                }
+            }, resultSuccess = {
                 "updateSession $it".logE()
             }, resultFailed = { code, message ->
 
@@ -35,16 +37,19 @@ object TBAHelper {
 
     fun updateInstall() {
         "updateInstall".logE()
-        HttpHelper.sendRequestPost(
-            jsonObject = getRequestJson(
-                EventCommon.install,
-                getEventInstall()
-            ),
-            resultSuccess = {
-                "updateInstall $it".logE()
-            }, resultFailed = { code, message ->
+        Thread {
+            HttpHelper.sendRequestPost(
+                jsonObject = getRequestJson {
+                    mutableMapOf<String, Any>().apply {
+                        put(EventCommon.install, getEventInstall())
+                    }
+                },
+                resultSuccess = {
+                    "updateInstall $it".logE()
+                }, resultFailed = { code, message ->
 
-            })
+                })
+        }
     }
 
     fun updateAdvertising(
@@ -55,15 +60,38 @@ object TBAHelper {
         adsIndex: String
     ) {
         "updateAdvertising".logE()
-        HttpHelper.sendRequestPost(
-            jsonObject = getRequestJson(
-                EventCommon.advertising,
-                getEventAdvertising(adsType, adsId, adsPlat, adsSDK, adsIndex)
-            ),
-            resultSuccess = {
-                "updateAdvertising $it".logE()
-            }, resultFailed = { code, message ->
+        Thread {
+            HttpHelper.sendRequestPost(
+                jsonObject = getRequestJson {
+                    mutableMapOf<String, Any>().apply {
+                        put(EventCommon.eventName, getEventAds())
+                        putAll(getEventAdvertising(adsType, adsId, adsPlat, adsSDK, adsIndex))
+                    }
+                },
+                resultSuccess = {
+                    "updateAdvertising $it".logE()
+                }, resultFailed = { code, message ->
 
-            })
+                })
+        }
+    }
+
+    fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf()) {
+        "updatePoints".logE()
+        Thread{
+            HttpHelper.sendRequestPost(
+                jsonObject = getRequestJson {
+                    mutableMapOf<String, Any>().apply {
+                        put(EventCommon.eventName, eventValue)
+                        put(eventValue, getEventPoints(map))
+                    }
+                },
+                resultSuccess = {
+                    "updatePoints $it".logE()
+                }, resultFailed = { code, message ->
+
+                })
+        }
+
     }
 }

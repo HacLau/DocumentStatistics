@@ -45,7 +45,7 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCom
     }
 
     private fun getHadPermission() {
-        if (MMKVHelper.requestPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || MMKVHelper.requestCodeManager)) {
+        if (MMKVHelper.requestExPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || MMKVHelper.requestCodeManager)) {
             viewModel.hadPermission.value = true
         }
     }
@@ -128,7 +128,12 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCom
     }
 
     override fun onClick(v: View?) {
-        if (!(requireActivity() as BaseActivity<*, *>).judgePermission()) {
+        if (!MMKVHelper.requestExPermission) {
+            (requireActivity() as BaseActivity<*, *>).judgePermission()
+            return
+        }
+        if (!MMKVHelper.requestCodeManager) {
+            (requireActivity() as BaseActivity<*, *>).requestFilesPermission()
             return
         }
         when (v?.id) {

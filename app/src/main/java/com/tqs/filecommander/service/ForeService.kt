@@ -16,7 +16,6 @@ class ForeService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        notification = NotificationHelper.createNotificationScheduled(this)
         startForeground(notificationID, notification)
     }
 

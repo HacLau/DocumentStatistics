@@ -5,6 +5,7 @@ import com.tqs.filecommander.notification.NotificationShowed
 
 object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     // is request read/write and storage permissions
+    var requestExPermission by mmkvBoolean(default = false)
     var requestPermission by mmkvBoolean(default = false)
     var requestCodeManager by mmkvBoolean(default = false)
     // advertising showing times and click times
@@ -24,6 +25,9 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
 
     // first launch app
     var firstLaunchApp by mmkvBoolean(default = true)
+    var firstLaunchAppTime by mmkvLong(default = System.currentTimeMillis())
+    // launch date
+    var launchAppTime by mmkvLong(default = System.currentTimeMillis())
     // cloak state
     var cloakState by mmkvString(default = "")
     // notification

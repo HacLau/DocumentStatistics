@@ -2,6 +2,9 @@ package com.tqs.filecommander.net
 
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.utils.logE
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -32,7 +35,7 @@ object HttpHelper {
     ) {
         "requestFromJson = $jsonObject".logE()
 
-        thread {
+        GlobalScope.launch {
             runCatching {
                 val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()
@@ -61,7 +64,7 @@ object HttpHelper {
         resultSuccess: (String) -> Unit,
         resultFailed: (Int, String) -> Unit
     ) {
-        thread {
+        GlobalScope.launch {
             runCatching {
                 val requestString = jsonObject.toString()
                 "requestString = $requestString".logE()

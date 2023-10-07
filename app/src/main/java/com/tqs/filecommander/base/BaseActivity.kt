@@ -1,5 +1,6 @@
 package com.tqs.filecommander.base
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -18,12 +19,15 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.activity.DocListActivity
 import com.tqs.filecommander.ui.activity.ImageListActivity
 import com.tqs.filecommander.ui.activity.Not404Activity
 import com.tqs.filecommander.ui.activity.ScannerActivity
 import com.tqs.filecommander.ui.activity.ScannerResultActivity
 import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.logE
 
 
 abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatActivity() {
@@ -35,15 +39,34 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
         currentNotAllowPermissions.clear()
         for ((key, value) in result) {
+            if (key == Manifest.permission.WRITE_EXTERNAL_STORAGE && value) {
+                MMKVHelper.requestExPermission = true
+            }
             if (!value) {
                 currentNotAllowPermissions.add(key)
             }
+            key.logE()
         }
         if (currentNotAllowPermissions.isEmpty()) {
             MMKVHelper.requestPermission = true
-            judgePermission()
         }
+        if (!MMKVHelper.requestCodeManager) {
+            requestFilesPermission()
+        } else if (MMKVHelper.requestExPermission) {
+            onPermissionSuccess()
+        }
+
+        TBAHelper.updatePoints(
+            EventPoints.filec_premission_result, mutableMapOf(
+                EventPoints.result to if (currentNotAllowPermissions.isEmpty()) {
+                    "yes"
+                } else {
+                    "no"
+                }
+            )
+        )
     }
+
     private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         setResult(it.resultCode)
     }
@@ -53,7 +76,11 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         @RequiresApi(Build.VERSION_CODES.R)
         if (Environment.isExternalStorageManager()) {
             MMKVHelper.requestCodeManager = true
-            judgePermission()
+            if (!MMKVHelper.requestExPermission) {
+//                judgePermission()
+            } else {
+                onPermissionSuccess()
+            }
         }
     }
 
@@ -86,31 +113,31 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         window.statusBarColor = Color.TRANSPARENT
     }
 
-    fun judgePermission(): Boolean {
+    fun judgePermission() {
+        TBAHelper.updatePoints(EventPoints.filec_premission_show)
         if (!MMKVHelper.requestPermission) {
             requestPermission.launch(currentNotAllowPermissions.toTypedArray())
-            return false
         }
+    }
+
+    fun requestFilesPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && (!Environment.isExternalStorageManager() || !MMKVHelper.requestCodeManager)) {
             startActivity.launch(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
                 data = Uri.parse("package:${packageName}")
             })
-
-            return false
         }
-        onPermissionSuccess()
-        return true
     }
 
     open fun onPermissionSuccess() {}
 
-    fun jumpScannerResultActivity(fromPage: String) {
+    fun jumpScannerResultActivity(fromPage: String, notifyType: String?) {
         if (AdsManager.adsNativeMain.isCacheNotEmpty) {
             startActivityForResult.launch(Intent(this, ScannerResultActivity::class.java).apply {
                 putExtra(Common.PAGE_TYPE, fromPage)
+                putExtra(notifyType, notifyType)
                 finish()
             })
-        }else{
+        } else {
             jumpMediaListActivity(fromPage)
         }
     }
@@ -127,9 +154,10 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         finish()
     }
 
-    open fun jumpScannerActivity(fromPage : String){
+    open fun jumpScannerActivity(fromPage: String, notifyType: String?) {
         startActivityForResult.launch(Intent(this, ScannerActivity::class.java).apply {
             putExtra(Common.PAGE_TYPE, fromPage)
+            putExtra(notifyType, notifyType)
         })
     }
 }

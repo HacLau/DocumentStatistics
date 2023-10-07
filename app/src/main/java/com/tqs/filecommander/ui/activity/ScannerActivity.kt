@@ -8,6 +8,9 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.databinding.ActivityScannerBinding
 import com.tqs.filecommander.base.BaseActivity
+import com.tqs.filecommander.notification.NotificationKey
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.vm.MainVM
 
@@ -16,11 +19,30 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
         get() = R.layout.activity_scanner
     override val TAG: String
         get() = "ScannerActivity"
+
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
+        val notifyType = intent.getStringExtra("notifyType")
+
+        when (notifyType) {
+            NotificationKey.SCHEDULED -> "t"
+            NotificationKey.CHARGE -> "char"
+            NotificationKey.UNCLOCK -> "unl"
+            NotificationKey.UNINSTALL -> "uni"
+            else -> {
+                null
+            }
+        }?.let {
+            TBAHelper.updatePoints(
+                EventPoints.filecpop_all_page, mutableMapOf(
+                    EventPoints.source to it
+                )
+            )
+        }
+        TBAHelper.updatePoints(EventPoints.filec_clean_show)
         binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 // loop a day
@@ -31,7 +53,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
             }
 
             override fun onAnimationCancel(animation: Animator) {
-                jumpScannerResultActivity(viewModel.mPageType)
+                jumpScannerResultActivity(viewModel.mPageType, notifyType)
 
             }
 
@@ -55,7 +77,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
                         }
                     }"
                     count++
-                    if(millisUntilFinished < 3000L && AdsManager.adsNativeMain.isCacheNotEmpty){
+                    if (millisUntilFinished < 3000L && AdsManager.adsNativeMain.isCacheNotEmpty) {
                         this.cancel()
                         this.onFinish()
                     }

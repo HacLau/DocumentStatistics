@@ -2,6 +2,8 @@ package com.tqs.filecommander.ads
 
 import android.content.Context
 import com.tqs.filecommander.base.BaseAds
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 
 class AdsPreloader(
     private val context: Context,
@@ -33,6 +35,7 @@ class AdsPreloader(
             onLoad.invoke(false)
             return
         }
+        TBAHelper.updatePoints(EventPoints.filec_ad_request, mutableMapOf(EventPoints.ad_pos_id to item.adsId))
         baseAds.load(onAdsLoaded = {
             cache.add(baseAds)
             cache.sortByDescending { it.adsItem.adsWeight }

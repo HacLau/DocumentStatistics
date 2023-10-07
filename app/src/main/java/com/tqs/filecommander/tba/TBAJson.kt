@@ -15,12 +15,16 @@ import java.net.URLEncoder
 import java.util.Locale
 import java.util.UUID
 
-fun getRequestJson(key: String, jsonObject: JSONObject): JSONObject = JSONObject().apply {
-    this.put(EventCommon.celsius, getCelsius())
-    this.put(EventCommon.quixotic, getQuixotic())
-    this.put(EventCommon.filigree, getFiligree())
-    this.put(key, jsonObject)
-}
+fun getRequestJson(function: () -> MutableMap<String, Any> = { mutableMapOf<String, Any>() }): JSONObject =
+    JSONObject().apply {
+        this.put(EventCommon.celsius, getCelsius())
+        this.put(EventCommon.quixotic, getQuixotic())
+        this.put(EventCommon.filigree, getFiligree())
+        function.invoke().forEach { (key, value) ->
+            this.put(key, value)
+        }
+
+    }
 
 
 private fun getCelsius(): JSONObject = JSONObject().apply {
@@ -62,7 +66,7 @@ fun getEventInstall(): JSONObject = JSONObject().apply {
     this.put(EventInstall.omnibus, MMKVHelper.installReferrer)
     this.put(EventInstall.booty, MMKVHelper.installReferrerVersion)
     this.put(EventInstall.surname, WebSettings.getDefaultUserAgent(application))
-    this.put(EventInstall.hades, if(TBAHelper.getGAIdLimit()) "enough" else "shrub")
+    this.put(EventInstall.hades, if (TBAHelper.getGAIdLimit()) "enough" else "shrub")
     this.put(EventInstall.cacao, MMKVHelper.referrerClickTimestampSeconds)
     this.put(EventInstall.dough, MMKVHelper.installBeginTimestampSeconds)
     this.put(EventInstall.chunky, MMKVHelper.referrerClickTimestampServerSeconds)
@@ -74,6 +78,11 @@ fun getEventInstall(): JSONObject = JSONObject().apply {
 
 fun getEventSession(): JSONObject = JSONObject().apply { }
 
+fun getEventAds(): JSONObject =
+    JSONObject().apply {
+        put("impasse", "simon")
+    }
+
 
 fun getEventAdvertising(
     adsType: String,
@@ -81,8 +90,8 @@ fun getEventAdvertising(
     adsPlat: String = "admob",
     adsSDK: String,
     adsIndex: String
-): JSONObject =
-    JSONObject().apply {
+): MutableMap<String, String> =
+    mutableMapOf<String, String>().apply {
 //    this.put(EventAdvertising.blink, "")
 //    this.put(EventAdvertising.sank, "")
         this.put(EventAdvertising.monetary, adsPlat)
@@ -96,3 +105,9 @@ fun getEventAdvertising(
 //    this.put(EventAdvertising.wholly, "")
 //    this.put(EventAdvertising.abstract, "")
     }
+
+fun getEventPoints(map: MutableMap<String, Any?>): JSONObject = JSONObject().apply {
+    map.forEach { (key, value) ->
+        put(key, value)
+    }
+}

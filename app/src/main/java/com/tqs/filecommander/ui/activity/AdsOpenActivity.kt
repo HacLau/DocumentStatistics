@@ -8,6 +8,9 @@ import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.databinding.ActivityAdsOpenBinding
 import com.tqs.filecommander.notification.NotificationHelper
+import com.tqs.filecommander.notification.NotificationKey
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.vm.MainVM
 
@@ -20,16 +23,31 @@ class AdsOpenActivity : BaseActivity<ActivityAdsOpenBinding, MainVM>() {
 
     override fun initData() {
         viewModel = ViewModelProvider(this)[MainVM::class.java]
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager ).apply {
-            when(taskId){
-                NotificationHelper.requestServiceCode,
-                    NotificationHelper.requestBatteryCode,
-                    NotificationHelper.requestUnlockCode,
-                    NotificationHelper.requestUninstallCode -> cancel(taskId)
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+            when (taskId) {
+                NotificationHelper.requestScheduledCode,
+                NotificationHelper.requestBatteryCode,
+                NotificationHelper.requestUnlockCode,
+                NotificationHelper.requestUninstallCode -> cancel(taskId)
             }
         }
-        AdsManager.adsFullScreen.showFullScreenAds(this){
-            jumpScannerActivity(Common.pageArray[(0..4).random()])
+        var notifyType = intent.getStringExtra("notifyType")
+        AdsManager.adsFullScreen.showFullScreenAds(this) {
+            jumpScannerActivity(Common.pageArray[(0..4).random()],notifyType)
         }
+        TBAHelper.updatePoints(EventPoints.filecpop_all_cli)
+        TBAHelper.updatePoints(
+            when (notifyType) {
+                NotificationKey.SCHEDULED -> EventPoints.filecpop_t_cli
+                NotificationKey.CHARGE -> EventPoints.filecpop_char_cli
+                NotificationKey.UNCLOCK -> EventPoints.filecpop_unl_cli
+                NotificationKey.UNINSTALL -> EventPoints.filecpop_uninstall_cli
+
+                else -> {
+                    ""
+                }
+            }
+        )
+
     }
 }

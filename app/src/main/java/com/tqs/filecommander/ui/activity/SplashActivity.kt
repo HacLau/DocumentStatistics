@@ -8,6 +8,8 @@ import com.tqs.filecommander.R
 import com.tqs.filecommander.databinding.ActivitySplashBinding
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ads.AdsManager
+import com.tqs.filecommander.tba.EventPoints
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.vm.MainVM
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
@@ -21,6 +23,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         initAdsData()
         createTimer(viewModel.countDownTime)
+        TBAHelper.updatePoints(EventPoints.filec_startpage_show)
+        TBAHelper.updatePoints(EventPoints.filec_launch_page_show)
     }
 
     private fun initAdsData() {
@@ -55,6 +59,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         startActivity(intent)
         finish()
     }
+
 
 
 

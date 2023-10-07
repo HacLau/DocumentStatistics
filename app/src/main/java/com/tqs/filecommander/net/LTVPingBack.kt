@@ -3,6 +3,7 @@ package com.tqs.filecommander.net
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.tqs.filecommander.ads.AdsUserCost
+import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.application
 
 private val mFirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(application) }
