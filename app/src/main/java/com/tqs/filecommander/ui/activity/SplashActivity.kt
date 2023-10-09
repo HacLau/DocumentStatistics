@@ -54,13 +54,4 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         countDownTimer.start()
     }
 
-    private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-
-
-
 }

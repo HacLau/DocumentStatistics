@@ -53,6 +53,7 @@ class FullScreenAdvertising(
                 is InterstitialAd -> {
                     ads.run {
                         fullScreenContentCallback = callback
+                        "Debug Logcat: Advertising adsType = $adsType type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Showing".logE()
                         show(activity)
                     }
                 }
@@ -60,6 +61,7 @@ class FullScreenAdvertising(
                 is AppOpenAd -> {
                     ads.run {
                         fullScreenContentCallback = callback
+                        "Debug Logcat: Advertising adsType = $adsType type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Showing".logE()
                         show(activity)
                     }
                 }
@@ -73,6 +75,7 @@ class FullScreenAdvertising(
     private fun loadOpenAdvertising(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         AppOpenAd.load(context, item.adsId, adsRequest, AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, object : AppOpenAd.AppOpenAdLoadCallback() {
             override fun onAdLoaded(appOpenAd: AppOpenAd) {
+                "Debug Logcat: Advertising adsType = $adsType type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
                 ad = appOpenAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()
@@ -90,6 +93,7 @@ class FullScreenAdvertising(
     private fun loadInterstitial(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         InterstitialAd.load(context, item.adsId, adsRequest, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                "Debug Logcat: Advertising adsType = $adsType  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
                 ad = interstitialAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()

@@ -35,7 +35,7 @@ class AdsPreloader(
             onLoad.invoke(false)
             return
         }
-        TBAHelper.updatePoints(EventPoints.filec_ad_request, mutableMapOf(EventPoints.ad_pos_id to item.adsId))
+        TBAHelper.updatePoints(EventPoints.filec_ad_request, mutableMapOf(EventPoints.ad_pos_id to adsType.adsItemType))
         baseAds.load(onAdsLoaded = {
             cache.add(baseAds)
             cache.sortByDescending { it.adsItem.adsWeight }

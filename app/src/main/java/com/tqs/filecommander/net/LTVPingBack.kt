@@ -3,6 +3,7 @@ package com.tqs.filecommander.net
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.tqs.filecommander.ads.AdsUserCost
+import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.application
 
@@ -27,5 +28,6 @@ fun logEvent(eventName: String, paramMap: MutableMap<String, Any?>) {
                 }
             }
         })
+        TBAHelper.updatePoints(eventName, paramMap)
     }
 }

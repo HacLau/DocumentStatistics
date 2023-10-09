@@ -14,6 +14,7 @@ import com.tqs.filecommander.net.adsUserCost
 import com.tqs.filecommander.net.logEvent
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
+import com.tqs.filecommander.utils.logE
 
 abstract class BaseAds(
     private val adsType: AdsItemType,
@@ -25,6 +26,7 @@ abstract class BaseAds(
 
     //paid data to firebase
     fun onAdsPaid(adsValue: AdValue, item: AdsItem, responseInfo: ResponseInfo?) {
+        "Debug Logcat: Advertising adsType = $adsType  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} LoadSuccess".logE()
         // data update to firebase
         runCatching {
             logEvent(
@@ -37,7 +39,7 @@ abstract class BaseAds(
                 )
             )
 
-            TBAHelper.updatePoints(EventPoints.filec_ad_impression, mutableMapOf(EventPoints.ad_pos_id to adsItem.adsId))
+            TBAHelper.updatePoints(EventPoints.filec_ad_impression, mutableMapOf(EventPoints.ad_pos_id to adsType.adsItemType))
         }
         // google 2.5
         runCatching {

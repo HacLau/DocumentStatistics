@@ -24,6 +24,10 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, MainVM>() {
         binding.titleBar.setLeftClickListener {
             onBackPressed()
         }
+        viewModel.deletedFile.observe(this){
+            if (it)
+                getDocDataList()
+        }
         getDocDataList()
         viewModel.dataList.observe(this) {
             viewModel.statisticsListDirectory(it){folders->
@@ -68,14 +72,14 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, MainVM>() {
             }
         }
         binding.vFileDelete.setOnClickListener {
-            AdsManager.adsInsertResultClean.showFullScreenAds(this@DocListActivity) {
-                viewModel.showDeleteDialog(this,{},{
+//            AdsManager.adsInsertResultClean.showFullScreenAds(this@DocListActivity) {
+                viewModel.showDeleteDialog(this, cancel = {}, confirm = {
                     viewModel.deleteSelectedDoc{
                         setResult(it)
                     }
                     getDocDataList()
                 })
-            }
+//            }
         }
     }
 
@@ -102,7 +106,7 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, MainVM>() {
     }
 
     override fun onBackPressed() {
-        viewModel.onBackPressed(this,{
+        viewModel.onBackPressed(this@DocListActivity,{
             super.onBackPressed()
         },{
         })

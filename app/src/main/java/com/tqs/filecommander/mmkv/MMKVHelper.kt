@@ -4,10 +4,6 @@ import com.tqs.filecommander.ads.AdsCount
 import com.tqs.filecommander.notification.NotificationShowed
 
 object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
-    // is request read/write and storage permissions
-    var requestExPermission by mmkvBoolean(default = false)
-    var requestPermission by mmkvBoolean(default = false)
-    var requestCodeManager by mmkvBoolean(default = false)
     // advertising showing times and click times
     var showAdsData by mmkvParcelable<AdsCount>()
     var clickAdsData by mmkvParcelable<AdsCount>()
@@ -24,7 +20,7 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     var googlePlayInstantParam by mmkvBoolean(default = false)
 
     // first launch app
-    var firstLaunchApp by mmkvBoolean(default = true)
+    var isLaunchedApp by mmkvBoolean(default = false)
     var firstLaunchAppTime by mmkvLong(default = System.currentTimeMillis())
     // launch date
     var launchAppTime by mmkvLong(default = System.currentTimeMillis())
@@ -39,4 +35,8 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
     var currentUserCost by mmkvDouble(default = 0.0)
     var currentUserCostTime by mmkvLong(default = System.currentTimeMillis())
     var androidId by mmkvString(default = "")
+
+
+    var GaId by mmkvString(default = "")
+    var isLimitAdTrackingEnabled by mmkvBoolean(default = false)
 }

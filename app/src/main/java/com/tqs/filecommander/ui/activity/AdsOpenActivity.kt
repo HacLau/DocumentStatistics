@@ -12,6 +12,7 @@ import com.tqs.filecommander.notification.NotificationKey
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.logE
 import com.tqs.filecommander.vm.MainVM
 
 class AdsOpenActivity : BaseActivity<ActivityAdsOpenBinding, MainVM>() {
@@ -31,9 +32,11 @@ class AdsOpenActivity : BaseActivity<ActivityAdsOpenBinding, MainVM>() {
                 NotificationHelper.requestUninstallCode -> cancel(taskId)
             }
         }
-        var notifyType = intent.getStringExtra("notifyType")
+        val notifyType = intent.getStringExtra(NotificationKey.notifyType)
+        "notifyType = $notifyType".logE()
         AdsManager.adsFullScreen.showFullScreenAds(this) {
             jumpScannerActivity(Common.pageArray[(0..4).random()],notifyType)
+            finish()
         }
         TBAHelper.updatePoints(EventPoints.filecpop_all_cli)
         TBAHelper.updatePoints(

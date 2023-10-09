@@ -29,7 +29,6 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, MainVM>() {
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         binding.titleBar.setLeftClickListener {
-            viewModel.setResult(this)
             finish()
         }
         viewModel.currentIndex = intent.getIntExtra("selectImageIndex", 0)
@@ -71,24 +70,26 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, MainVM>() {
 
         })
         binding.ivWarningImage.setOnClickListener {
-            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity) {
+//            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity) {
                 viewModel.setPopupWindow(this@PreviewActivity,binding.titleBar)
-            }
+//            }
         }
         binding.ivDeleteImage.setOnClickListener {
-            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
-                viewModel.showDeleteDialog(this@PreviewActivity,{}) {
+//            AdsManager.adsInsertResultClean.showFullScreenAds(this@PreviewActivity){
+                viewModel.showDeleteDialog(this@PreviewActivity, cancel = {}) {
                     viewModel.deleteSelectPreview(binding.vpShowMedia) {
                         setTitleText()
-                        viewModel.setResult(this@PreviewActivity)
+                        if (viewModel.previewMediaList!!.isEmpty()){
+                            finish()
+                        }
                     }
                 }
-            }
+//            }
         }
         binding.ivShareImage.setOnClickListener {
-            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
+//            AdsManager.adsInsertResultScan.showFullScreenAds(this@PreviewActivity) {
                 viewModel.setSharedFile(this@PreviewActivity)
-            }
+//            }
         }
     }
 
@@ -97,8 +98,12 @@ class PreviewActivity : BaseActivity<ActivityImagePreviewBinding, MainVM>() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        viewModel.setResult(this)
+        viewModel.onBackPressed(this@PreviewActivity,{
+            super.onBackPressed()
+        },{
+
+        })
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.tqs.filecommander.ui.activity
 
+import android.content.Intent
 import android.text.Html
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
@@ -25,23 +26,21 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
-        val notifyType = intent.getStringExtra("notifyType")
-
-        when (notifyType) {
-            NotificationKey.SCHEDULED -> "t"
-            NotificationKey.CHARGE -> "char"
-            NotificationKey.UNCLOCK -> "unl"
-            NotificationKey.UNINSTALL -> "uni"
-            else -> {
-                null
-            }
-        }?.let {
-            TBAHelper.updatePoints(
-                EventPoints.filecpop_all_result, mutableMapOf(
-                    EventPoints.source to it
-                )
+        val notifyType = intent.getStringExtra(NotificationKey.notifyType)
+        TBAHelper.updatePoints(
+            EventPoints.filecpop_all_result, mutableMapOf(
+                EventPoints.source to when (notifyType) {
+                    NotificationKey.SCHEDULED -> "t"
+                    NotificationKey.CHARGE -> "char"
+                    NotificationKey.UNCLOCK -> "unl"
+                    NotificationKey.UNINSTALL -> "uni"
+                    else -> {
+                        ""
+                    }
+                }
             )
-        }
+        )
+
         TBAHelper.updatePoints(EventPoints.filec_scan_result_show)
         binding.titleBar.setLeftClickListener {
             finish()
@@ -71,7 +70,7 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>
             if (AdsManager.adsNativeMain.isCacheNotEmpty) {
                 viewModel.baseAds?.destroyNative()
                 kotlin.runCatching {
-                    AdsManager.adsNativeMain.showNativeAds(this@ScannerResultActivity, binding.nativeFrame) {
+                    AdsManager.adsNativeResultScan.showNativeAds(this@ScannerResultActivity, binding.nativeFrame) {
                         viewModel.baseAds = it
                         Log.e(TAG, "native is show")
                     }

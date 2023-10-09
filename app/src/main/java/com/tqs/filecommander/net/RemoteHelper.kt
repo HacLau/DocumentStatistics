@@ -14,7 +14,7 @@ import com.tqs.filecommander.notification.NotificationEntity
 import com.tqs.filecommander.referrer.ReferrerHelper
 
 
-class RemoteHelper {
+object RemoteHelper {
     private val remoteConfig by lazy {
         Firebase.remoteConfig.apply {
             setConfigSettingsAsync(remoteConfigSettings {
@@ -42,7 +42,6 @@ class RemoteHelper {
             val json: String = remoteConfig["fcpop"].asString()
             if (json.isBlank()) return
             val notificationEntity = Gson().fromJson(json, NotificationEntity::class.java)
-            ReferrerHelper.setReferrerControl(notificationEntity.referrerSwitch)
             NotificationController.setNotification(notificationEntity)
         }
     }

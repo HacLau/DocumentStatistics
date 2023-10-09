@@ -20,18 +20,25 @@ object Common {
     const val DOCUMENTS_LIST = "documentsList"
     const val DOWNLOAD_LIST = "downloadList"
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
     val permissions = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.CALL_PHONE,
-        Manifest.permission.SEND_SMS,
-        Manifest.permission.BODY_SENSORS,
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.READ_CONTACTS,
-        Manifest.permission.CAMERA,
-        Manifest.permission.READ_CALENDAR,
-        Manifest.permission.POST_NOTIFICATIONS
+//        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//        Manifest.permission.READ_EXTERNAL_STORAGE,
+//        Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+
+//        Manifest.permission.CALL_PHONE,
+//        Manifest.permission.SEND_SMS,
+//        Manifest.permission.BODY_SENSORS,
+//        Manifest.permission.RECORD_AUDIO,
+//        Manifest.permission.ACCESS_FINE_LOCATION,
+//        Manifest.permission.READ_CONTACTS,
+//        Manifest.permission.CAMERA,
+//        Manifest.permission.READ_CALENDAR,
+//        Manifest.permission.POST_NOTIFICATIONS,
+        Manifest.permission.READ_MEDIA_AUDIO,
+        Manifest.permission.READ_MEDIA_VIDEO,
+        Manifest.permission.READ_MEDIA_IMAGES,
+//        Manifest.permission.MANAGE_DOCUMENTS,
     )
     val pageArray = arrayOf(
         IMAGE_LIST,
@@ -44,9 +51,11 @@ object Common {
 
 @SuppressLint("HardwareIds")
 fun getAndroidId(): String {
-    return MMKVHelper.androidId ?: Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID)?.apply {
-        MMKVHelper.androidId = this
-    } ?: UUID.randomUUID().toString().apply {
-        MMKVHelper.androidId = this
+    if (MMKVHelper.androidId.isNullOrBlank()) {
+        MMKVHelper.androidId = Settings.Secure.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
+        if(MMKVHelper.androidId.isNullOrBlank()){
+            MMKVHelper.androidId = UUID.randomUUID().toString()
+        }
     }
+    return MMKVHelper.androidId!!
 }

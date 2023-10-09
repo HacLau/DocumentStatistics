@@ -10,6 +10,7 @@ import com.tqs.filecommander.broadcast.registerBattery
 import com.tqs.filecommander.broadcast.registerUninstall
 import com.tqs.filecommander.broadcast.registerUnlock
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.net.RemoteHelper
 import com.tqs.filecommander.notification.NotificationController
 import com.tqs.filecommander.notification.NotificationHelper
 import com.tqs.filecommander.referrer.ReferrerHelper
@@ -26,34 +27,33 @@ import java.util.TimerTask
 class FileCommanderApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        application = this
         val adsJson = getJsonFromAssets(this, "ads.json")
         AdsManager.initAdsConfig(adsJson)
         MMKV.initialize(this)
         NotificationController.initNotificationConfig(this)
         ReferrerHelper.initReferrer(this)
-        application = this
+        TBAHelper.getAds{id,bool->
+            MMKVHelper.GaId = id
+            MMKVHelper.isLimitAdTrackingEnabled = bool
+        }
+        if (BuildConfig.DEBUG.not())
+            RemoteHelper.fetch()
 //        startService()
         registerBroadcast()
         timerPoints()
-        timerNotification()
         if (0L == MMKVHelper.firstLaunchAppTime) {
             MMKVHelper.firstLaunchAppTime = System.currentTimeMillis()
         }
-        if (TimeUtils.isToday(MMKVHelper.launchAppTime).not()){
+//        if (TimeUtils.isToday(MMKVHelper.launchAppTime).not()){
             TBAHelper.updatePoints(EventPoints.filec_retention, mutableMapOf(
-                EventPoints.D to "D${DateUtils.getMillisDay(MMKVHelper.firstLaunchAppTime) - DateUtils.getMillisDay(MMKVHelper.firstLaunchAppTime)}"))
-        }
+                EventPoints.D to "D${DateUtils.getMillisDay(System.currentTimeMillis()) - DateUtils.getMillisDay(MMKVHelper.firstLaunchAppTime)}"))
+//        }
         MMKVHelper.launchAppTime = System.currentTimeMillis()
 
     }
 
-    private fun timerNotification() {
-        Timer().schedule(object : TimerTask(){
-            override fun run() {
-                NotificationHelper.createNotificationScheduled(this@FileCommanderApp)
-            }
-        },0,1000 * 60 * 10)
-    }
+
 
     private fun timerPoints() {
         Timer().schedule(object : TimerTask(){

@@ -18,18 +18,14 @@ val broadcast by lazy {
             when (intent?.action) {
                 Intent.ACTION_BATTERY_CHANGED -> {
                     NotificationHelper.createNotificationBroadcastCharge(application)
-                    "BroadcastUninstall Charge".logE()
                 }
 
                 Intent.ACTION_USER_PRESENT -> {
                     NotificationHelper.createNotificationBroadcastUnlock(application)
-                    "BroadcastUninstall unlock".logE()
                 }
 
-                Intent.ACTION_PACKAGE_ADDED -> {
+                Intent.ACTION_PACKAGE_REMOVED -> {
                     NotificationHelper.createNotificationBroadcastUninstall(application)
-                    "BroadcastUninstall UNINSTALL".logE()
-                    "BroadcastBattery UNINSTALL".toast(application)
                 }
             }
         }
@@ -45,19 +41,7 @@ fun registerUnlock(context: Context?) {
 }
 
 fun registerUninstall(context: Context?) {
-    context?.registerReceiver(broadcast, IntentFilter(Intent.ACTION_PACKAGE_ADDED).apply {
+    context?.registerReceiver(broadcast, IntentFilter(Intent.ACTION_PACKAGE_REMOVED).apply {
         addDataScheme("package")
     })
-}
-
-fun isBatteryCharging(context: Context?): Boolean {
-    return context?.registerReceiver(broadcast, IntentFilter(Intent.ACTION_BATTERY_CHANGED)).let {
-        when (it?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)) {
-            BatteryManager.BATTERY_PLUGGED_AC, BatteryManager.BATTERY_PLUGGED_USB, BatteryManager.BATTERY_PLUGGED_WIRELESS ->
-                true
-
-            else ->
-                false
-        }
-    }
 }

@@ -11,10 +11,10 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.R
-import com.tqs.filecommander.referrer.ReferrerHelper
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.activity.AdsOpenActivity
+import com.tqs.filecommander.ui.activity.MainActivity
 import com.tqs.filecommander.utils.application
 
 object NotificationHelper {
@@ -27,22 +27,18 @@ object NotificationHelper {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannel(context: Context, channelId: String, channelName: String, important: Int) {
-        NotificationChannel(channelId, channelName, important).let {
-            it.canBypassDnd()
-            it.lockscreenVisibility = Notification.VISIBILITY_SECRET
-            it.group = "FileCommander"
-            it.canShowBadge()
-            it.setBypassDnd(true)
-            notificationManager.createNotificationChannel(it)
-        }
+        notificationManager.createNotificationChannel(NotificationChannel(channelId, channelName, important).apply {
+            canBypassDnd()
+            lockscreenVisibility = Notification.VISIBILITY_SECRET
+            canShowBadge()
+            setBypassDnd(true)
+        })
+
 
     }
 
     fun createNotificationScheduled(context: Context) {
-        if (ReferrerHelper.isReferrerUser().not()) return
-        if (NotificationController.notificationControl != 1) return
-        if (NotificationController.isLimit(NotificationKey.SCHEDULED)) return
-        if (NotificationController.isMoreIntervalTime(NotificationKey.SCHEDULED).not()) return
+        if (!NotificationController.isShouldShowNotification(NotificationKey.SCHEDULED)) return
         notificationManager.notify(
             requestScheduledCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -51,16 +47,18 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                PendingIntent.getActivity(context, requestScheduledCode, getIntent(context, NotificationKey.SCHEDULED), PendingIntent.FLAG_IMMUTABLE)
-                    .let {
-                        setContentIntent(it)
-                    }
+                setContentIntent(PendingIntent.getActivity(
+                    context, requestScheduledCode,
+                    getIntent(context, NotificationKey.SCHEDULED),
+                    PendingIntent.FLAG_IMMUTABLE
+                ))
+
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
-                setContentText(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
+//                setContentTitle(NotificationController.getNotificationName(NotificationKey.SCHEDULED))
+                setContentText(NotificationController.getNotificationContent(NotificationKey.SCHEDULED))
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.SCHEDULED)
@@ -69,10 +67,7 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastUninstall(context: Context) {
-        if (ReferrerHelper.isReferrerUser().not()) return
-        if (NotificationController.notificationControl != 1) return
-        if (NotificationController.isLimit(NotificationKey.UNINSTALL)) return
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNINSTALL).not()) return
+        if (!NotificationController.isShouldShowNotification(NotificationKey.UNINSTALL)) return
         notificationManager.notify(
             requestUninstallCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -93,8 +88,8 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNINSTALL))
-                setContentText(NotificationController.getNotificationName(NotificationKey.UNINSTALL))
+//                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNINSTALL))
+                setContentText(NotificationController.getNotificationContent(NotificationKey.UNINSTALL))
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.UNINSTALL)
@@ -103,10 +98,7 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastCharge(context: Context) {
-        if (ReferrerHelper.isReferrerUser().not()) return
-        if (NotificationController.notificationControl != 1) return
-        if (NotificationController.isLimit(NotificationKey.CHARGE)) return
-        if (NotificationController.isMoreIntervalTime(NotificationKey.CHARGE).not()) return
+        if (!NotificationController.isShouldShowNotification(NotificationKey.CHARGE)) return
         notificationManager.notify(
             requestBatteryCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -127,8 +119,8 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle(NotificationController.getNotificationName(NotificationKey.CHARGE))
-                setContentText(NotificationController.getNotificationName(NotificationKey.CHARGE))
+//                setContentTitle(NotificationController.getNotificationName(NotificationKey.CHARGE))
+                setContentText(NotificationController.getNotificationContent(NotificationKey.CHARGE))
             }.build()
         )
         NotificationController.updateShowTimes(NotificationKey.CHARGE)
@@ -138,10 +130,7 @@ object NotificationHelper {
     }
 
     fun createNotificationBroadcastUnlock(context: Context) {
-        if (ReferrerHelper.isReferrerUser().not()) return
-        if (NotificationController.notificationControl != 1) return
-        if (NotificationController.isLimit(NotificationKey.UNCLOCK)) return
-        if (NotificationController.isMoreIntervalTime(NotificationKey.UNCLOCK).not()) return
+        if (!NotificationController.isShouldShowNotification(NotificationKey.UNCLOCK)) return
         notificationManager.notify(
             requestUnlockCode,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -162,7 +151,7 @@ object NotificationHelper {
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
                 setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_foreground))
-                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNCLOCK))
+//                setContentTitle(NotificationController.getNotificationName(NotificationKey.UNCLOCK))
                 setContentText(NotificationController.getNotificationContent(NotificationKey.UNCLOCK))
             }.build()
         )
@@ -175,7 +164,7 @@ object NotificationHelper {
 
     private fun getIntent(context: Context, notifyType: String): Intent {
         return Intent(context, AdsOpenActivity::class.java).apply {
-            putExtra("notifyType", notifyType)
+            putExtra(NotificationKey.notifyType, notifyType)
         }
     }
 }

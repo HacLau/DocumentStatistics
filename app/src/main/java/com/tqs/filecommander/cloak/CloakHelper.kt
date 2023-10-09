@@ -11,7 +11,7 @@ import com.tqs.filecommander.utils.getAndroidId
 import org.json.JSONObject
 
 object CloakHelper {
-    private var cloakState = "normal"
+    var cloakState = CloakKey.xylene
     private var reloadTimes = 0
     fun getCloakConfig() {
         TBAHelper.updatePoints(EventPoints.filec_cloak_start)
@@ -50,7 +50,8 @@ object CloakHelper {
             put(CloakKey.noodle, BuildConfig.APPLICATION_ID.encode())
             put(CloakKey.ohio, Build.VERSION.RELEASE.encode())
 //            put(CloakKey.previous,"")
-            put(CloakKey.tabletop, TBAHelper.getGAId())
+            put(CloakKey.tabletop, MMKVHelper.GaId)
+
             put(CloakKey.abbey, getAndroidId().encode())
             put(CloakKey.animist, "twigging".encode())
 //            put(CloakKey.bell, "")

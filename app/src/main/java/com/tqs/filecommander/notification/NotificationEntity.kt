@@ -60,4 +60,6 @@ object NotificationKey {
     const val Unlock = "Unlock"
     const val Charge = "Charge"
     const val Uninstall = "Uninstall"
+
+    const val notifyType = "notifyType"
 }

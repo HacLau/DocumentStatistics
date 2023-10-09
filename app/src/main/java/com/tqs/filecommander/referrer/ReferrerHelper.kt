@@ -13,10 +13,7 @@ object ReferrerHelper {
     private val buyUserList: Array<String> = arrayOf("fb4a", "gclid", "not%20set", "youtubeads", "%7b%22", "bytedance")
     private val fbUserList: Array<String> = arrayOf("fb4a")
     var installReferrer = ""
-    private var referrerControl = 1
-    fun setReferrerControl(control: Int) {
-        this.referrerControl = control
-    }
+    var referrerControl = 2
 
     fun isReferrerUser(): Boolean {
         return when (referrerControl) {
@@ -31,7 +28,7 @@ object ReferrerHelper {
         return fbUserList.contains(installReferrer)
     }
 
-    fun isBuyUser(installReferrer: String): Boolean {
+    private fun isBuyUser(installReferrer: String): Boolean {
         return buyUserList.contains(installReferrer)
     }
 
@@ -61,8 +58,8 @@ object ReferrerHelper {
 
                                     MMKVHelper.installReferrer = it.installVersion
                                     // to update tba data of install
-                                    if (MMKVHelper.firstLaunchApp) {
-                                        MMKVHelper.firstLaunchApp = false
+                                    if (!MMKVHelper.isLaunchedApp) {
+                                        MMKVHelper.isLaunchedApp = true
                                         TBAHelper.updateInstall()
                                     }
 

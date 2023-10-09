@@ -3,6 +3,7 @@ package com.tqs.filecommander.ui.activity
 import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.ads.AdsManager
@@ -25,23 +26,21 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
-        val notifyType = intent.getStringExtra("notifyType")
-
-        when (notifyType) {
-            NotificationKey.SCHEDULED -> "t"
-            NotificationKey.CHARGE -> "char"
-            NotificationKey.UNCLOCK -> "unl"
-            NotificationKey.UNINSTALL -> "uni"
-            else -> {
-                null
-            }
-        }?.let {
-            TBAHelper.updatePoints(
-                EventPoints.filecpop_all_page, mutableMapOf(
-                    EventPoints.source to it
-                )
+        val notifyType = intent.getStringExtra(NotificationKey.notifyType)
+        TBAHelper.updatePoints(
+            EventPoints.filecpop_all_page, mutableMapOf(
+                EventPoints.source to when (notifyType) {
+                    NotificationKey.SCHEDULED -> "t"
+                    NotificationKey.CHARGE -> "char"
+                    NotificationKey.UNCLOCK -> "unl"
+                    NotificationKey.UNINSTALL -> "uni"
+                    else -> {
+                        ""
+                    }
+                }
             )
-        }
+        )
+
         TBAHelper.updatePoints(EventPoints.filec_clean_show)
         binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
@@ -53,8 +52,10 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
             }
 
             override fun onAnimationCancel(animation: Animator) {
-                jumpScannerResultActivity(viewModel.mPageType, notifyType)
-
+                AdsManager.adsInsertResultScan.showFullScreenAds(this@ScannerActivity) {
+                    Log.e(TAG, "ads onDismiss")
+                    jumpScannerResultActivity(viewModel.mPageType, notifyType)
+                }
             }
 
             override fun onAnimationRepeat(animation: Animator) {

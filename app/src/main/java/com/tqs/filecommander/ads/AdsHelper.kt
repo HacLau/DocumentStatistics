@@ -69,7 +69,7 @@ class AdsHelper(private val adsType: AdsItemType) {
 
 
     fun showFullScreenAds(activity: Activity, onAdsDismissed: () -> Unit) {
-        TBAHelper.updatePoints(EventPoints.filec_ad_chance)
+        TBAHelper.updatePoints(EventPoints.filec_ad_chance,mutableMapOf(EventPoints.ad_pos_id to adsType.adsItemType))
         if (cache.isEmpty()) {
             onAdsDismissed.invoke()
             return
@@ -85,7 +85,7 @@ class AdsHelper(private val adsType: AdsItemType) {
     }
 
     fun showNativeAds(activity: Activity, parent: ViewGroup?, onBaseAds: (BaseAds) -> Unit) {
-        TBAHelper.updatePoints(EventPoints.filec_ad_chance)
+        TBAHelper.updatePoints(EventPoints.filec_ad_chance,mutableMapOf(EventPoints.ad_pos_id to adsType.adsItemType))
         val baseAd = getAdsCache() ?: return
         baseAd.show(activity = activity,nativeParent = parent)
         onBaseAds.invoke(baseAd)

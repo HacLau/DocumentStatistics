@@ -1,43 +1,49 @@
 package com.tqs.filecommander.tba
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.tqs.filecommander.net.*
+import com.tqs.filecommander.net.HttpHelper
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.logE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 object TBAHelper {
     val firstInstall by lazy { application.packageManager.getPackageInfo(application.packageName, 0).firstInstallTime }
     val lastUpdate by lazy { application.packageManager.getPackageInfo(application.packageName, 0).lastUpdateTime }
-    private val advertisingInfo by lazy {
-        AdvertisingIdClient.getAdvertisingIdInfo(application)
-    }
 
-    fun getGAId(): String {
-        return advertisingInfo.id ?: ""
-    }
-
-    fun getGAIdLimit(): Boolean {
-        return advertisingInfo.isLimitAdTrackingEnabled
+    fun getAds(callback: (String, Boolean) ->Unit  ) {
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                val info = AdvertisingIdClient.getAdvertisingIdInfo(application)
+                callback.invoke(info.id?:"", info.isLimitAdTrackingEnabled)
+            }catch (e:Exception) {
+                callback.invoke("",false)
+            }
+        }
     }
 
     fun updateSession() {
-        "updateSession".logE()
-        HttpHelper.sendRequestPost(
-            jsonObject = getRequestJson {
-                mutableMapOf<String, Any>().apply {
-                    put(EventCommon.session, getEventSession())
+        Thread{
+            HttpHelper.sendRequestPost(
+                jsonObject = getRequestJson {
+                    mutableMapOf<String, Any>().apply {
+                        put(EventCommon.session, getEventSession())
+                    }
+                }, resultSuccess = {
+                    "updateSession response : $it".logE()
+                }, resultFailed = { code, message ->
+                    "updateSession response fail response code $code & message $message".logE()
                 }
-            }, resultSuccess = {
-                "updateSession $it".logE()
-            }, resultFailed = { code, message ->
+            )
+        }.start()
 
-            }
-        )
     }
 
     fun updateInstall() {
-        "updateInstall".logE()
-        Thread {
+        Thread{
+            "updateInstall ".logE()
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
@@ -45,11 +51,13 @@ object TBAHelper {
                     }
                 },
                 resultSuccess = {
-                    "updateInstall $it".logE()
+                    "updateInstall response : $it".logE()
                 }, resultFailed = { code, message ->
+                    "updateInstall response fail response code $code & message $message".logE()
 
                 })
-        }
+        }.start()
+
     }
 
     fun updateAdvertising(
@@ -59,25 +67,25 @@ object TBAHelper {
         adsSDK: String,
         adsIndex: String
     ) {
-        "updateAdvertising".logE()
-        Thread {
+        Thread{
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
-                        put(EventCommon.eventName, getEventAds())
+                        put(EventCommon.eventName, "simon")
                         putAll(getEventAdvertising(adsType, adsId, adsPlat, adsSDK, adsIndex))
                     }
                 },
                 resultSuccess = {
-                    "updateAdvertising $it".logE()
+                    "updateAdvertising response : $it".logE()
                 }, resultFailed = { code, message ->
 
+                    "updateAdvertising response fail response code $code & message $message".logE()
                 })
-        }
+        }.start()
+
     }
 
     fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf()) {
-        "updatePoints".logE()
         Thread{
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
@@ -87,11 +95,12 @@ object TBAHelper {
                     }
                 },
                 resultSuccess = {
-                    "updatePoints $it".logE()
+                    "updatePoints response : $it".logE()
                 }, resultFailed = { code, message ->
 
+                    "updatePoints response fail response code $code & message $message".logE()
                 })
-        }
+        }.start()
 
     }
 }

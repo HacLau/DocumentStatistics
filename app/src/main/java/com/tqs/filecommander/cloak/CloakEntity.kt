@@ -15,4 +15,7 @@ object CloakKey{
     const val crib = "crib"
     const val stab = "stab"
     const val gondola = "gondola"
+
+    const val poem = "poem"
+    const val xylene = "xylene"
 }

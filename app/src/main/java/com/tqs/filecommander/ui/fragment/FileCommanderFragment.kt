@@ -1,22 +1,21 @@
 package com.tqs.filecommander.ui.fragment
 
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.tqs.filecommander.R
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.base.BaseFragment
 import com.tqs.filecommander.databinding.FragmentFileCommanderBinding
-import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.DateUtils
-import com.tqs.filecommander.vm.FileCommanderVM
+import com.tqs.filecommander.vm.MainVM
 
-class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCommanderVM>(),
+class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, MainVM>(),
     View.OnClickListener {
     override val layoutId: Int
         get() = R.layout.fragment_file_commander
@@ -34,19 +33,14 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCom
     }
 
     override fun initData() {
-        viewModel = ViewModelProvider(this)[FileCommanderVM::class.java]
+        viewModel = ViewModelProvider(this)[MainVM::class.java]
         setClickListener()
-        viewModel.hadPermission.observe(requireActivity()) {
+        if((requireActivity() as BaseActivity<*, *>).checkPermissionExternal()){
+            setData()
+        }
+        viewModel.deletedFile.observe(requireActivity()){
             if (it)
                 setData()
-        }
-        viewModel.hadPermission.value = false
-        getHadPermission()
-    }
-
-    private fun getHadPermission() {
-        if (MMKVHelper.requestExPermission && (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || MMKVHelper.requestCodeManager)) {
-            viewModel.hadPermission.value = true
         }
     }
 
@@ -108,9 +102,9 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCom
 
     override fun getMediaInfo() {
         viewModel.getMemoryInfo()
-        viewModel.getImgListOrderDescByDate(requireContext())
+        viewModel.getImageList(requireContext())
         viewModel.getAudioList(requireContext())
-        viewModel.getVideoListOrderDescByDate(requireContext())
+        viewModel.getVideoList(requireContext())
         viewModel.getDocumentsList(requireContext())
         viewModel.getDownloadList(requireContext())
     }
@@ -128,12 +122,8 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, FileCom
     }
 
     override fun onClick(v: View?) {
-        if (!MMKVHelper.requestExPermission) {
-            (requireActivity() as BaseActivity<*, *>).judgePermission()
-            return
-        }
-        if (!MMKVHelper.requestCodeManager) {
-            (requireActivity() as BaseActivity<*, *>).requestFilesPermission()
+        if (!(requireActivity() as BaseActivity<*, *>).checkPermissionExternal()){
+            (requireActivity() as BaseActivity<*, *>).requestPermissionExternal(viewModel)
             return
         }
         when (v?.id) {

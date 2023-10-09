@@ -7,6 +7,6 @@ data class DocumentEntity(
     var suffix: String = "",
     var number: Int = 0,
     var selected: Boolean = false,
-    var path: String = "",
-    var typeFile: Int = -1
+    var typeFile: Int = -1,
+    var docPathList: MutableList<FileEntity> = mutableListOf()
 )

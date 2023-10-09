@@ -33,28 +33,24 @@ object HttpHelper {
         resultSuccess: (String) -> Unit,
         resultFailed: (Int, String) -> Unit
     ) {
-        "requestFromJson = $jsonObject".logE()
-
-        GlobalScope.launch {
-            runCatching {
-                val requestString = jsonObject.toString()
-                "requestString = $requestString".logE()
-                builder = Request.Builder().url(baseUrl)
-                okHttpClient.newCall(
-                    builder?.post(RequestBody.create(postType, requestString))?.build()
-                ).execute().let {
-                    it.toString().logE()
-                    "code = ${it.code()}".logE()
-                    if (it.isSuccessful) {
-                        it.body().string().let { response ->
-                            resultSuccess.invoke(response)
-                        }
-                    } else {
-                        resultFailed.invoke(it.code(), it.message())
+        runCatching {
+            val requestString = jsonObject.toString()
+            "requestString = $requestString".logE()
+            builder = Request.Builder().url(baseUrl)
+            okHttpClient.newCall(
+                builder?.post(RequestBody.create(postType, requestString))?.build()
+            ).execute().let {
+                it.toString().logE()
+                if (it.isSuccessful) {
+                    it.body().string().let { response ->
+                        resultSuccess.invoke(response)
                     }
+                } else {
+                    resultFailed.invoke(it.code(), it.message())
                 }
-
             }
+
+
         }
     }
 
@@ -64,24 +60,23 @@ object HttpHelper {
         resultSuccess: (String) -> Unit,
         resultFailed: (Int, String) -> Unit
     ) {
-        GlobalScope.launch {
-            runCatching {
-                val requestString = jsonObject.toString()
-                "requestString = $requestString".logE()
-                builder = Request.Builder().url(baseUrl)
-                okHttpClient.newCall(builder?.get()?.build()).execute().let {
-                    it.toString().logE()
-                    "code = ${it.code()}".logE()
-                    if (it.isSuccessful) {
-                        it.body().string().let { response ->
-                            resultSuccess.invoke(response)
-                        }
-                    } else {
-                        resultFailed.invoke(it.code(), it.message())
+        runCatching {
+            val requestString = jsonObject.toString()
+            "requestString = $requestString".logE()
+            builder = Request.Builder().url(baseUrl)
+            okHttpClient.newCall(builder?.get()?.build()).execute().let {
+                it.toString().logE()
+                "code = ${it.code()}".logE()
+                if (it.isSuccessful) {
+                    it.body().string().let { response ->
+                        resultSuccess.invoke(response)
                     }
+                } else {
+                    resultFailed.invoke(it.code(), it.message())
                 }
             }
         }
+
     }
 
 }

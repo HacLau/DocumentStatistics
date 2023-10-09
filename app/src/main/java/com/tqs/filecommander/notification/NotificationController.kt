@@ -3,31 +3,61 @@ package com.tqs.filecommander.notification
 import android.content.Context
 import com.blankj.utilcode.util.TimeUtils
 import com.google.gson.Gson
+import com.tqs.filecommander.cloak.CloakHelper
+import com.tqs.filecommander.cloak.CloakKey
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.referrer.ReferrerHelper
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.getJsonFromAssets
 import com.tqs.filecommander.utils.logE
+import java.util.Timer
+import java.util.TimerTask
 
 object NotificationController {
 
-    var notificationControl = 0
+    private var notificationControl = 0
     private var notificationMap: MutableMap<String, NotificationItem> = mutableMapOf()
     private var showedMap: MutableMap<String, NotificationShowed> = mutableMapOf()
+    private var timer: Timer? = null
     fun setNotification(notificationEntity: NotificationEntity) {
         notificationControl = notificationEntity.notificationSwitch
+        ReferrerHelper.referrerControl = notificationEntity.referrerSwitch
         notificationMap.clear()
         notificationMap[NotificationKey.SCHEDULED] = notificationEntity.timing
         notificationMap[NotificationKey.UNCLOCK] = notificationEntity.unclock
         notificationMap[NotificationKey.UNINSTALL] = notificationEntity.uninstall
         notificationMap[NotificationKey.CHARGE] = notificationEntity.battery
 
-        initNotificationConfig(application)
+        if(timer == null){
+            openTimingNotification()
+        }
+    }
+
+    private fun openTimingNotification() {
+        timer = Timer()
+        timer?.schedule(
+            object : TimerTask() {
+                override fun run() {
+                    "Debug Logcat: Notification Scheduled preparing show".logE()
+                    NotificationHelper.createNotificationScheduled(application)
+                }
+            }, notificationMap[NotificationKey.SCHEDULED]?.delayPopupTime!! * 1000L * 60,
+            1000L * 60 * notificationMap[NotificationKey.SCHEDULED]?.intervalPopupTime!!
+        )
     }
 
     fun initNotificationConfig(context: Context) {
+        if (notificationMap.isEmpty()) {
+            Gson().fromJson<NotificationEntity>(
+                getJsonFromAssets(context, "notificationConfig.json"),
+                NotificationEntity::class.java
+            ).let {
+                setNotification(it)
+            }
+        }
         if (showedMap.isNotEmpty()) return
         Gson().fromJson<NotificationConfig>(
-            getJsonFromAssets(context, "notification.json"),
+            getJsonFromAssets(context, "notificationContent.json"),
             NotificationConfig::class.java
         ).apply {
             for (item in this.scenes) {
@@ -76,7 +106,7 @@ object NotificationController {
     }
 
     private fun updateShowedNotification(key: String) {
-        when(key){
+        when (key) {
             NotificationKey.SCHEDULED -> showedMap[key] = MMKVHelper.normalNotification as NotificationShowed
             NotificationKey.UNCLOCK -> showedMap[key] = MMKVHelper.unlockNotification as NotificationShowed
             NotificationKey.UNINSTALL -> showedMap[key] = MMKVHelper.uninstallNotification as NotificationShowed
@@ -107,7 +137,7 @@ object NotificationController {
         updateMMKVNotification(key)
     }
 
-    fun isLimit(key: String): Boolean {
+    private fun isLimit(key: String): Boolean {
         "notification = ${notificationMap[key]?.dayShowLimit}".logE()
         return notificationMap[key]?.let {
             when (it.dayShowLimit) {
@@ -116,10 +146,13 @@ object NotificationController {
                 null -> false
                 else -> false
             }
-        }?:false
+        } ?: false
     }
 
-    fun isMoreIntervalTime(key: String): Boolean {
+    /**
+     * last showed time is or not more interval time
+     */
+    private fun isMoreIntervalTime(key: String): Boolean {
         return System.currentTimeMillis() - showedMap[key]?.lastShowTime!! >
                 if (showedMap[key]?.showTimes == 0) {
                     notificationMap[key]?.delayPopupTime!!
@@ -140,5 +173,18 @@ object NotificationController {
 
     fun getNotificationContent(key: String): String? {
         return showedMap[key]?.content
+    }
+
+    fun isShouldShowNotification(type:String):Boolean {
+        "Debug Logcat: Notification $type CloakHelper.cloakState = ${CloakHelper.cloakState}".logE()
+        if (CloakHelper.cloakState == CloakKey.poem) return false
+        "Debug Logcat: Notification $type referrerControl = ${ReferrerHelper.referrerControl} and ${ReferrerHelper.isReferrerUser()}".logE()
+        if (ReferrerHelper.isReferrerUser().not()) return false
+        "Debug Logcat: Notification $type notificationControl = $notificationControl".logE()
+        if (notificationControl != 1) return false
+        "Debug Logcat: Notification $type isLimit = ${isLimit(type)}".logE()
+        if (isLimit(type)) return false
+        "Debug Logcat: Notification $type isMoreIntervalTime = ${isMoreIntervalTime(type)}".logE()
+        return isMoreIntervalTime(type)
     }
 }

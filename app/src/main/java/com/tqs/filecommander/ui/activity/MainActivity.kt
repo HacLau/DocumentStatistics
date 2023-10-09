@@ -2,8 +2,11 @@ package com.tqs.filecommander.ui.activity
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -43,19 +46,17 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
         binding.rlPrivacyPolicy.setOnClickListener(this)
         binding.rlShare.setOnClickListener(this)
         binding.rlUpgrade.setOnClickListener(this)
-
-        TBAHelper.updatePoints(EventPoints.filec_home_show)
-        judgePermission()
+        checkAppPermission(viewModel)
     }
 
     override fun onResume() {
         super.onResume()
         if (System.currentTimeMillis() - MMKVHelper.showMainActivityTime > 30 * 1000) {
-            Thread{
-                TBAHelper.updateSession()
-            }
+            TBAHelper.updateSession()
             MMKVHelper.showMainActivityTime = System.currentTimeMillis()
         }
+
+        TBAHelper.updatePoints(EventPoints.filec_home_show)
     }
 
 
@@ -131,6 +132,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     override fun onPermissionSuccess() {
         "onPermissionSuccess".logE()
         selectedMenu(R.id.nav_file_commander, true)
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - viewModel.mainOnBackPressedTime < 300){
+            super.onBackPressed()
+        }else{
+            viewModel.mainOnBackPressedTime = System.currentTimeMillis()
+        }
     }
 
 }

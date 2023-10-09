@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
+import android.os.StatFs
 import android.text.Html
 import android.util.Log
 import android.view.Gravity
@@ -32,6 +34,7 @@ import java.io.File
 
 class MainVM : BaseVM() {
 
+    var mainOnBackPressedTime: Long = 0L
     override lateinit var title: LiveData<String>
 
     val DESC: String = "DESC"
@@ -42,7 +45,7 @@ class MainVM : BaseVM() {
     var currentIndex = 0
     var baseAds: BaseAds? = null
     val countDownTime = 8 * 1000L
-    var deletedFile: Boolean = false
+    var deletedFile = MutableLiveData<Boolean>(false)
     var mPageType: String = Common.IMAGE_LIST
 
     lateinit var mDocAdapter: DocAdapter
@@ -62,24 +65,98 @@ class MainVM : BaseVM() {
     var currentOrder = MutableLiveData<String>(DESC)
     var currentSelect = MutableLiveData<String>(NONE)
 
+    var totalSpace = MutableLiveData<String>()
+    var availSpace = MutableLiveData<String>()
+    var progressValue = MutableLiveData<Int>(0)
+
+    var imageList = MutableLiveData<ArrayList<FileEntity>>()
+    var audioList = MutableLiveData<ArrayList<FileEntity>>()
+    var videoList = MutableLiveData<ArrayList<FileEntity>>()
+    var documentsList = MutableLiveData<ArrayList<FileEntity>>()
+    var downloadList = MutableLiveData<ArrayList<FileEntity>>()
+
+    var imageSpaceSize = MutableLiveData<String>()
+    var audioSpaceSize = MutableLiveData<String>()
+    var videoSpaceSize = MutableLiveData<String>()
+    var documentsSpaceSize = MutableLiveData<String>()
+    var downloadSpaceSize = MutableLiveData<String>()
+
+    fun getMemoryInfo() {
+        val state = Environment.getExternalStorageState()
+        if (Environment.MEDIA_MOUNTED == state) {
+            val sf = StatFs(Environment.getExternalStorageDirectory().path)
+            val blockSize = sf.blockSizeLong
+            val blockCount = sf.blockCountLong
+            val availCount = sf.availableBlocksLong
+            totalSpace.value = FileUtils.getTwoDigitsSpace(blockSize * blockCount)
+            availSpace.value = FileUtils.getTwoDigitsSpace((blockCount - availCount) * blockSize)
+            progressValue.value = ((blockCount - availCount) * 1.0 / blockCount * 100).toInt()
+        }
+    }
+
+    fun getImageListSize() {
+        var size = 0L
+        for (fileEntity in imageList.value!!) {
+            size += fileEntity.size
+        }
+        imageSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
+    }
+
+    fun getVideoListSize() {
+        var size = 0L
+        for (fileEntity in videoList.value!!) {
+            size += fileEntity.size
+        }
+        videoSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
+    }
+
+    fun getAudioListSize() {
+        var size = 0L
+        for (fileEntity in audioList.value!!) {
+            size += fileEntity.size
+        }
+        audioSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
+    }
+
+    fun getDocumentsListSize() {
+        var size = 0L
+        for (fileEntity in documentsList.value!!) {
+            size += fileEntity.size
+        }
+        documentsSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
+    }
+
+    fun getDownloadListSize() {
+        var size = 0L
+        for (fileEntity in downloadList.value!!) {
+            size += fileEntity.size
+        }
+        downloadSpaceSize.value = FileUtils.getTwoDigitsSpace(size)
+    }
+
     fun getImageList(context: Context) {
         getImageListOrderDescByDate(context)
+        imageList.value = FileUtils.getImgListOrderDescByDate(context)
     }
 
     fun getVideoList(context: Context) {
         getVideoListOrderDescByDate(context)
+        videoList.value = FileUtils.getVideoListOrderDescByDate(context)
     }
 
     fun getAudioList(context: Context) {
         dataList.value = FileUtils.getAudioList(context)
+        audioList.value = FileUtils.getAudioList(context)
     }
 
     fun getDocumentsList(context: Context) {
         dataList.value = FileUtils.getDocList(context)
+        documentsList.value = FileUtils.getDocList(context)
     }
 
     fun getDownloadList(context: Context) {
         dataList.value = FileUtils.getDownloadList(context)
+        downloadList.value = FileUtils.getDownloadList(context)
     }
 
     private fun getVideoListOrderDescByDate(context: Context) {
@@ -187,7 +264,7 @@ class MainVM : BaseVM() {
         }
     }
 
-    fun showDeleteDialog(context: Context, cancel: () -> Unit, confirm: () -> Unit) {
+    fun showDeleteDialog(context: Context, title: String = "", content: String = "", cancel: () -> Unit, confirm: () -> Unit) {
         if (mDeleteDialog == null) {
             mDeleteDialog = ConfirmAndCancelDialog(context, {
                 mDeleteDialog?.dismiss()
@@ -198,12 +275,14 @@ class MainVM : BaseVM() {
             })
 
         }
+        mDeleteDialog?.setTitle(title)
+        mDeleteDialog?.setContent(content)
         mDeleteDialog?.show()
     }
 
-    fun deleteSelectPreview(viewGroup: ViewGroup,setTitleText: () -> Unit){
+    fun deleteSelectPreview(viewGroup: ViewGroup, setTitleText: () -> Unit) {
         if (FileUtils.deleteFile(previewMediaList!![currentIndex].path!!)) {
-            deletedFile = true
+            deletedFile.value = true
             previewMediaList!!.remove(previewMediaList?.get(currentIndex))
             mPreviewAdapter.setData(previewMediaList!!)
             mPreviewAdapter.destroyItem(viewGroup, -1, viewGroup.rootView)
@@ -215,15 +294,18 @@ class MainVM : BaseVM() {
     fun deleteSelectedDoc(function: (Int) -> Unit) {
         for (doc in docDataList) {
             if (doc.selected) {
-                for (file in dataList.value!!) {
-                    if (file.path?.endsWith(doc.suffix) == true) {
-                        FileUtils.deleteFile(file.path!!)
-                    }
+                for (file in doc.docPathList) {
+                    FileUtils.deleteFile(file.path!!)
                 }
             }
         }
+        docDataList.removeIf {
+            it.selected
+        }
+        mDocAdapter.setData(docDataList)
         mDocAdapter.setSelected(false)
         listSelectCount.value = 0
+        deletedFile.value = true
         function.invoke(AppCompatActivity.RESULT_OK)
     }
 
@@ -305,17 +387,16 @@ class MainVM : BaseVM() {
                 val suffix = it.substring(it.lastIndexOf(".", it.length))
                 var document = hashMap[suffix]
                 if (document == null) {
-                    document = DocumentEntity(suffix = suffix, number = 1)
+                    document = DocumentEntity(suffix = suffix, typeFile = file.fileType, number = 1, selected = false, docPathList = mutableListOf())
                 } else {
                     document.number = document.number + 1
                 }
-                document.typeFile = file.fileType
-                document.path = file.path!!
+                document.docPathList.add(file)
                 hashMap.put(suffix, document)
             }
         }
         docDataList = ArrayList<DocumentEntity>(hashMap.values)
-        mDocAdapter?.setData(docDataList)
+        mDocAdapter.setData(docDataList)
     }
 
     fun statisticsListDirectory(fileEntities: ArrayList<FileEntity>, function: (Int) -> Unit) {
@@ -345,7 +426,7 @@ class MainVM : BaseVM() {
         mPreviewAdapter.stopPlayer()
     }
 
-    public fun setPopupWindow(context: Context,view: View) {
+    public fun setPopupWindow(context: Context, view: View) {
         if (mPopupWindow == null) {
             mPopupWindow = FileDetailPopupWindow(context)
             previewMediaList?.let { mPopupWindow?.setFileInfo(it[currentIndex]) }
@@ -353,30 +434,19 @@ class MainVM : BaseVM() {
         mPopupWindow?.showAsDropDown(view, 0, 0, Gravity.CENTER)
     }
 
-    fun setResult(activity: Activity) {
-        if (deletedFile) {
-            activity.setResult(AppCompatActivity.RESULT_OK, Intent().apply {
-                putExtra("currentIndex", currentIndex)
-                putExtra("deleteResult", true)
-            })
-        } else {
-            activity.setResult(AppCompatActivity.RESULT_CANCELED, Intent().apply {
-            })
-        }
-
-    }
-
-    fun onBackPressed(activity: Activity,function: () -> Unit,viewFun: () -> Unit){
-        when(activity){
+    fun onBackPressed(activity: Activity, function: () -> Unit, viewFun: () -> Unit) {
+        deletedFile.value = false
+        when (activity) {
             is ImageListActivity -> {
                 if (listSelectCount.value!! > 0 || mImageAdapter.touchState == mImageAdapter.LONGSTATE) {
                     mImageAdapter.touchState = mImageAdapter.CLICKSTATE
                     unselectAllShowImageList()
-                }else{
+                } else {
                     function.invoke()
                 }
             }
-            is DocListActivity ->{
+
+            is DocListActivity -> {
                 if (listSelectCount.value!! > 0 || mDocAdapter.getSelected()) {
                     for (doc in docDataList) {
                         doc.selected = false
