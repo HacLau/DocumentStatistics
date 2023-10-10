@@ -35,12 +35,12 @@ object HttpHelper {
     ) {
         runCatching {
             val requestString = jsonObject.toString()
-            "requestString = $requestString".logE()
+            "HttpHelper sendRequestPost requestString = $requestString".logE()
             builder = Request.Builder().url(baseUrl)
             okHttpClient.newCall(
                 builder?.post(RequestBody.create(postType, requestString))?.build()
             ).execute().let {
-                it.toString().logE()
+                "HttpHelper ResponsePost code = ${it.code()}  message = ${it.message()}".logE()
                 if (it.isSuccessful) {
                     it.body().string().let { response ->
                         resultSuccess.invoke(response)
@@ -62,11 +62,11 @@ object HttpHelper {
     ) {
         runCatching {
             val requestString = jsonObject.toString()
-            "requestString = $requestString".logE()
+            "HttpHelper sendRequestGet requestString = $requestString".logE()
             builder = Request.Builder().url(baseUrl)
             okHttpClient.newCall(builder?.get()?.build()).execute().let {
                 it.toString().logE()
-                "code = ${it.code()}".logE()
+                "HttpHelper ResponseGet code = ${it.code()}  message = ${it.message()}".logE()
                 if (it.isSuccessful) {
                     it.body().string().let { response ->
                         resultSuccess.invoke(response)

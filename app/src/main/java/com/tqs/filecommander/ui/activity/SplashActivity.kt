@@ -17,12 +17,21 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         get() = R.layout.activity_splash
     override val TAG: String
         get() = this.packageName
+
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         initAdsData()
-        createTimer(viewModel.countDownTime)
+        startCountDownTimer(viewModel.countDownTime, {
+            binding.splashProgressBar.progress = 100 - (it / 80).toInt()
+        }) {
+            binding.splashProgressBar.progress = 100
+            AdsManager.adsFullScreen.showFullScreenAds(this@SplashActivity) {
+                Log.e(TAG, "ads onDismiss")
+                startMainActivity()
+            }
+        }
         TBAHelper.updatePoints(EventPoints.filec_startpage_show)
         TBAHelper.updatePoints(EventPoints.filec_launch_page_show)
     }
@@ -34,24 +43,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         AdsManager.adsInsertResultScan.preLoad(this)
         AdsManager.adsNativeResultScan.preLoad(this)
         AdsManager.adsNativeResultClean.preLoad(this)
-    }
-
-    private fun createTimer(time: Long) {
-        val countDownTimer: CountDownTimer =
-            object : CountDownTimer(time, 33) {
-                override fun onTick(millisUntilFinished: Long) {
-                    binding.splashProgressBar.progress = 100 - (millisUntilFinished / 80).toInt()
-                }
-
-                override fun onFinish() {
-                    binding.splashProgressBar.progress = 100
-                    AdsManager.adsFullScreen.showFullScreenAds(this@SplashActivity){
-                        Log.e(TAG,"ads onDismiss")
-                        startMainActivity()
-                    }
-                }
-            }
-        countDownTimer.start()
     }
 
 }

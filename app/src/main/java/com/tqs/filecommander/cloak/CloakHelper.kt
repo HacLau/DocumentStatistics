@@ -8,6 +8,7 @@ import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.encode
 import com.tqs.filecommander.utils.getAndroidId
+import com.tqs.filecommander.utils.logE
 import org.json.JSONObject
 
 object CloakHelper {
@@ -29,7 +30,7 @@ object CloakHelper {
             )
 
         }, resultFailed = { code, message ->
-            if (reloadTimes < 20)
+            if (reloadTimes++ < 20)
                 getCloakConfig()
             TBAHelper.updatePoints(
                 EventPoints.filec_cloak_get, mutableMapOf(

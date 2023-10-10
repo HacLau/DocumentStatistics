@@ -8,8 +8,10 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.notification.NotificationKey
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
@@ -37,6 +40,8 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
     abstract val TAG: String
+    var countDownTimer:CountDownTimer? = null
+    var countDownTimerCancel = false
     private val currentNotAllowPermissions: MutableList<String> = mutableListOf()
     private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
         currentNotAllowPermissions.clear()
@@ -44,18 +49,17 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         for ((key, value) in result) {
             if (!value) {
                 currentNotAllowPermissions.add(key)
-            } else {
-                if (key == Manifest.permission.POST_NOTIFICATIONS) {
-                    TBAHelper.updatePoints(
-                        EventPoints.filec_post_get, mutableMapOf(
-                            EventPoints.result to if (value) {
-                                "yes"
-                            } else {
-                                "no"
-                            }
-                        )
+            }
+            if (key == Manifest.permission.POST_NOTIFICATIONS) {
+                TBAHelper.updatePoints(
+                    EventPoints.filec_post_get, mutableMapOf(
+                        EventPoints.result to if (value) {
+                            "yes"
+                        } else {
+                            "no"
+                        }
                     )
-                }
+                )
             }
             if(key == Manifest.permission.READ_EXTERNAL_STORAGE || key == Manifest.permission.WRITE_EXTERNAL_STORAGE){
                 TBAHelper.updatePoints(
@@ -208,7 +212,7 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     }
 
     open fun onPermissionSuccess() {}
-    fun jumpMainAndScannerResultActivity(fromPage: String, notifyType: String) {
+    fun jumpMainAndScannerResultActivity(fromPage: String, notifyType: String?) {
         startActivities(arrayOf(Intent(this, MainActivity::class.java).apply {},Intent(this, ScannerResultActivity::class.java).apply {
             putExtra(Common.PAGE_TYPE, fromPage)
             putExtra(notifyType, notifyType)
@@ -247,5 +251,32 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         })
         finish()
+    }
+
+    fun startCountDownTimer(time: Long,onTick:(Long)->Unit,onFish:()->Unit){
+        stopCountDownTimer()
+        countDownTimer =
+            object : CountDownTimer(time, 33) {
+                override fun onTick(millisUntilFinished: Long) {
+                    "millisUntilFinished = $millisUntilFinished".logE()
+                    if(countDownTimerCancel)
+                        cancel()
+                    onTick.invoke(millisUntilFinished)
+                }
+
+                override fun onFinish() {
+                    if(countDownTimerCancel){
+                        return
+                    }
+                    onFish.invoke()
+
+                }
+            }
+        countDownTimer?.start()
+        countDownTimerCancel = false
+    }
+
+    fun stopCountDownTimer(){
+        countDownTimerCancel = true
     }
 }

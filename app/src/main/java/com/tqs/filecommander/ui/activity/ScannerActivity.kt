@@ -24,13 +24,42 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
         get() = R.layout.activity_scanner
     override val TAG: String
         get() = "ScannerActivity"
-
+    var notifyType: String? = null
     override fun initData() {
         setStatusBarTransparent(this)
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
-        val notifyType = intent.getStringExtra(NotificationKey.notifyType)
+
+        binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                // loop a day
+
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                AdsManager.adsInsertResultScan.showFullScreenAds(this@ScannerActivity) {
+                    Log.e(TAG, "ads onDismiss")
+                    if (!notifyType.isNullOrBlank()) {
+                        jumpMainAndScannerResultActivity(viewModel.mPageType, notifyType ?: "")
+                    } else {
+                        jumpScannerResultActivity(viewModel.mPageType, notifyType)
+                    }
+                }
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+            }
+
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        notifyType = intent.getStringExtra(NotificationKey.notifyType)
         if (!notifyType.isNullOrBlank()) {
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
                 when (taskId) {
@@ -53,13 +82,15 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
                     }
                 }
             )
+
+            stopCountDownTimer()
+            clearAllActivity()
             // stop all timer
             AdsManager.adsFullScreen.showFullScreenAds(this) {
-                createTimer(viewModel.countDownTime)
+                startCountDownTimer()
             }
-
-        }else{
-            createTimer(viewModel.countDownTime)
+        } else {
+            startCountDownTimer()
         }
         TBAHelper.updatePoints(
             EventPoints.filecpop_all_page, mutableMapOf(
@@ -76,57 +107,28 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
         )
 
         TBAHelper.updatePoints(EventPoints.filec_clean_show)
-        binding.scannerAnim.addAnimatorListener(object : AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                // loop a day
+    }
 
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-                AdsManager.adsInsertResultScan.showFullScreenAds(this@ScannerActivity) {
-                    Log.e(TAG, "ads onDismiss")
-                    if (!notifyType.isNullOrBlank()){
-                        jumpMainAndScannerResultActivity(viewModel.mPageType, notifyType)
-                    }else {
-                        jumpScannerResultActivity(viewModel.mPageType, notifyType)
-                    }
-                }
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-            }
-
-        })
+    private fun clearAllActivity() {
+        "ScannerActivity = clearAllActivity".logE()
     }
 
     private var count = 0
-    private fun createTimer(time: Long) {
-        val countDownTimer: CountDownTimer =
-            object : CountDownTimer(time, 33) {
-                override fun onTick(millisUntilFinished: Long) {
-                    binding.scannerTips.text = "Scanner${
-                        when (count % 40) {
-                            in 0..<10 -> "."
-                            in 10..<20 -> ".."
-                            in 20..29 -> "..."
-                            else -> "...."
-                        }
-                    }"
-                    count++
-                    if (millisUntilFinished < 3000L && AdsManager.adsNativeMain.isCacheNotEmpty) {
-                        this.cancel()
-                        this.onFinish()
-                    }
-                }
 
-                override fun onFinish() {
-                    binding.scannerAnim.cancelAnimation()
+    private fun startCountDownTimer() {
+        startCountDownTimer(viewModel.countDownTime, {
+            binding.scannerTips.text = "Scanner${
+                when (count % 40) {
+                    in 0..<10 -> "."
+                    in 10..<20 -> ".."
+                    in 20..29 -> "..."
+                    else -> "...."
                 }
-            }
-        countDownTimer.start()
+            }"
+            count++
+        }) {
+            binding.scannerAnim.cancelAnimation()
+        }
     }
 
     override fun onBackPressed() {

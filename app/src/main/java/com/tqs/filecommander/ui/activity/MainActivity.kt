@@ -142,11 +142,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainVM>(), View.OnClickLi
     }
 
     override fun onBackPressed() {
-        if (System.currentTimeMillis() - viewModel.mainOnBackPressedTime < 300){
+//        if (System.currentTimeMillis() - viewModel.mainOnBackPressedTime < 300){
             super.onBackPressed()
-        }else{
-            viewModel.mainOnBackPressedTime = System.currentTimeMillis()
-        }
+//        }else{
+//            viewModel.mainOnBackPressedTime = System.currentTimeMillis()
+//        }
     }
 
 }

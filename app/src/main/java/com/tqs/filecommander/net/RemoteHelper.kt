@@ -34,7 +34,6 @@ object RemoteHelper {
         getReferrerAndNotificationConfig()
         getAdvertisingConfig()
         getGoogleConfig()
-        CloakHelper.getCloakConfig()
     }
 
     private fun getReferrerAndNotificationConfig() {

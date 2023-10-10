@@ -13,28 +13,26 @@ object TBAHelper {
     val firstInstall by lazy { application.packageManager.getPackageInfo(application.packageName, 0).firstInstallTime }
     val lastUpdate by lazy { application.packageManager.getPackageInfo(application.packageName, 0).lastUpdateTime }
 
-    fun getAds(callback: (String, Boolean) ->Unit  ) {
+    fun getAds(callback: (String, Boolean) -> Unit) {
         CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             try {
                 val info = AdvertisingIdClient.getAdvertisingIdInfo(application)
-                callback.invoke(info.id?:"", info.isLimitAdTrackingEnabled)
-            }catch (e:Exception) {
-                callback.invoke("",false)
+                callback.invoke(info.id ?: "", info.isLimitAdTrackingEnabled)
+            } catch (e: Exception) {
+                callback.invoke("", false)
             }
         }
     }
 
     fun updateSession() {
-        Thread{
+        Thread {
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
                         put(EventCommon.session, getEventSession())
                     }
                 }, resultSuccess = {
-                    "updateSession response : $it".logE()
                 }, resultFailed = { code, message ->
-                    "updateSession response fail response code $code & message $message".logE()
                 }
             )
         }.start()
@@ -42,8 +40,7 @@ object TBAHelper {
     }
 
     fun updateInstall() {
-        Thread{
-            "updateInstall ".logE()
+        Thread {
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
@@ -51,9 +48,7 @@ object TBAHelper {
                     }
                 },
                 resultSuccess = {
-                    "updateInstall response : $it".logE()
                 }, resultFailed = { code, message ->
-                    "updateInstall response fail response code $code & message $message".logE()
 
                 })
         }.start()
@@ -67,7 +62,7 @@ object TBAHelper {
         adsSDK: String,
         adsIndex: String
     ) {
-        Thread{
+        Thread {
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
@@ -76,17 +71,14 @@ object TBAHelper {
                     }
                 },
                 resultSuccess = {
-                    "updateAdvertising response : $it".logE()
                 }, resultFailed = { code, message ->
-
-                    "updateAdvertising response fail response code $code & message $message".logE()
                 })
         }.start()
 
     }
 
-    fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf(), userEvent:String = eventValue) {
-        Thread{
+    fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf(), userEvent: String = eventValue) {
+        Thread {
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
@@ -95,10 +87,7 @@ object TBAHelper {
                     }
                 },
                 resultSuccess = {
-                    "updatePoints response : $it".logE()
                 }, resultFailed = { code, message ->
-
-                    "updatePoints response fail response code $code & message $message".logE()
                 })
         }.start()
 
