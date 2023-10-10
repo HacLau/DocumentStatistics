@@ -27,7 +27,7 @@ class NativeMainAdvertising(
     private val adRequest: AdRequest get() = AdRequest.Builder().build()
     override fun load(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         AdLoader.Builder(context, item.adsId).apply {
-            "Debug Logcat: Advertising adsType = $adsType  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
+            "Debug Logcat: Advertising adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
             forNativeAd {
                 nativeAd = it
                 adsLoadTime = System.currentTimeMillis()
@@ -49,7 +49,7 @@ class NativeMainAdvertising(
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
         if (null == nativeAd) return
 
-        "Debug Logcat: Advertising adsType = $adsType  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Showing".logE()
+        "Debug Logcat: Advertising adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Showing".logE()
         val binding: LayoutAdvertisingNativeBinding =
             DataBindingUtil.inflate(LayoutInflater.from(activity), R.layout.layout_advertising_native, nativeParent, false)
         binding.nativeAdView.mediaView = binding.nativeMediaView

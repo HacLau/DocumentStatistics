@@ -27,19 +27,20 @@ class ScannerResultActivity : BaseActivity<ActivityScannerResultBinding, MainVM>
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         viewModel.mPageType = intent.getStringExtra(Common.PAGE_TYPE).toString()
         val notifyType = intent.getStringExtra(NotificationKey.notifyType)
-        TBAHelper.updatePoints(
-            EventPoints.filecpop_all_result, mutableMapOf(
-                EventPoints.source to when (notifyType) {
-                    NotificationKey.SCHEDULED -> "t"
-                    NotificationKey.CHARGE -> "char"
-                    NotificationKey.UNCLOCK -> "unl"
-                    NotificationKey.UNINSTALL -> "uni"
-                    else -> {
-                        ""
+        if (!notifyType.isNullOrBlank())
+            TBAHelper.updatePoints(
+                EventPoints.filecpop_all_result, mutableMapOf(
+                    EventPoints.source to when (notifyType) {
+                        NotificationKey.SCHEDULED -> "t"
+                        NotificationKey.CHARGE -> "char"
+                        NotificationKey.UNCLOCK -> "unl"
+                        NotificationKey.UNINSTALL -> "uni"
+                        else -> {
+                            ""
+                        }
                     }
-                }
+                )
             )
-        )
 
         TBAHelper.updatePoints(EventPoints.filec_scan_result_show)
         binding.titleBar.setLeftClickListener {

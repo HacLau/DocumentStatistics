@@ -25,7 +25,6 @@ class ForeService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(broadcast)
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 }

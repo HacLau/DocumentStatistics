@@ -35,12 +35,16 @@ class FileCommanderFragment : BaseFragment<FragmentFileCommanderBinding, MainVM>
     override fun initData() {
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         setClickListener()
-        if((requireActivity() as BaseActivity<*, *>).checkPermissionExternal()){
-            setData()
-        }
         viewModel.deletedFile.observe(requireActivity()){
             if (it)
                 setData()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if((requireActivity() as BaseActivity<*, *>).checkPermissionExternal()){
+            setData()
         }
     }
 

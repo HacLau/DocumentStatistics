@@ -81,7 +81,7 @@ class ImageListActivity : BaseActivity<ActivityImageListBinding, MainVM>() {
                     viewModel.deleteSelectedImage {
                         binding.titleBar.setOrderVisible(true)
                         binding.vImageDelete.visibility = View.GONE
-                        setResult(RESULT_OK)
+
                     }
                     viewModel.orderShowImageList(this) {
                         binding.titleBar.setTitleText(it)

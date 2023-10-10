@@ -1,8 +1,12 @@
 package com.tqs.filecommander.ui.activity
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
@@ -12,9 +16,12 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.tqs.filecommander.BuildConfig
 import com.tqs.filecommander.R
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.databinding.ActivityMainBinding
 import com.tqs.filecommander.mmkv.MMKVHelper
+import com.tqs.filecommander.notification.NotificationHelper
+import com.tqs.filecommander.notification.NotificationKey
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.ui.view.TitleBar

@@ -75,7 +75,7 @@ class DocListActivity : BaseActivity<ActivityDocListBinding, MainVM>() {
 //            AdsManager.adsInsertResultClean.showFullScreenAds(this@DocListActivity) {
                 viewModel.showDeleteDialog(this, cancel = {}, confirm = {
                     viewModel.deleteSelectedDoc{
-                        setResult(it)
+
                     }
                     getDocDataList()
                 })

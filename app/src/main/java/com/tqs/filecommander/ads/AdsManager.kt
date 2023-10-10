@@ -34,17 +34,17 @@ object AdsManager {
     }
 
     private fun showOverLimit(): Boolean {
-        if (0 == AdsManager.showAdsCount) return false
+        if (0 == showAdsCount) return false
         val showData = MMKVHelper.showAdsData ?: return false
 
-        return if (TimeUtils.isToday(showData.time)) showData.count >= AdsManager.showAdsCount else false
+        return if (TimeUtils.isToday(showData.time)) showData.count >= showAdsCount else false
     }
 
     private fun clickOverLimit(): Boolean {
-        if (0 == AdsManager.clickAdsCount) return false
+        if (0 == clickAdsCount) return false
         val clickData = MMKVHelper.clickAdsData ?: return false
 
-        return if (TimeUtils.isToday(clickData.time)) clickData.count >= AdsManager.clickAdsCount else false
+        return if (TimeUtils.isToday(clickData.time)) clickData.count >= clickAdsCount else false
     }
 
     fun addShowCount() {

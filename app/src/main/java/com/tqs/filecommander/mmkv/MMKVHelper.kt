@@ -21,7 +21,7 @@ object MMKVHelper : MMKVOwner(mapId = "fileCommander") {
 
     // first launch app
     var isLaunchedApp by mmkvBoolean(default = false)
-    var firstLaunchAppTime by mmkvLong(default = System.currentTimeMillis())
+    var firstLaunchAppTime by mmkvLong(default = 0L)
     // launch date
     var launchAppTime by mmkvLong(default = System.currentTimeMillis())
     // cloak state

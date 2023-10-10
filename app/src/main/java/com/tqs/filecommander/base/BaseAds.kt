@@ -26,7 +26,7 @@ abstract class BaseAds(
 
     //paid data to firebase
     fun onAdsPaid(adsValue: AdValue, item: AdsItem, responseInfo: ResponseInfo?) {
-        "Debug Logcat: Advertising adsType = $adsType  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} LoadSuccess".logE()
+        "Debug Logcat: Advertising adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} LoadSuccess".logE()
         // data update to firebase
         runCatching {
             logEvent(

@@ -1,12 +1,17 @@
 package com.tqs.filecommander.notification
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import com.blankj.utilcode.util.TimeUtils
 import com.google.gson.Gson
 import com.tqs.filecommander.cloak.CloakHelper
 import com.tqs.filecommander.cloak.CloakKey
 import com.tqs.filecommander.mmkv.MMKVHelper
 import com.tqs.filecommander.referrer.ReferrerHelper
+import com.tqs.filecommander.runningActivities
+import com.tqs.filecommander.ui.activity.ScannerActivity
+import com.tqs.filecommander.utils.Common
 import com.tqs.filecommander.utils.application
 import com.tqs.filecommander.utils.getJsonFromAssets
 import com.tqs.filecommander.utils.logE
@@ -28,7 +33,7 @@ object NotificationController {
         notificationMap[NotificationKey.UNINSTALL] = notificationEntity.uninstall
         notificationMap[NotificationKey.CHARGE] = notificationEntity.battery
 
-        if(timer == null){
+        if (timer == null) {
             openTimingNotification()
         }
     }
@@ -175,7 +180,10 @@ object NotificationController {
         return showedMap[key]?.content
     }
 
-    fun isShouldShowNotification(type:String):Boolean {
+    fun isShouldShowNotification(type: String): Boolean {
+        // if application in foreground return false
+        "Debug Logcat: Notification $type runningActivities = ${runningActivities}".logE()
+        if (runningActivities != 0) return false
         "Debug Logcat: Notification $type CloakHelper.cloakState = ${CloakHelper.cloakState}".logE()
         if (CloakHelper.cloakState == CloakKey.poem) return false
         "Debug Logcat: Notification $type referrerControl = ${ReferrerHelper.referrerControl} and ${ReferrerHelper.isReferrerUser()}".logE()
@@ -186,5 +194,20 @@ object NotificationController {
         if (isLimit(type)) return false
         "Debug Logcat: Notification $type isMoreIntervalTime = ${isMoreIntervalTime(type)}".logE()
         return isMoreIntervalTime(type)
+    }
+
+    fun getPendingIntent(context: Context, code: Int, notifyType: String): PendingIntent {
+        return PendingIntent.getActivity(context, code, getIntent(context, notifyType),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+    private fun getIntent(context: Context, notifyType: String): Intent {
+        return Intent(context, ScannerActivity::class.java).apply {
+            putExtra(NotificationKey.notifyType, notifyType)
+            putExtra(Common.PAGE_TYPE,Common.pageArray[(0..4).random()])
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
     }
 }

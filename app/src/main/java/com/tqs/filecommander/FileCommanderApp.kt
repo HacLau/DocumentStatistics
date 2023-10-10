@@ -4,9 +4,11 @@ import android.app.Application
 import android.content.Intent
 import android.os.Build
 import com.blankj.utilcode.util.TimeUtils
+import com.google.firebase.FirebaseApp
 import com.tencent.mmkv.MMKV
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.broadcast.registerBattery
+import com.tqs.filecommander.broadcast.registerNotificationReceiver
 import com.tqs.filecommander.broadcast.registerUninstall
 import com.tqs.filecommander.broadcast.registerUnlock
 import com.tqs.filecommander.mmkv.MMKVHelper
@@ -37,6 +39,7 @@ class FileCommanderApp : Application() {
             MMKVHelper.GaId = id
             MMKVHelper.isLimitAdTrackingEnabled = bool
         }
+        FirebaseApp.initializeApp(this)
         if (BuildConfig.DEBUG.not())
             RemoteHelper.fetch()
 //        startService()
@@ -46,11 +49,12 @@ class FileCommanderApp : Application() {
             MMKVHelper.firstLaunchAppTime = System.currentTimeMillis()
         }
 //        if (TimeUtils.isToday(MMKVHelper.launchAppTime).not()){
-            TBAHelper.updatePoints(EventPoints.filec_retention, mutableMapOf(
-                EventPoints.D to "D${DateUtils.getMillisDay(System.currentTimeMillis()) - DateUtils.getMillisDay(MMKVHelper.firstLaunchAppTime)}"))
+            TBAHelper.updatePoints(EventPoints.covenant, mutableMapOf(
+                EventPoints.D to "D${DateUtils.getMillisDay(System.currentTimeMillis()) - DateUtils.getMillisDay(MMKVHelper.firstLaunchAppTime)}"),
+                EventPoints.filec_retention,)
 //        }
         MMKVHelper.launchAppTime = System.currentTimeMillis()
-
+        registerActivityLifecycleCallbacks(FileCommanderLifecycle())
     }
 
 
@@ -68,6 +72,7 @@ class FileCommanderApp : Application() {
         registerBattery(this)
         registerUnlock(this)
         registerUninstall(this)
+//        registerNotificationReceiver(this)
     }
 
     private fun startService(){

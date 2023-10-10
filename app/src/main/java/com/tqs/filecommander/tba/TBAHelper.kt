@@ -85,13 +85,13 @@ object TBAHelper {
 
     }
 
-    fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf()) {
+    fun updatePoints(eventValue: String, map: MutableMap<String, Any?> = mutableMapOf(), userEvent:String = eventValue) {
         Thread{
             HttpHelper.sendRequestPost(
                 jsonObject = getRequestJson {
                     mutableMapOf<String, Any>().apply {
                         put(EventCommon.eventName, eventValue)
-                        put(eventValue, getEventPoints(map))
+                        put(userEvent, getEventPoints(map))
                     }
                 },
                 resultSuccess = {

@@ -6,15 +6,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tqs.filecommander.R
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
-import com.tqs.filecommander.ui.activity.AdsOpenActivity
-import com.tqs.filecommander.ui.activity.MainActivity
 import com.tqs.filecommander.utils.application
 
 object NotificationHelper {
@@ -33,8 +30,6 @@ object NotificationHelper {
             canShowBadge()
             setBypassDnd(true)
         })
-
-
     }
 
     fun createNotificationScheduled(context: Context) {
@@ -47,12 +42,7 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(PendingIntent.getActivity(
-                    context, requestScheduledCode,
-                    getIntent(context, NotificationKey.SCHEDULED),
-                    PendingIntent.FLAG_IMMUTABLE
-                ))
-
+                setContentIntent(NotificationController.getPendingIntent(context, requestScheduledCode, NotificationKey.SCHEDULED))
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -76,14 +66,7 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(
-                    PendingIntent.getActivity(
-                        context,
-                        requestUninstallCode,
-                        getIntent(context, NotificationKey.UNINSTALL),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                )
+                setContentIntent(NotificationController.getPendingIntent(context, requestUninstallCode, NotificationKey.UNINSTALL))
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -107,14 +90,7 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(
-                    PendingIntent.getActivity(
-                        context,
-                        requestBatteryCode,
-                        getIntent(context, NotificationKey.CHARGE),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                )
+                setContentIntent(NotificationController.getPendingIntent(context, requestBatteryCode, NotificationKey.CHARGE))
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -139,14 +115,8 @@ object NotificationHelper {
             } else {
                 Notification.Builder(context)
             }.apply {
-                setContentIntent(
-                    PendingIntent.getActivity(
-                        context,
-                        requestUnlockCode,
-                        getIntent(context, NotificationKey.UNCLOCK),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                )
+
+                setContentIntent(NotificationController.getPendingIntent(context, requestUnlockCode, NotificationKey.UNCLOCK))
                 setAutoCancel(true)
                 setSmallIcon(R.mipmap.ic_launcher_foreground)
                 setWhen(System.currentTimeMillis())
@@ -162,9 +132,5 @@ object NotificationHelper {
         TBAHelper.updatePoints(EventPoints.filecpop_all_tri)
     }
 
-    private fun getIntent(context: Context, notifyType: String): Intent {
-        return Intent(context, AdsOpenActivity::class.java).apply {
-            putExtra(NotificationKey.notifyType, notifyType)
-        }
-    }
+
 }

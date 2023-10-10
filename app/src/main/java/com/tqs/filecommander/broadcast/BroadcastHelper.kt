@@ -45,3 +45,7 @@ fun registerUninstall(context: Context?) {
         addDataScheme("package")
     })
 }
+
+fun registerNotificationReceiver(context: Context?){
+    context?.registerReceiver(NotificationClickReceiver(),IntentFilter())
+}

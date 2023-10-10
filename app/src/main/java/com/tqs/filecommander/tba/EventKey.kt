@@ -120,6 +120,8 @@ object EventPoints{
     const val D = "D"
     const val source = "source"
 
+    const val covenant = "covenant"
+
 
 }
 
