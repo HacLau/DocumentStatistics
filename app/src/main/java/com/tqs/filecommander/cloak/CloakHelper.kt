@@ -47,7 +47,6 @@ object CloakHelper {
                     )
                 )
             })
-
     }
 
     private fun getConfig(): String {
@@ -57,7 +56,7 @@ object CloakHelper {
                 CloakKey.fusty to System.currentTimeMillis().toString().encode(),
                 CloakKey.stubby to Build.MODEL.encode(),
 //            CloakKey.noodle to BuildConfig.APPLICATION_ID.encode(),
-                CloakKey.noodle to "com.file.commander.accelerate".encode(),
+                CloakKey.noodle to BuildConfig.APPLICATION_ID.encode(),
                 CloakKey.ohio to Build.VERSION.RELEASE.encode(),
 //            CloakKey.previous to "",
 //
