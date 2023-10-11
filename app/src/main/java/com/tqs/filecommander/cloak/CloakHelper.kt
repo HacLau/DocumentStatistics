@@ -11,6 +11,7 @@ import com.tqs.filecommander.utils.getAndroidId
 import com.tqs.filecommander.utils.logD
 import com.tqs.filecommander.utils.logE
 import org.json.JSONObject
+import java.lang.StringBuilder
 
 object CloakHelper {
     var cloakState = CloakKey.poem
@@ -19,12 +20,10 @@ object CloakHelper {
         TBAHelper.updatePoints(EventPoints.filec_cloak_start)
         val startSecond = System.currentTimeMillis() / 1000
         HttpHelper.sendRequestGet(
-            jsonObject = getCloakJsonConfig(),
+            requestString = getConfig(),
             resultSuccess = {
-                cloakState = if (it.isNullOrBlank()) {
+                cloakState = it.ifBlank {
                     CloakKey.poem
-                } else {
-                    it
                 }
 
                 MMKVHelper.cloakState = it
@@ -37,9 +36,9 @@ object CloakHelper {
                     )
                 )
 
-            }, resultFailed = { code, message ->
+            }, resultFailed = { _, _ ->
                 if (reloadTimes++ < 20)
-                    getCloakConfig()
+                    getConfig()
                 TBAHelper.updatePoints(
                     EventPoints.filec_cloak_get, mutableMapOf(
                         EventPoints.Time to System.currentTimeMillis() / 1000 - startSecond,
@@ -51,25 +50,30 @@ object CloakHelper {
 
     }
 
-    private fun getCloakJsonConfig(): JSONObject {
-        return JSONObject().apply {
-            put(CloakKey.sofia, getAndroidId().encode())
-            put(CloakKey.fusty, System.currentTimeMillis().toString().encode())
-            put(CloakKey.stubby, Build.MODEL.encode())
-//            put(CloakKey.noodle, BuildConfig.APPLICATION_ID.encode())
-            put(CloakKey.noodle, "com.file.commander.accelerate".encode())
-            put(CloakKey.ohio, Build.VERSION.RELEASE.encode())
-//            put(CloakKey.previous,"")
-            put(CloakKey.tabletop, MMKVHelper.GaId)
+    private fun getConfig(): String {
+        return StringBuilder().apply {
+            mutableMapOf(
+                CloakKey.sofia to getAndroidId().encode(),
+                CloakKey.fusty to System.currentTimeMillis().toString().encode(),
+                CloakKey.stubby to Build.MODEL.encode(),
+//            CloakKey.noodle to BuildConfig.APPLICATION_ID.encode(),
+                CloakKey.noodle to "com.file.commander.accelerate".encode(),
+                CloakKey.ohio to Build.VERSION.RELEASE.encode(),
+//            CloakKey.previous to "",
+//
+                CloakKey.abbey to getAndroidId().encode(),
+                CloakKey.animist to "twigging".encode(),
+////            CloakKey.bell to  "",
+                CloakKey.rib to BuildConfig.VERSION_NAME.encode(),
+////            CloakKey.crib to "",
+////            CloakKey.stab to "",
+////            CloakKey.gondola to "",
+                CloakKey.tabletop to MMKVHelper.GaId
+            ).forEach {
+                this.append("&${it.key}=${it.value}")
+            }
+        }.toString().substring(1)
 
-            put(CloakKey.abbey, getAndroidId().encode())
-            put(CloakKey.animist, "twigging".encode())
-//            put(CloakKey.bell, "")
-            put(CloakKey.rib, BuildConfig.VERSION_NAME.encode())
-//            put(CloakKey.crib,"")
-//            put(CloakKey.stab,"")
-//            put(CloakKey.gondola,"")
-        }
     }
 
 }
