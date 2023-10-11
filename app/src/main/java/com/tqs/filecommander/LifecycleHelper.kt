@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import com.google.android.gms.ads.AdActivity
+import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.ui.activity.ScannerActivity
 import com.tqs.filecommander.ui.activity.SplashActivity
 import com.tqs.filecommander.utils.application
@@ -14,10 +16,11 @@ var inBackgroundTime = 0L
 
 class FileCommanderLifecycle : Application.ActivityLifecycleCallbacks {
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-
+        "Lifecycle onActivityCreated ${activity.localClassName}".logE()
     }
 
     override fun onActivityStarted(activity: Activity) {
+        "Lifecycle onActivityStarted ${activity.localClassName}".logE()
         if (runningActivities == 0) {
             // application from background to foreground
         }
@@ -41,14 +44,17 @@ class FileCommanderLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
+        "Lifecycle onActivityResumed ${activity.localClassName}".logE()
 
     }
 
     override fun onActivityPaused(activity: Activity) {
+        "Lifecycle onActivityPaused ${activity.localClassName}".logE()
 
     }
 
     override fun onActivityStopped(activity: Activity) {
+        "Lifecycle onActivityStopped ${activity.localClassName}".logE()
         runningActivities--
         if (runningActivities == 0) {
             // application from fore to background
@@ -57,11 +63,14 @@ class FileCommanderLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-
+        "Lifecycle onActivitySaveInstanceState ${activity.localClassName}".logE()
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+        "Lifecycle onActivityDestroyed ${activity.localClassName}".logE()
 
     }
+
+
 
 }

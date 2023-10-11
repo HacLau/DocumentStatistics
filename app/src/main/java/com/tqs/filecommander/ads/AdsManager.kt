@@ -21,7 +21,7 @@ object AdsManager {
         adsEntity = Gson().fromJson(adsJson, AdsEntity::class.java)
         showAdsCount = adsEntity?.showMax ?: 0
         clickAdsCount = adsEntity?.clickMax ?: 0
-        adsFullScreen.initializeSource(adsEntity?.adsOpen)
+        adsFullScreen.initializeSource(adsEntity?.adsFullScreen)
         adsInsertResultScan.initializeSource(adsEntity?.adsInsertResultScan)
         adsInsertResultClean.initializeSource(adsEntity?.adsInsertResultClean)
         adsNativeMain.initializeSource(adsEntity?.adsNativeMain)

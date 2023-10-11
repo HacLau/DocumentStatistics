@@ -10,7 +10,7 @@ data class AdsEntity(
     @SerializedName("koof")
     var clickMax: Int = 15,
     @SerializedName("fc_launch")
-    var adsOpen: MutableList<AdsItem>? = null,
+    var adsFullScreen: MutableList<AdsItem>? = null,
     @SerializedName("fc_scan_int")
     var adsInsertResultScan: MutableList<AdsItem>? = null,
     @SerializedName("fc_result_int")

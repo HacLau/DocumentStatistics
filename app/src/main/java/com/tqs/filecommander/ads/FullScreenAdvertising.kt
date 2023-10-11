@@ -3,6 +3,7 @@ package com.tqs.filecommander.ads
 import android.app.Activity
 import android.content.Context
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -10,8 +11,12 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.utils.logE
+import com.tqs.filecommander.utils.logW
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class FullScreenAdvertising(
     private val context: Context,
@@ -32,18 +37,43 @@ class FullScreenAdvertising(
     }
 
     override fun show(activity: Activity, nativeParent: ViewGroup?, onAdsDismissed: () -> Unit) {
+        fun onAdsClose(){
+            val baseActivity = activity as? BaseActivity<*, *>
+            if (null != baseActivity){
+                baseActivity.lifecycleScope.launch {
+                    while (!baseActivity.isActivityOnResume()) delay(200L)
+                    onAdsDismissed.invoke()
+                }
+            }else{
+                onAdsDismissed.invoke()
+            }
+
+        }
         val callback: FullScreenContentCallback by lazy {
             object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
-                    onAdsDismissed.invoke()
+                    "Advertising callback 1 onAdDismissedFullScreenContent".logW()
+                    onAdsClose()
                 }
 
                 override fun onAdShowedFullScreenContent() {
+                    "Advertising callback 2 onAdShowedFullScreenContent".logW()
                     AdsManager.addShowCount()
                 }
 
                 override fun onAdFailedToShowFullScreenContent(e: AdError) {
-                    onAdsDismissed.invoke()
+                    "Advertising callback 3 onAdFailedToShowFullScreenContent".logW()
+                    onAdsClose()
+                }
+
+                override fun onAdClicked() {
+                    "Advertising callback 4 onAdClicked".logW()
+                    AdsManager.addClickCount()
+                }
+
+                override fun onAdImpression() {
+                    "Advertising callback 5 onAdImpression".logW()
+                    super.onAdImpression()
                 }
             }
         }
@@ -75,7 +105,7 @@ class FullScreenAdvertising(
     private fun loadOpenAdvertising(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         AppOpenAd.load(context, item.adsId, adsRequest, AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, object : AppOpenAd.AppOpenAdLoadCallback() {
             override fun onAdLoaded(appOpenAd: AppOpenAd) {
-                "Debug Logcat: Advertising adsType = ${adsType.adsItemType} type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
+                "Debug Logcat: Advertising Loading success adsType = ${adsType.adsItemType} type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} ".logE()
                 ad = appOpenAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()
@@ -85,6 +115,7 @@ class FullScreenAdvertising(
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                "Debug Logcat: Advertising Loading fail adsType = ${adsType.adsItemType} type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} ".logE()
                 onAdsLoadFailed.invoke(loadAdError.message)
             }
         })
@@ -93,7 +124,7 @@ class FullScreenAdvertising(
     private fun loadInterstitial(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         InterstitialAd.load(context, item.adsId, adsRequest, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                "Debug Logcat: Advertising adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
+                "Debug Logcat: Advertising Loading success adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId}".logE()
                 ad = interstitialAd
                 adsLoadTime = System.currentTimeMillis()
                 onAdsLoaded.invoke()
@@ -103,6 +134,7 @@ class FullScreenAdvertising(
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                "Debug Logcat: Advertising Loading fail adsType = ${adsType.adsItemType} type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} ".logE()
                 onAdsLoadFailed.invoke(loadAdError.message)
             }
         })

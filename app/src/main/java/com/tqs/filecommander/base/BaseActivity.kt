@@ -10,6 +10,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -19,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.notification.NotificationKey
@@ -40,8 +44,7 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
     protected lateinit var viewModel: VM
     abstract val layoutId: Int
     abstract val TAG: String
-    var countDownTimer:CountDownTimer? = null
-    var countDownTimerCancel = false
+    private var isResume = false
     private val currentNotAllowPermissions: MutableList<String> = mutableListOf()
     private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: Map<String, Boolean> ->
         currentNotAllowPermissions.clear()
@@ -61,7 +64,7 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
                     )
                 )
             }
-            if(key == Manifest.permission.READ_EXTERNAL_STORAGE || key == Manifest.permission.WRITE_EXTERNAL_STORAGE){
+            if (key == Manifest.permission.READ_EXTERNAL_STORAGE || key == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
                 TBAHelper.updatePoints(
                     EventPoints.filec_premission_result, mutableMapOf(
                         EventPoints.result to if (value) {
@@ -97,11 +100,12 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         setCustomDensity()
         binding = DataBindingUtil.setContentView(this, layoutId)
         initData()
+        isResume = false
     }
 
     abstract fun initData()
 
-    private fun setCustomDensity(){
+    private fun setCustomDensity() {
         val metrics = resources.displayMetrics
         (metrics.heightPixels / 760f).let {
             metrics.density = it
@@ -213,12 +217,13 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
 
     open fun onPermissionSuccess() {}
     fun jumpMainAndScannerResultActivity(fromPage: String, notifyType: String?) {
-        startActivities(arrayOf(Intent(this, MainActivity::class.java).apply {},Intent(this, ScannerResultActivity::class.java).apply {
+        startActivities(arrayOf(Intent(this, MainActivity::class.java).apply {}, Intent(this, ScannerResultActivity::class.java).apply {
             putExtra(Common.PAGE_TYPE, fromPage)
             putExtra(notifyType, notifyType)
         }))
         finish()
     }
+
     fun jumpScannerResultActivity(fromPage: String, notifyType: String?) {
         startActivity(Intent(this, ScannerResultActivity::class.java).apply {
             putExtra(Common.PAGE_TYPE, fromPage)
@@ -253,30 +258,36 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : ViewModel> : AppCompatAct
         finish()
     }
 
-    fun startCountDownTimer(time: Long,onTick:(Long)->Unit,onFish:()->Unit){
-        stopCountDownTimer()
-        countDownTimer =
-            object : CountDownTimer(time, 33) {
-                override fun onTick(millisUntilFinished: Long) {
-                    "millisUntilFinished = $millisUntilFinished".logE()
-                    if(countDownTimerCancel)
-                        cancel()
-                    onTick.invoke(millisUntilFinished)
-                }
-
-                override fun onFinish() {
-                    if(countDownTimerCancel){
-                        return
-                    }
-                    onFish.invoke()
-
-                }
-            }
-        countDownTimer?.start()
-        countDownTimerCancel = false
+    override fun onStart() {
+        super.onStart()
+        isResume = false
+    }
+    override fun onResume() {
+        super.onResume()
+        isResume = true
     }
 
-    fun stopCountDownTimer(){
-        countDownTimerCancel = true
+    override fun onPause() {
+        super.onPause()
+        isResume = false
     }
+
+    override fun onStop() {
+        super.onStop()
+        isResume = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isResume = false
+    }
+
+    fun isActivityOnResume():Boolean{
+        return isResume && ifLifecycleResume()
+    }
+
+    private fun ifLifecycleResume():Boolean{
+        return Lifecycle.State.RESUMED == lifecycle.currentState
+    }
+
 }

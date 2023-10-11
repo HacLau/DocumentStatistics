@@ -1,6 +1,6 @@
 {
-  "ujn": 15,
-  "koof": 5,
+  "ujn": 40,
+  "koof": 15,
   "fc_launch": [
     {
       "popl": "ca-app-pub-3940256099942544/3419835294",
@@ -8,20 +8,6 @@
       "vtha": "op",
       "cgabk": 13800,
       "buy": 1
-    },
-    {
-      "popl": "ca-app-pub-3940256099942544/3419835294A",
-      "gbne": "admob",
-      "vtha": "op",
-      "cgabk": 13800,
-      "buy": 2
-    },
-    {
-      "popl": "ca-app-pub-3940256099942544/1033173712AA",
-      "gbne": "admob",
-      "vtha": "int",
-      "cgabk": 3000,
-      "buy": 3
     }
   ],
   "fc_scan_int": [
@@ -31,13 +17,6 @@
       "vtha": "int",
       "cgabk": 3000,
       "buy": 1
-    },
-    {
-      "popl": "ca-app-pub-3940256099942544/1033173712AA",
-      "gbne": "admob",
-      "vtha": "int",
-      "cgabk": 3000,
-      "buy": 3
     }
   ],
   "fc_result_int": [
@@ -47,13 +26,6 @@
       "vtha": "int",
       "cgabk": 3000,
       "buy": 1
-    },
-    {
-      "popl": "ca-app-pub-3940256099942544/1033173712AA",
-      "gbne": "admob",
-      "vtha": "int",
-      "cgabk": 3000,
-      "buy": 2
     }
   ],
   "fc_main_nat": [
@@ -63,13 +35,6 @@
       "vtha": "nat",
       "cgabk": 3000,
       "buy": 1
-    },
-    {
-      "popl": "ca-app-pub-3940256099942544/2247696110AA",
-      "gbne": "admob",
-      "vtha": "nat",
-      "cgabk": 3000,
-      "buy": 2
     }
   ],
   "fc_scan_nat": [
@@ -83,7 +48,7 @@
   ],
   "fc_result_nat": [
     {
-      "popl": "ca-app-pub-3940256099942544/2247696110A",
+      "popl": "ca-app-pub-3940256099942544/2247696110",
       "gbne": "admob",
       "vtha": "nat",
       "cgabk": 3000,

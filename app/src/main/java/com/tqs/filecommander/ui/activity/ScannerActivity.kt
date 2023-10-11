@@ -16,7 +16,9 @@ import com.tqs.filecommander.notification.NotificationKey
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
 import com.tqs.filecommander.utils.Common
+import com.tqs.filecommander.utils.TimerUtils
 import com.tqs.filecommander.utils.logE
+import com.tqs.filecommander.utils.logI
 import com.tqs.filecommander.vm.MainVM
 
 class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
@@ -83,7 +85,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
                 }
             )
 
-            stopCountDownTimer()
+            TimerUtils.stopCountDownTimer()
             clearAllActivity()
             // stop all timer
             AdsManager.adsFullScreen.showFullScreenAds(this) {
@@ -116,7 +118,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding, MainVM>() {
     private var count = 0
 
     private fun startCountDownTimer() {
-        startCountDownTimer(viewModel.countDownTime, {
+        TimerUtils.startCountDownTimer(viewModel.countDownTime, {
             binding.scannerTips.text = "Scanner${
                 when (count % 40) {
                     in 0..<10 -> "."

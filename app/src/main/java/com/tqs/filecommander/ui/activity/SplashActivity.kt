@@ -10,6 +10,8 @@ import com.tqs.filecommander.base.BaseActivity
 import com.tqs.filecommander.ads.AdsManager
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
+import com.tqs.filecommander.utils.TimerUtils
+import com.tqs.filecommander.utils.logI
 import com.tqs.filecommander.vm.MainVM
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
@@ -23,12 +25,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, MainVM>() {
         setStatusBarLightMode(this, true)
         viewModel = ViewModelProvider(this)[MainVM::class.java]
         initAdsData()
-        startCountDownTimer(viewModel.countDownTime, {
+        TimerUtils.startCountDownTimer(viewModel.countDownTime, {
             binding.splashProgressBar.progress = 100 - (it / 80).toInt()
         }) {
             binding.splashProgressBar.progress = 100
             AdsManager.adsFullScreen.showFullScreenAds(this@SplashActivity) {
                 Log.e(TAG, "ads onDismiss")
+
                 startMainActivity()
             }
         }

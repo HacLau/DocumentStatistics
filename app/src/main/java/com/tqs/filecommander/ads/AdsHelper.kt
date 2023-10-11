@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.tqs.filecommander.base.BaseAds
 import com.tqs.filecommander.tba.EventPoints
 import com.tqs.filecommander.tba.TBAHelper
+import com.tqs.filecommander.utils.logD
 import com.tqs.filecommander.utils.logE
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,11 @@ class AdsHelper(private val adsType: AdsItemType) {
             clear()
             addAll(data ?: mutableListOf())
             sortByDescending { it.adsWeight }
+            forEach {
+                "source = ${it.adsId} ${it.adsWeight} ${it.adsPlatform} ${it.adsType} ${it.adsAliveMillis}  ".logD()
+            }
         }
+
     }
 
     private fun isCacheOverTime(): Boolean {
@@ -44,12 +49,14 @@ class AdsHelper(private val adsType: AdsItemType) {
     }
 
     fun preLoad(context: Context) {
+        cache.forEach {
+            "cache = {\n ${it.adsItem.adsId} \n ${it.adsItem.adsType} \n ${it.adsItem.adsWeight} \n ${it.adsItem.adsPlatform}\n}".logD()
+        }
         CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, throwable -> Log.e(TAG, "${throwable.message}") }).launch {
             if (source.isEmpty()) return@launch
             if (AdsManager.isOverLimit()) return@launch
             if (isCacheNotEmpty && isCacheOverTime().not()) return@launch
             if (isAdsLoading) return@launch
-            "AdsHelper preload".logE()
             isAdsLoading = true
             AdsPreloader(context, adsType,source, cache){
                 isAdsLoading = false

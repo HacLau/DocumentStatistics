@@ -25,7 +25,7 @@ object HttpHelper {
         .readTimeout(DEFAULT_READ_TIME, TimeUnit.SECONDS)
         .build()
     private var builder: Request.Builder? = null
-    private val postType = MediaType.parse("application/json")
+    private val mediaType = MediaType.parse("application/json")
 
     fun sendRequestPost(
         baseUrl: String = BuildConfig.TBAUrl,
@@ -35,17 +35,18 @@ object HttpHelper {
     ) {
         runCatching {
             val requestString = jsonObject.toString()
-            "HttpHelper sendRequestPost requestString = $requestString".logE()
+            "HttpHelper ${baseUrl} POST json = $requestString".logE()
             builder = Request.Builder().url(baseUrl)
             okHttpClient.newCall(
-                builder?.post(RequestBody.create(postType, requestString))?.build()
+                builder?.post(RequestBody.create(mediaType, requestString))?.build()
             ).execute().let {
-                "HttpHelper ResponsePost code = ${it.code()}  message = ${it.message()}".logE()
                 if (it.isSuccessful) {
-                    it.body().string().let { response ->
-                        resultSuccess.invoke(response)
+                    it.body().string().let { message ->
+                        "HttpHelper ${baseUrl} POST code = ${it.code()}  message = ${message}".logE()
+                        resultSuccess.invoke(message)
                     }
                 } else {
+                    "HttpHelper ${baseUrl} POST code = ${it.code()}  message = ${it.message()}".logE()
                     resultFailed.invoke(it.code(), it.message())
                 }
             }
@@ -62,16 +63,17 @@ object HttpHelper {
     ) {
         runCatching {
             val requestString = jsonObject.toString()
-            "HttpHelper sendRequestGet requestString = $requestString".logE()
+            "HttpHelper ${baseUrl} GET json = $requestString".logE()
             builder = Request.Builder().url(baseUrl)
             okHttpClient.newCall(builder?.get()?.build()).execute().let {
-                it.toString().logE()
-                "HttpHelper ResponseGet code = ${it.code()}  message = ${it.message()}".logE()
+
                 if (it.isSuccessful) {
-                    it.body().string().let { response ->
-                        resultSuccess.invoke(response)
+                    it.body().string().let {message ->
+                        "HttpHelper ${baseUrl} GET code = ${it.code()}  message = ${message}".logE()
+                        resultSuccess.invoke(message)
                     }
                 } else {
+                    "HttpHelper ${baseUrl} GET code = ${it.code()}  message = ${it.message()}".logE()
                     resultFailed.invoke(it.code(), it.message())
                 }
             }

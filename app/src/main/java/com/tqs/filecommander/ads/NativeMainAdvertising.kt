@@ -27,7 +27,7 @@ class NativeMainAdvertising(
     private val adRequest: AdRequest get() = AdRequest.Builder().build()
     override fun load(onAdsLoaded: () -> Unit, onAdsLoadFailed: (msg: String?) -> Unit) {
         AdLoader.Builder(context, item.adsId).apply {
-            "Debug Logcat: Advertising adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} Loading".logE()
+
             forNativeAd {
                 nativeAd = it
                 adsLoadTime = System.currentTimeMillis()
@@ -37,8 +37,14 @@ class NativeMainAdvertising(
                 }
             }
             withAdListener(object : AdListener() {
+                override fun onAdLoaded() {
+                    "Debug Logcat: Advertising Loading success adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} ".logE()
+                }
                 override fun onAdClicked() = AdsManager.addClickCount()
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) = onAdsLoadFailed.invoke(loadAdError.message)
+                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                    "Debug Logcat: Advertising Loading fail adsType = ${adsType.adsItemType}  type = ${item.adsType} Platform = ${item.adsPlatform}  ID = ${item.adsId} ".logE()
+                    onAdsLoadFailed.invoke(loadAdError.message)
+                }
             })
             withNativeAdOptions(NativeAdOptions.Builder().apply {
                 setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_LEFT)

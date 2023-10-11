@@ -181,6 +181,7 @@ object NotificationController {
     }
 
     fun isShouldShowNotification(type: String): Boolean {
+
         // if application in foreground return false
         "Debug Logcat: Notification $type runningActivities = ${runningActivities}".logE()
         if (runningActivities != 0) return false
